@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nate Freese — Aerospace Engineering</title>
+  <meta name="description" content="Aerospace Engineering portfolio of Nathanyl (Nate) Freese — spacecraft systems, structures &amp; FEA, experimental aerodynamics, and propulsion." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- 3D viewer library, self-hosted (no external CDN). Vendored from @google/model-viewer. -->
+  <script type="module" src="assets/js/model-viewer.min.js"></script>
+</head>
+<body>
+  <!-- NAV -->
+  <header class="nav">
+    <a class="nav__brand" href="#top">NF</a>
+    <nav class="nav__links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#rocket">3D Model</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="top" class="hero">
+    <div class="hero__inner">
+      <p class="hero__eyebrow">Aerospace Engineering · Embry-Riddle Aeronautical University</p>
+      <h1 class="hero__name">Nathanyl <span>“Nate”</span> Freese</h1>
+      <p class="hero__pitch">
+        <!-- [fill-in: one-sentence pitch — what you do + what you're looking for] -->
+        Aerospace engineering student focused on spacecraft systems, structures &amp; FEA, and experimental aerodynamics.
+      </p>
+      <div class="hero__cta">
+        <a class="btn" href="#projects">View Projects</a>
+        <a class="btn btn--ghost" href="assets/Nate_Freese_Resume.pdf">Résumé (PDF)</a>
+      </div>
+      <div class="hero__links">
+        <a href="mailto:nathanylfreese@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/nathanyl-freese/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://github.com/N8Freese?tab=repositories" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <h2 class="section__title">About</h2>
+    <div class="about">
+      <div class="about__photo" aria-label="Photo placeholder">
+        <span>Add headshot →<br />assets/img/headshot.jpg</span>
+      </div>
+      <div class="about__text">
+        <p><!-- [fill-in: 3–5 sentence bio — who you are, year/expected grad, focus areas, what drives you] -->
+          I'm an aerospace engineering student at Embry-Riddle with hands-on flight-hardware experience and a strong analysis background spanning MATLAB simulation, FEA, and experimental aerodynamics.</p>
+        <p class="about__focus"><strong>Focus areas:</strong> spacecraft systems · structures &amp; FEA · experimental aerodynamics · propulsion · attitude dynamics</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section">
+    <h2 class="section__title">Skills</h2>
+    <div class="skills">
+      <div class="skills__group">
+        <h3>Analysis &amp; Simulation</h3>
+        <ul><li>MATLAB</li><li>Simulink</li><li>ode45 / ode15s dynamics</li><li>Signal processing / FFT</li></ul>
+      </div>
+      <div class="skills__group">
+        <h3>FEA &amp; CAD</h3>
+        <ul><li>NASTRAN / Femap</li><li>CBEAM/PBEAM, SOL 101</li><li>CATIA</li></ul>
+      </div>
+      <div class="skills__group">
+        <h3>Experimental</h3>
+        <ul><li>Wind-tunnel testing</li><li>Cp / Cl / Cd analysis</li><li>Data acquisition</li></ul>
+      </div>
+      <div class="skills__group">
+        <h3>Programming &amp; Tools</h3>
+        <ul><li>MATLAB</li><li><!-- [fill-in: Python? C/Arduino?] -->Arduino</li><li>Git / GitHub</li><li>LaTeX</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="section">
+    <h2 class="section__title">Projects</h2>
+    <p class="section__hint">Mostly visuals — add a figure/photo to each card (fills ~1/3 of the card). Edit copy in the cards below.</p>
+    <div class="projects">
+      <!-- Card template — duplicate as needed -->
+      <article class="card">
+        <div class="card__media" aria-label="Project image placeholder"><span>Add image →<br />assets/img/capstone.jpg</span></div>
+        <div class="card__body">
+          <span class="card__cat">Senior Design · Capstone</span>
+          <h3>AE 441 Launch Vehicle</h3>
+          <p><strong>Objective:</strong> <!-- [fill-in] -->Two-stage launch vehicle preliminary design.</p>
+          <p><strong>My role:</strong> <!-- [fill-in] --></p>
+          <p><strong>Results:</strong> <!-- [fill-in: quantified] --></p>
+          <a href="#rocket" class="card__link">See the 3D model ↓</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__media"><span>Add image →<br />assets/img/mayott.jpg</span></div>
+        <div class="card__body">
+          <span class="card__cat">Flight Hardware · Mayott Aerospace</span>
+          <h3>Drone Flight Controller</h3>
+          <p><strong>Objective:</strong> Integrate Lantronix LOQ-8550DRP + Pixhawk 6X / PX4 + Open-Q 8550CS µSOM.</p>
+          <p><strong>My role:</strong> <!-- [fill-in] --></p>
+          <p><strong>Results:</strong> <!-- [fill-in] --></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__media"><span>Add plot →<br />assets/img/sad-sim.png</span></div>
+        <div class="card__body">
+          <span class="card__cat">AE 426 · Attitude Dynamics</span>
+          <h3>Spacecraft Attitude Dynamics Simulation</h3>
+          <p><strong>Objective:</strong> Simulate rigid-body attitude (torque &amp; no-torque) with quaternion kinematics.</p>
+          <p><strong>Tools:</strong> MATLAB, Euler's equation, ode45.</p>
+          <p><strong>Results:</strong> <!-- [fill-in: angular velocity, precession/nutation, quaternion histories] --></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__media"><span>Add image →<br />assets/img/earth-moon-relay.jpg</span></div>
+        <div class="card__body">
+          <span class="card__cat">AE 429 · Space Environment</span>
+          <h3>Earth-Moon Relay Pathfinder</h3>
+          <p><strong>Objective:</strong> Environmental analysis &amp; test plan for a relay pathfinder mission.</p>
+          <p><strong>My role:</strong> <!-- [fill-in] --></p>
+          <p><strong>Results:</strong> <!-- [fill-in] --></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__media"><span>Add image →<br />assets/img/nastran.png</span></div>
+        <div class="card__body">
+          <span class="card__cat">AE 318 · Structures &amp; FEA</span>
+          <h3>NASTRAN Structural Analysis</h3>
+          <p><strong>Objective:</strong> <!-- [fill-in: CBEAM/PBEAM model, SOL 101] --></p>
+          <p><strong>Results:</strong> <!-- [fill-in: displacements, constraint forces] --></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__media"><span>Add image →<br />assets/img/airfoil.jpg</span></div>
+        <div class="card__body">
+          <span class="card__cat">AE 314 / 315 · Experimental Aero</span>
+          <h3>NACA 2414 Airfoil — Numerical &amp; Wind Tunnel</h3>
+          <p><strong>Objective:</strong> <!-- [fill-in: Cl/Cd/Cp, wind-tunnel validation] --></p>
+          <p><strong>Results:</strong> <!-- [fill-in] --></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3D ROCKET MODEL -->
+  <section id="rocket" class="section section--feature">
+    <h2 class="section__title">Senior Design Launch Vehicle — Interactive 3D</h2>
+    <p class="section__hint">Drag to orbit · scroll to zoom · auto-rotates. Model loads automatically once the GLB is added.</p>
+    <div id="rocket-viewer" class="rocket-viewer">
+      <!-- Placeholder shown until assets/rocket/full-launch-vehicle.glb exists. main.js swaps in <model-viewer> when present. -->
+      <div class="rocket-viewer__placeholder">
+        <p>🚀 3D model coming soon</p>
+        <small>Drop <code>full-launch-vehicle.glb</code> into <code>assets/rocket/</code> — it appears here automatically.</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="section">
+    <h2 class="section__title">Experience</h2>
+    <div class="timeline">
+      <div class="timeline__item">
+        <h3>Mayott Aerospace <span>— <!-- [fill-in role] --></span></h3>
+        <span class="timeline__date"><!-- [fill-in dates] --></span>
+        <ul><li><!-- [fill-in: drone flight-controller work and what you delivered] --></li></ul>
+      </div>
+      <div class="timeline__item">
+        <h3>COPE Capstone — Team 4 <span>— <!-- [fill-in role] --></span></h3>
+        <span class="timeline__date"><!-- [fill-in dates] --></span>
+        <ul><li><!-- [fill-in] --></li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education" class="section">
+    <h2 class="section__title">Education</h2>
+    <div class="edu">
+      <h3>Embry-Riddle Aeronautical University</h3>
+      <p>B.S. Aerospace Engineering — expected <!-- [fill-in grad date] --></p>
+      <p class="edu__course"><strong>Relevant coursework:</strong> Experimental Aerodynamics · Structures &amp; FEA · Spacecraft Attitude Dynamics · Space Propulsion · Spacecraft Control · Space Environment · Preliminary Design</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <footer id="contact" class="footer">
+    <h2 class="section__title">Get in touch</h2>
+    <div class="footer__links">
+      <a href="mailto:nathanylfreese@gmail.com">nathanylfreese@gmail.com</a>
+      <a href="https://www.linkedin.com/in/nathanyl-freese/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/N8Freese?tab=repositories" target="_blank" rel="noopener">GitHub</a>
+      <a href="assets/Nate_Freese_Resume.pdf" target="_blank" rel="noopener">Résumé</a>
+    </div>
+    <p class="footer__note">© <span id="year"></span> Nate Freese · Built with plain HTML/CSS on GitHub Pages</p>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

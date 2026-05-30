@@ -1,0 +1,131 @@
+/* ===== Nate Freese — Portfolio (dark theme) ===== */
+:root {
+  --bg: #0b0b0f;
+  --bg-2: #14141b;
+  --card: #16161f;
+  --text: #e7e7ee;
+  --muted: #9a9ab0;
+  --accent: #5b8cff;
+  --accent-2: #7c5cff;
+  --border: #262633;
+  --radius: 14px;
+  --maxw: 1080px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.2; }
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px clamp(16px, 5vw, 48px);
+  background: rgba(11,11,15,.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.nav__brand { font-weight: 800; letter-spacing: 1px; color: var(--text); }
+.nav__links a { color: var(--muted); margin-left: clamp(10px, 2.5vw, 26px); font-size: .95rem; }
+.nav__links a:hover { color: var(--text); text-decoration: none; }
+@media (max-width: 620px) { .nav__links a:nth-child(n+4) { display: none; } }
+
+/* HERO */
+.hero {
+  min-height: 78vh; display: flex; align-items: center;
+  padding: 60px clamp(16px, 5vw, 48px);
+  background: radial-gradient(1200px 500px at 70% -10%, rgba(124,92,255,.18), transparent 60%),
+              radial-gradient(900px 400px at 10% 20%, rgba(91,140,255,.12), transparent 55%);
+}
+.hero__inner { max-width: var(--maxw); margin: 0 auto; width: 100%; }
+.hero__eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .5px; margin: 0 0 10px; }
+.hero__name { font-size: clamp(2.4rem, 7vw, 4.4rem); margin: 0 0 14px; }
+.hero__name span { color: var(--muted); font-weight: 400; }
+.hero__pitch { font-size: clamp(1.05rem, 2.5vw, 1.35rem); color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+.hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.hero__links a { color: var(--muted); margin-right: 18px; font-size: .95rem; }
+
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-weight: 600;
+}
+.btn:hover { text-decoration: none; opacity: .92; }
+.btn--ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+/* SECTIONS */
+.section { max-width: var(--maxw); margin: 0 auto; padding: 64px clamp(16px, 5vw, 48px); }
+.section--feature { background: var(--bg-2); max-width: none; }
+.section--feature > * { max-width: var(--maxw); margin-left: auto; margin-right: auto; }
+.section__title { font-size: clamp(1.5rem, 4vw, 2.2rem); margin: 0 0 8px; }
+.section__hint { color: var(--muted); margin: 0 0 28px; font-size: .95rem; }
+
+/* ABOUT */
+.about { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: start; }
+.about__photo {
+  aspect-ratio: 1; border-radius: var(--radius); border: 1px dashed var(--border);
+  background: var(--card); display: grid; place-items: center; text-align: center;
+  color: var(--muted); font-size: .85rem; padding: 12px;
+}
+.about__focus { color: var(--muted); }
+@media (max-width: 640px) { .about { grid-template-columns: 1fr; } .about__photo { max-width: 200px; } }
+
+/* SKILLS */
+.skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
+.skills__group { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+.skills__group h3 { margin: 0 0 10px; font-size: 1rem; color: var(--accent); }
+.skills__group ul { margin: 0; padding-left: 18px; color: var(--muted); }
+
+/* PROJECTS */
+.projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; transition: transform .15s ease, border-color .15s ease; }
+.card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.card__media {
+  aspect-ratio: 16/9; background: linear-gradient(135deg, #1b1b27, #11111a);
+  display: grid; place-items: center; text-align: center; color: var(--muted); font-size: .82rem; padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.card__body { padding: 18px 20px; }
+.card__cat { color: var(--accent); font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.card__body h3 { margin: 6px 0 12px; font-size: 1.2rem; }
+.card__body p { margin: 6px 0; color: var(--muted); font-size: .92rem; }
+.card__link { display: inline-block; margin-top: 10px; font-weight: 600; }
+
+/* ROCKET VIEWER */
+.rocket-viewer {
+  width: 100%; height: 540px; border-radius: var(--radius);
+  border: 1px solid var(--border); overflow: hidden; background: #0b0b0f;
+}
+.rocket-viewer model-viewer { width: 100%; height: 100%; }
+.rocket-viewer__placeholder {
+  width: 100%; height: 100%; display: grid; place-content: center; text-align: center; gap: 8px;
+  background: repeating-linear-gradient(45deg, #11111a, #11111a 12px, #14141b 12px, #14141b 24px);
+}
+.rocket-viewer__placeholder p { font-size: 1.5rem; margin: 0; }
+.rocket-viewer__placeholder small { color: var(--muted); }
+.rocket-viewer__placeholder code { background: var(--bg-2); padding: 1px 6px; border-radius: 5px; }
+
+/* TIMELINE / EDU */
+.timeline__item, .edu { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px; }
+.timeline__item h3, .edu h3 { margin: 0 0 4px; }
+.timeline__item h3 span { color: var(--muted); font-weight: 400; }
+.timeline__date { color: var(--accent); font-size: .85rem; }
+.timeline__item ul { color: var(--muted); margin: 8px 0 0; padding-left: 18px; }
+.edu__course { color: var(--muted); }
+
+/* FOOTER */
+.footer { max-width: var(--maxw); margin: 0 auto; padding: 56px clamp(16px, 5vw, 48px) 72px; border-top: 1px solid var(--border); }
+.footer__links { display: flex; gap: 22px; flex-wrap: wrap; margin: 14px 0 24px; }
+.footer__note { color: var(--muted); font-size: .85rem; }
+
+/* TODO markers (visual reminder for unfinished links) */
+[data-todo] { position: relative; }
+[data-todo]::after { content: " ⚠"; font-size: .8em; opacity: .6; }
