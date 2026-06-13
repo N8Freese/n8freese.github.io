@@ -10,7 +10,7 @@
   <meta name="author" content="Nathanyl Freese" />
   <meta name="keywords" content="aerospace engineer, spacecraft systems, CAD, CATIA, MATLAB, Rust, NASA, launch vehicle, robotics, UAV, FEA, portfolio" />
   <link rel="canonical" href="https://n8freese.github.io/" />
-  <meta name="theme-color" content="#0a0c11" />
+  <meta name="theme-color" content="#0a0f1a" />
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
@@ -44,8 +44,10 @@
   }
   </script>
 
-  <!-- 3D viewer library, self-hosted (no external CDN). Vendored from @google/model-viewer. -->
-  <script type="module" src="assets/js/model-viewer.min.js"></script>
+  <!-- Three.js, self-hosted (no external CDN). Vendored from three@0.160.0. -->
+  <script type="importmap">
+    { "imports": { "three": "./assets/js/three.module.js" } }
+  </script>
 </head>
 <body>
   <a href="#projects" class="sr-only">Skip to projects</a>
@@ -89,9 +91,9 @@
       </div>
       <div class="hero__stats">
         <div class="hero__stat"><div class="n">3.97</div><div class="l">GPA · Tau Beta Pi</div></div>
+        <div class="hero__stat"><div class="n">2</div><div class="l">Internships · KBR &amp; Collins</div></div>
+        <div class="hero__stat"><div class="n">10</div><div class="l">Engineering projects</div></div>
         <div class="hero__stat"><div class="n">13×</div><div class="l">NASA tool speedup</div></div>
-        <div class="hero__stat"><div class="n">6</div><div class="l">Person team led</div></div>
-        <div class="hero__stat"><div class="n">'26</div><div class="l">Expected B.S. AE</div></div>
       </div>
     </div>
   </section>
@@ -167,23 +169,31 @@
     </div>
   </section>
 
-  <!-- ENGINEERING DEMO -->
+  <!-- ENGINEERING DEMOS (tabbed) -->
   <section class="section section--feature">
     <p class="section__eyebrow reveal">Interactive</p>
-    <h2 class="section__title reveal">Engineering demo — orbit propagation</h2>
-    <p class="section__hint reveal">A small taste of the simulation work: the code on the left propagates a two-body orbit; the result runs live on the right. Scroll-triggered, runs entirely in your browser.</p>
-    <div data-demo="orbit" class="reveal"></div>
+    <h2 class="section__title reveal">Code showcase — live engineering simulations</h2>
+    <p class="section__hint reveal">Pick a topic below. Each tab shows the core source and runs the result live next to it — the code panel sits beside the simulation on wide screens and stacks above it on narrow ones. Self-contained demo simulations, simplified for the browser to illustrate the methods I work with.</p>
+    <div data-demo-tabs class="reveal"></div>
   </section>
 
   <!-- 3D ROCKET MODEL -->
   <section id="rocket" class="section">
     <p class="section__eyebrow reveal">3D Model</p>
     <h2 class="section__title reveal">Crewed lunar launch vehicle — interactive 3D</h2>
-    <p class="section__hint reveal">Drag to orbit · scroll to zoom · auto-rotates. The model loads automatically once the GLB is added.</p>
-    <div id="rocket-viewer" class="rocket-viewer reveal">
-      <div class="rocket-viewer__placeholder">
-        <p>🚀 3D model coming soon</p>
-        <small>Drop <code>full-launch-vehicle.glb</code> into <code>assets/rocket/</code> — it appears here automatically.</small>
+    <p class="section__hint reveal">Auto-rotating · click or tap the model to explode it into its components and reassemble · switch between the launch stack and the on-orbit refuel &amp; crew configuration. Zoom is disabled for a stable view.</p>
+    <div id="rocket-viewer" class="rocket-viewer reveal" data-rocket>
+      <div class="rocket-viewer__controls">
+        <div class="rocket-viewer__seg" role="tablist" aria-label="Select vehicle">
+          <button class="is-active" data-model="0" type="button" aria-selected="true">Launch vehicle</button>
+          <button data-model="1" type="button" aria-selected="false">Refuel &amp; crew</button>
+        </div>
+      </div>
+      <canvas class="rocket-viewer__canvas" data-canvas></canvas>
+      <div class="rocket-viewer__hint" data-hint>Click to explode ⤢</div>
+      <div class="rocket-viewer__placeholder" data-placeholder>
+        <p>🚀 Loading 3D model…</p>
+        <small>Interactive model requires WebGL &amp; JavaScript.</small>
       </div>
     </div>
   </section>
@@ -194,6 +204,7 @@
     <h2 class="section__title reveal">Where I've worked</h2>
     <div class="timeline reveal" style="margin-top:32px">
       <div class="timeline__item">
+        <span class="timeline__logo" aria-hidden="true"><img src="assets/img/logos/collins.svg" alt="" loading="lazy" /></span>
         <div class="timeline__head">
           <h3>System Engineering Intern <span>— Collins Aerospace</span></h3>
           <span class="timeline__date">May 2026 – Present</span>
@@ -205,6 +216,7 @@
         </ul>
       </div>
       <div class="timeline__item">
+        <span class="timeline__logo timeline__logo--dark" aria-hidden="true"><img src="assets/img/logos/nasa.svg" alt="" loading="lazy" /></span>
         <div class="timeline__head">
           <h3>Engineering Technician I <span>— KBR &amp; LZ Technology · NASA Johnson Space Center</span></h3>
           <span class="timeline__date">Jan 2025 – Aug 2025</span>
@@ -265,5 +277,6 @@
   <script src="assets/js/projects.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/demo.js"></script>
+  <script type="module" src="assets/js/rocket3d.js"></script>
 </body>
 </html>

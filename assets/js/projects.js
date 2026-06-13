@@ -261,13 +261,15 @@ window.PROJECTS = [
     problem:
       "Simulate the rotational motion of a rigid spacecraft under both torque-free and applied-torque conditions, tracking attitude through quaternion kinematics.",
     approach: [
-      "Implemented Euler's rotational equations of motion in MATLAB.",
-      "Propagated angular velocity and quaternion attitude with ode45.",
+      "Implemented Euler's rotational equations of motion, I·ω̇ + ω × (I·ω) = τ, for a principal-axis inertia tensor.",
+      "Propagated the coupled state [ω; q] with ode45, using scalar-last quaternion kinematics q̇ = ½·Ξ(q)·ω to avoid gimbal-lock singularities.",
+      "Validated the torque-free case directly against the closed-form analytical solution before adding external torque.",
       "Examined precession and nutation behavior across inertia configurations.",
     ],
-    tools: ["MATLAB", "Euler's equations", "ode45", "Quaternion kinematics"],
+    tools: ["MATLAB", "Euler's equations", "ode45", "Quaternion / DCM kinematics"],
     results: [
       "Produced angular-velocity and quaternion histories for torque-free and torqued cases.",
+      "Numerical torque-free solution matched the analytical benchmark, confirming the integration.",
       "Visualized precession/nutation consistent with rigid-body theory.",
     ],
     learned:
@@ -292,12 +294,16 @@ window.PROJECTS = [
     problem:
       "Model a structure with beam finite elements and solve for displacements and reaction forces under static loading.",
     approach: [
-      "Built the beam model with CBEAM/PBEAM element and property cards.",
-      "Ran a SOL 101 linear static analysis.",
-      "Post-processed displacements and constraint (reaction) forces.",
+      "Built the model with GRID, CBEAM/PBEAM, and MAT1 bulk-data cards, applying loads with FORCE/MOMENT.",
+      "Constrained all six rigid-body DOF with SPC1 and confirmed a clean (non-singular) solution.",
+      "Ran a SOL 101 linear static analysis and recovered CBEAM forces (axial, shear, bending, torsion) and stresses at recovery points C/D/E/F.",
+      "Post-processed nodal displacements and constraint (reaction) forces.",
     ],
-    tools: ["NASTRAN", "Femap", "CBEAM/PBEAM", "SOL 101"],
-    results: ["Recovered nodal displacements and constraint forces for the loaded structure."],
+    tools: ["NASTRAN", "Femap", "CBEAM/PBEAM", "SPC1", "SOL 101"],
+    results: [
+      "Recovered nodal displacements, CBEAM internal forces/stresses, and constraint reactions for the loaded structure.",
+      "Cross-checked FEA results against analytical beam theory to verify the model.",
+    ],
     learned: "Connected hand-calculation beam theory to a proper FEA workflow and result interpretation.",
     gallery: [{ src: "assets/img/nastran.png", caption: "Displacement contour / FEA result" }],
     needs: ["FEA result image — .png"],
@@ -319,12 +325,16 @@ window.PROJECTS = [
     problem:
       "Characterize the lift, drag, and pressure distribution of a NACA 2414 airfoil and validate numerical predictions experimentally.",
     approach: [
-      "Computed Cl, Cd, and Cp distributions numerically.",
-      "Ran wind-tunnel tests with pressure-tap data acquisition.",
-      "Compared numerical vs. experimental results and discussed discrepancies.",
+      "Computed Cl, Cd, and surface Cp distributions numerically as a function of angle of attack.",
+      "Ran subsonic wind-tunnel tests with pressure-tap data acquisition and reduced the data in MATLAB.",
+      "Plotted Cp vs. x/c (inverted axis) and Cl/Cd vs. α, identifying the stall angle at peak Cl.",
+      "Compared numerical vs. experimental results and discussed sources of discrepancy.",
     ],
-    tools: ["Wind-tunnel testing", "Data acquisition", "Cl / Cd / Cp analysis"],
-    results: ["Quantified lift/drag behavior and validated numerical predictions against tunnel data."],
+    tools: ["Subsonic wind tunnel", "Pressure-tap DAQ", "MATLAB data reduction", "Cl / Cd / Cp analysis"],
+    results: [
+      "Quantified lift/drag behavior and the surface pressure distribution across angle of attack.",
+      "Validated numerical predictions against tunnel data and located the experimental stall point.",
+    ],
     learned: "Saw firsthand where idealized aerodynamic models diverge from measured reality.",
     gallery: [{ src: "assets/img/airfoil.jpg", caption: "Airfoil model in the wind tunnel / Cp plot" }],
     needs: ["Wind-tunnel photo or Cp/Cl/Cd plot — .jpg / .png"],
@@ -346,11 +356,15 @@ window.PROJECTS = [
     problem:
       "Assess the space-environment effects on an Earth–Moon relay pathfinder and define an appropriate environmental test plan.",
     approach: [
-      "Analyzed radiation, thermal, and orbital environment factors for the mission.",
-      "Defined an environmental test plan to qualify the spacecraft.",
+      "Characterized the cislunar radiation environment — Van Allen belt crossings during trans-lunar injection, solar energetic particles, and deep-space galactic cosmic rays — distinguishing TID, single-event effects, and displacement damage.",
+      "Estimated aluminum-equivalent shielding and dose, and analyzed thermal eclipse cycling and micrometeorite flux for the trajectory.",
+      "Mapped each environment to a standard qualification test and rationale to build the test plan.",
     ],
-    tools: ["Space-environment analysis", "Environmental test planning"],
-    results: ["Delivered an environmental analysis and test plan for the relay pathfinder concept."],
+    tools: ["Radiation analysis (TID / SEE)", "Aluminum-equivalent shielding", "Thermal & micrometeorite analysis", "Environmental test planning"],
+    results: [
+      "Delivered an environmental analysis and a traceable test plan for the relay pathfinder concept.",
+      "Tied each dominant environment to its driving design and qualification requirement.",
+    ],
     learned: "Learned how the space environment drives qualification and test requirements early in design.",
     gallery: [{ src: "assets/img/earth-moon-relay.jpg", caption: "Mission / environment diagram" }],
     needs: ["Mission diagram or analysis figure — .png"],
