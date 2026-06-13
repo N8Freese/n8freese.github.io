@@ -4,7 +4,7 @@
  *   · sticky-nav shadow + mobile menu
  *   · scroll-reveal animations (IntersectionObserver)
  *   · render project cards from assets/js/projects.js
- *   · auto-load the 3D rocket viewer when its GLB exists
+ * (The homepage 3D launch-vehicle viewer is handled by assets/js/rocket3d.js.)
  * ==========================================================================*/
 (function () {
   "use strict";
@@ -89,27 +89,4 @@
       "</article>"
     );
   }
-
-  /* ---- 3D rocket viewer: load GLB if present --------------------------- */
-  (function () {
-    var GLB = "assets/rocket/full-launch-vehicle.glb";
-    var host = document.getElementById("rocket-viewer");
-    if (!host) return;
-    fetch(GLB, { method: "HEAD" })
-      .then(function (res) {
-        if (!res.ok) return;
-        var mv = document.createElement("model-viewer");
-        mv.setAttribute("src", GLB);
-        mv.setAttribute("alt", "Crewed lunar mission launch vehicle (3D)");
-        mv.setAttribute("auto-rotate", "");
-        mv.setAttribute("camera-controls", "");
-        mv.setAttribute("shadow-intensity", "1");
-        mv.setAttribute("exposure", "1.05");
-        mv.setAttribute("camera-orbit", "30deg 80deg 90%");
-        mv.setAttribute("field-of-view", "32deg");
-        mv.setAttribute("auto-rotate-delay", "0");
-        host.replaceChildren(mv);
-      })
-      .catch(function () {});
-  })();
 })();
