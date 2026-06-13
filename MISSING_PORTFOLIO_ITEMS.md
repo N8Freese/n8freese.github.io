@@ -9,7 +9,8 @@ The site is fully built and live-ready, but several **image/asset slots are plac
 ## 1. Profile
 
 - [ ] **Headshot** — `assets/img/headshot.jpg` — preferred: **.jpg** or .png (portrait, ~4:5 works best)
-  - Then edit `index.html` (About section): replace the `<span>…</span>` inside `.about__photo` with `<img src="assets/img/headshot.jpg" alt="Nate Freese" />`.
+  - The `<img>` is already wired into the About section, so the moment this file exists it appears (and falls back to a placeholder until then). **No code change needed** — just add the file.
+  - ⚠️ You sent the headshot *inline in chat*, which I can't save to disk. Please re-send it as a **file attachment** (or drop it at the path above) and I'll commit it.
 
 ## 2. Project images (one card image + optional gallery shots per project)
 
@@ -27,12 +28,12 @@ The site is fully built and live-ready, but several **image/asset slots are plac
 | NACA 2414 Airfoil (AE 314/315) | `assets/img/airfoil.jpg` (wind-tunnel photo or Cp plot) | .jpg / .png |
 | Earth–Moon Relay (AE 429) | `assets/img/earth-moon-relay.jpg` (mission diagram) | .png / .jpg |
 
-## 3. Interactive 3D model (launch vehicle)
+## 3. Interactive 3D model (launch vehicle) — ✅ DONE
 
-- [ ] **`assets/rocket/full-launch-vehicle.glb`** — preferred: **.glb**
-  - If you can only export from CATIA/Fusion: give me a **.step / .stp** (precise) or **.stl** (mesh) and I'll convert + Draco-compress it to `.glb` and drop it in. Aim for ≤ ~8 MB.
-  - Used on the homepage 3D section **and** the Lunar Mission project page.
-  - ⚠️ Senior-design IP: don't upload CATIA/STEP files to public converters — hand them to me and I'll convert locally.
+- [x] **`assets/rocket/full-launch-vehicle.glb`** — converted from your `Full_Launch_Vehicle.stl`
+  (welded vertices, oriented upright, metallic PBR material, scaled to meters → **2.67 MB**).
+  - Live on the homepage 3D section **and** the Lunar Mission project page.
+  - The raw `.stl` / `.step` source files were **not** committed to the repo (kept your senior-design IP out of the public repo). If you ever want a different config (e.g. the *Stage 2 Refuel & Crew Mated* model), send it and I'll convert that too.
 
 ## 4. Links to confirm
 

@@ -66,9 +66,8 @@ window.PROJECTS = [
       { src: "assets/img/lunar-staging.png", caption: "Staging / ΔV budget summary" },
     ],
     needs: [
-      "CAD render or screenshot of the full vehicle assembly — .png",
-      "Any sizing/trade-study plots from MATLAB — .png",
-      "The CATIA assembly exported as .glb (or .step/.stl for me to convert) for the 3D viewer",
+      "Optional: a high-res CAD render/screenshot for the card & gallery — .png",
+      "Optional: any sizing/trade-study plots from MATLAB — .png",
     ],
   },
 

@@ -74,7 +74,9 @@
       mv.setAttribute("auto-rotate", "");
       mv.setAttribute("camera-controls", "");
       mv.setAttribute("shadow-intensity", "1");
-      mv.setAttribute("exposure", "1");
+      mv.setAttribute("exposure", "1.05");
+      mv.setAttribute("camera-orbit", "30deg 80deg 90%");
+      mv.setAttribute("field-of-view", "32deg");
       mvHost.replaceChildren(mv);
     }).catch(function () {});
   }
