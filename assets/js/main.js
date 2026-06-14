@@ -63,7 +63,9 @@
   }
 
   function cardHTML(p, i) {
-    var media = p.thumb
+    var media = p.thumbStyle === "logo" && p.thumb
+      ? '<div class="card__logo"><img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + ' logo" loading="lazy"></div>'
+      : p.thumb
       ? '<img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + '" loading="lazy" ' +
         'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
         '<div class="ph" style="display:none"><span class="glyph">✦</span><span>Image: ' + esc(p.thumb) + '</span></div>'

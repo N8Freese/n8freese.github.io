@@ -13,6 +13,44 @@ const root = document.querySelector('[data-rocket]');
 const canvas = root && root.querySelector('[data-canvas]');
 if (root && canvas) init();
 
+// Split a single fused mesh into N slices along its longest axis, so a model
+// that came from one welded STL (the launch vehicle) can still explode.
+function splitIntoBands(mesh, N) {
+  const geo = mesh.geometry;
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox, size = new THREE.Vector3();
+  bb.getSize(size);
+  const axis = size.x >= size.y && size.x >= size.z ? 'x' : (size.y >= size.z ? 'y' : 'z');
+  const lo = bb.min[axis], span = size[axis] || 1;
+  const pos = geo.attributes.position, nor = geo.attributes.normal, index = geo.index;
+  const triCount = index ? index.count / 3 : pos.count / 3;
+  const bands = Array.from({ length: N }, () => ({ p: [], n: [] }));
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+  for (let t = 0; t < triCount; t++) {
+    const i0 = index ? index.getX(t * 3) : t * 3;
+    const i1 = index ? index.getX(t * 3 + 1) : t * 3 + 1;
+    const i2 = index ? index.getX(t * 3 + 2) : t * 3 + 2;
+    a.fromBufferAttribute(pos, i0); b.fromBufferAttribute(pos, i1); c.fromBufferAttribute(pos, i2);
+    let bi = Math.floor((((a[axis] + b[axis] + c[axis]) / 3 - lo) / span) * N);
+    bi = bi < 0 ? 0 : bi >= N ? N - 1 : bi;
+    const band = bands[bi], idx = [i0, i1, i2], v = [a, b, c];
+    for (let k = 0; k < 3; k++) {
+      band.p.push(v[k].x, v[k].y, v[k].z);
+      if (nor) band.n.push(nor.getX(idx[k]), nor.getY(idx[k]), nor.getZ(idx[k]));
+    }
+  }
+  const meshes = [];
+  bands.forEach((band) => {
+    if (!band.p.length) return;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(band.p, 3));
+    if (band.n.length) g.setAttribute('normal', new THREE.Float32BufferAttribute(band.n, 3));
+    else g.computeVertexNormals();
+    meshes.push(new THREE.Mesh(g, mesh.material));
+  });
+  return meshes;
+}
+
 function init() {
   const placeholder = root.querySelector('[data-placeholder]');
   const hint = root.querySelector('[data-hint]');
@@ -69,6 +107,17 @@ function init() {
       mesh.name = o.name || (o.parent && o.parent.name) || '';
       container.add(mesh);
     });
+
+    // If the model is a single fused mesh (the launch vehicle came from one welded
+    // STL), slice it into bands along its long axis so the exploded view works too.
+    if (container.children.length <= 1 && container.children[0]) {
+      const bands = splitIntoBands(container.children[0], 6);
+      if (bands.length > 1) {
+        materials.add(container.children[0].material);
+        container.clear();
+        bands.forEach((b) => { b.name = ''; container.add(b); });
+      }
+    }
 
     // Recenter on origin and store each part's explode direction.
     const box = new THREE.Box3().setFromObject(container);

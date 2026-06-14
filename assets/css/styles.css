@@ -231,6 +231,12 @@ img { max-width: 100%; display: block; }
 }
 .about__text p { color: var(--muted); margin: 0 0 16px; font-size: 1.05rem; }
 .about__text p strong { color: var(--text); }
+/* Highlighted key phrase — professional accent marker */
+.hl {
+  color: var(--accent); font-weight: 600;
+  background: linear-gradient(transparent 62%, rgba(56, 189, 248, .18) 0);
+  padding: 0 2px; border-radius: 2px;
+}
 .about__focus {
   display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
 }
@@ -281,6 +287,11 @@ img { max-width: 100%; display: block; }
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
 .card__media .ph .glyph { font-size: 1.8rem; opacity: .5; }
+.card__logo {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  background: #fff; padding: 12% 16%;
+}
+.card__logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .card__period {
   position: absolute; top: 12px; right: 12px; font-size: .72rem; color: var(--muted);
   background: rgba(10, 12, 17, .7); border: 1px solid var(--border); border-radius: 999px;

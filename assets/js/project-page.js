@@ -105,7 +105,7 @@
   }
   function toolBlock(tools) {
     if (!tools || !tools.length) return "";
-    return block("Tools &amp; methods",
+    return block("Technical Skills",
       '<div class="detail__toolgrid">' + tools.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") + "</div>");
   }
   function galleryBlock(g) {

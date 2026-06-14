@@ -41,7 +41,7 @@ window.PROJECTS = [
     featured: true,
     thumb: "assets/img/lunar-mission.jpg",
     accent: "#7c5cff",
-    demo: "orbit",
+    demo: "",
     model: "assets/rocket/full-launch-vehicle.glb",
     links: [],
     problem:
@@ -81,7 +81,8 @@ window.PROJECTS = [
     role: "Engineering Technician I",
     tags: ["Python", "PyQt5", "Telemetry", "Linux", "GitLab", "Optimization"],
     featured: true,
-    thumb: "assets/img/nasa-jsc.jpg",
+    thumb: "assets/img/logos/nasa.svg",
+    thumbStyle: "logo",
     accent: "#4d8dff",
     demo: "",
     links: [],
@@ -101,13 +102,8 @@ window.PROJECTS = [
     ],
     learned:
       "Working alongside flight operations taught me to optimize for the user under real-time constraints — and that a measured 13–21× speedup comes from profiling first, then targeting the true bottleneck, not from guessing.",
-    gallery: [
-      { src: "assets/img/nasa-jsc.jpg", caption: "Telemetry overlay visualization (screenshot)" },
-    ],
-    needs: [
-      "Screenshot(s) of the visualization tools (cleared for public sharing) — .png",
-      "Confirmation of anything that must stay NDA / not shown publicly",
-    ],
+    gallery: [],
+    needs: [],
   },
 
   {
@@ -123,7 +119,9 @@ window.PROJECTS = [
     thumb: "assets/img/mayott-uav.jpg",
     accent: "#22c3a6",
     demo: "",
-    links: [],
+    links: [
+      { label: "Project overview (Prezi)", href: "https://prezi.com/view/GMI03G0bwPB44Vn5zlHD/?referral_token=o2aFxklnB3FN" },
+    ],
     problem:
       "Develop a heavy-lift UAV with a frame that is light yet structurally efficient, supported by flight software that is both memory-safe and capable of real-time performance.",
     approach: [
@@ -142,7 +140,6 @@ window.PROJECTS = [
       { src: "assets/img/mayott-uav.jpg", caption: "Heavy-lift UAV frame (Fusion 360 render)" },
     ],
     needs: [
-      "UAV frame CAD render or photo — .png / .jpg",
       "Optional: a public GitHub link to the Rust flight software (if shareable) — URL",
     ],
   },
@@ -157,7 +154,8 @@ window.PROJECTS = [
     role: "System Engineering Intern",
     tags: ["Python", "Automation", "Verification", "JIRA", "Avionics"],
     featured: false,
-    thumb: "assets/img/collins.jpg",
+    thumb: "assets/img/logos/collins.svg",
+    thumbStyle: "logo",
     accent: "#4d8dff",
     demo: "",
     links: [],
@@ -175,7 +173,7 @@ window.PROJECTS = [
     learned:
       "Verification work shows how much of real avionics engineering is rigorous, traceable documentation — and how automation pays off across a long test campaign.",
     gallery: [],
-    needs: ["Any shareable screenshot or diagram (cleared for public use) — .png"],
+    needs: [],
   },
 
   {
@@ -191,6 +189,7 @@ window.PROJECTS = [
     thumb: "assets/img/artemis.jpg",
     accent: "#ff8a4d",
     demo: "",
+    model: "assets/rocket/artemis.glb",
     links: [],
     problem:
       "Build a scaled-down version of the Artemis rocket with sound aerodynamics, stability, and structural integrity as part of a large student team.",
@@ -245,40 +244,6 @@ window.PROJECTS = [
   /* ----- Coursework projects (kept as additional entries) ----------------- */
 
   {
-    id: "attitude-dynamics",
-    title: "Spacecraft Attitude Dynamics Simulation",
-    category: "AE 426 · Coursework",
-    tagline:
-      "Rigid-body attitude propagation (torque & torque-free) using Euler's equations and quaternion kinematics in MATLAB.",
-    period: "Coursework",
-    role: "Coursework",
-    tags: ["MATLAB", "ode45", "Quaternions", "Dynamics"],
-    featured: false,
-    thumb: "assets/img/attitude-sim.png",
-    accent: "#4d8dff",
-    demo: "orbit",
-    links: [],
-    problem:
-      "Simulate the rotational motion of a rigid spacecraft under both torque-free and applied-torque conditions, tracking attitude through quaternion kinematics.",
-    approach: [
-      "Implemented Euler's rotational equations of motion, I·ω̇ + ω × (I·ω) = τ, for a principal-axis inertia tensor.",
-      "Propagated the coupled state [ω; q] with ode45, using scalar-last quaternion kinematics q̇ = ½·Ξ(q)·ω to avoid gimbal-lock singularities.",
-      "Validated the torque-free case directly against the closed-form analytical solution before adding external torque.",
-      "Examined precession and nutation behavior across inertia configurations.",
-    ],
-    tools: ["MATLAB", "Euler's equations", "ode45", "Quaternion / DCM kinematics"],
-    results: [
-      "Produced angular-velocity and quaternion histories for torque-free and torqued cases.",
-      "Numerical torque-free solution matched the analytical benchmark, confirming the integration.",
-      "Visualized precession/nutation consistent with rigid-body theory.",
-    ],
-    learned:
-      "Reinforced how quaternions avoid gimbal-lock singularities and how inertia distribution governs spin stability.",
-    gallery: [{ src: "assets/img/attitude-sim.png", caption: "Angular velocity / quaternion histories" }],
-    needs: ["MATLAB result plots — .png"],
-  },
-
-  {
     id: "nastran-fea",
     title: "NASTRAN Structural Analysis",
     category: "AE 318 · Coursework",
@@ -310,37 +275,6 @@ window.PROJECTS = [
   },
 
   {
-    id: "naca-airfoil",
-    title: "NACA 2414 Airfoil — Numerical & Wind Tunnel",
-    category: "AE 314 / 315 · Coursework",
-    tagline: "Compared numerical aerodynamic predictions against wind-tunnel measurements for a NACA 2414 airfoil.",
-    period: "Coursework",
-    role: "Coursework",
-    tags: ["Aerodynamics", "Wind tunnel", "Cl/Cd/Cp", "DAQ"],
-    featured: false,
-    thumb: "assets/img/airfoil.jpg",
-    accent: "#4d8dff",
-    demo: "",
-    links: [],
-    problem:
-      "Characterize the lift, drag, and pressure distribution of a NACA 2414 airfoil and validate numerical predictions experimentally.",
-    approach: [
-      "Computed Cl, Cd, and surface Cp distributions numerically as a function of angle of attack.",
-      "Ran subsonic wind-tunnel tests with pressure-tap data acquisition and reduced the data in MATLAB.",
-      "Plotted Cp vs. x/c (inverted axis) and Cl/Cd vs. α, identifying the stall angle at peak Cl.",
-      "Compared numerical vs. experimental results and discussed sources of discrepancy.",
-    ],
-    tools: ["Subsonic wind tunnel", "Pressure-tap DAQ", "MATLAB data reduction", "Cl / Cd / Cp analysis"],
-    results: [
-      "Quantified lift/drag behavior and the surface pressure distribution across angle of attack.",
-      "Validated numerical predictions against tunnel data and located the experimental stall point.",
-    ],
-    learned: "Saw firsthand where idealized aerodynamic models diverge from measured reality.",
-    gallery: [{ src: "assets/img/airfoil.jpg", caption: "Airfoil model in the wind tunnel / Cp plot" }],
-    needs: ["Wind-tunnel photo or Cp/Cl/Cd plot — .jpg / .png"],
-  },
-
-  {
     id: "earth-moon-relay",
     title: "Earth–Moon Relay Pathfinder",
     category: "AE 429 · Coursework",
@@ -352,7 +286,9 @@ window.PROJECTS = [
     thumb: "assets/img/earth-moon-relay.jpg",
     accent: "#7c5cff",
     demo: "",
-    links: [],
+    links: [
+      { label: "Read the report (PDF)", href: "assets/earth-moon-relay.pdf" },
+    ],
     problem:
       "Assess the space-environment effects on an Earth–Moon relay pathfinder and define an appropriate environmental test plan.",
     approach: [

@@ -22,22 +22,29 @@
   /* ---- Registry of demos --------------------------------------------- */
   var DEMOS = [
     {
-      key: "orbit",
-      tab: "Orbit propagation",
-      title: "orbit_propagate.m",
-      blurb: "Numerically integrates a satellite's path around a central body with a leapfrog (velocity-Verlet) scheme — the same building block behind mission-design and orbit-determination tools.",
-      caption: "Two-body orbit — leapfrog integration of Newtonian gravity.",
+      key: "artemis",
+      tab: "Artemis II Trajectory",
+      title: "ArtemisII_trajectory.m",
+      blurb: "Propagates an Artemis II–style translunar trajectory with an RK4 integrator under Earth, Moon, and optional Sun gravity (n-body) — the kind of mission-design tool used to target a lunar free-return.",
+      caption: "Translunar trajectory — RK4 propagation of Earth + Moon gravity.",
       code: [
-        ["c", "% Two-body orbit propagation (leapfrog / velocity-Verlet)"],
-        ["k", "mu", "p", " = ", "n", "398600", "p", ";", "c", "          % km^3/s^2 (Earth GM)"],
-        ["k", "r", "p", "  = [", "n", "7000", "p", "; ", "n", "0", "p", "];", "c", "        % position (km)"],
-        ["k", "v", "p", "  = [", "n", "0", "p", "; ", "n", "8.1", "p", "];", "c", "         % velocity (km/s)"],
+        ["c", "% Artemis II translunar trajectory — RK4, Earth + Moon (+Sun) gravity"],
+        ["k", "muE", "p", " = ", "n", "398600", "p", "; ", "k", "muM", "p", " = ", "n", "4903", "p", ";", "c", "   % GM [km^3/s^2]"],
+        ["k", "h", "p", "   = ", "n", "150", "p", "; tspan = t0:h:tf;", "c", "   % RK4 step [s]"],
+        ["k", "y", "p", "   = [r0; v0];", "c", "             % state [pos; vel]"],
         ["p", ""],
-        ["k", "for", "p", " k = ", "n", "1", "p", ":N", ""],
-        ["p", "    a  = -mu * r / ", "f", "norm", "p", "(r)^", "n", "3", "p", ";"],
-        ["p", "    v  = v + a * dt;", "c", "          % kick"],
-        ["p", "    r  = r + v * dt;", "c", "          % drift"],
-        ["p", "    plot(r(", "n", "1", "p", "), r(", "n", "2", "p", "));"],
+        ["k", "for", "p", " i = ", "n", "1", "p", ":numel(tspan)-", "n", "1", ""],
+        ["p", "    k1 = ", "f", "trajectory", "p", "(t,     y);"],
+        ["p", "    k2 = ", "f", "trajectory", "p", "(t+h/", "n", "2", "p", ", y+h*k1/", "n", "2", "p", ");"],
+        ["p", "    k3 = ", "f", "trajectory", "p", "(t+h/", "n", "2", "p", ", y+h*k2/", "n", "2", "p", ");"],
+        ["p", "    k4 = ", "f", "trajectory", "p", "(t+h,   y+h*k3);"],
+        ["p", "    y  = y + (h/", "n", "6", "p", ")*(k1+", "n", "2", "p", "*k2+", "n", "2", "p", "*k3+k4);", "c", " % RK4"],
+        ["k", "end", ""],
+        ["p", ""],
+        ["k", "function", "p", " dydt = ", "f", "trajectory", "p", "(t, y)"],
+        ["p", "    aE = -muE*r/", "f", "norm", "p", "(r)^", "n", "3", "p", ";", "c", "        % Earth"],
+        ["p", "    aM =  muM*(rm-r)/", "f", "norm", "p", "(rm-r)^", "n", "3", "p", ";", "c", " % Moon"],
+        ["p", "    dydt = [y(", "n", "4", "p", ":", "n", "6", "p", "); aE + aM];"],
         ["k", "end", ""],
       ],
       build: orbitSim,
@@ -61,27 +68,6 @@
         ["p", "    m  -= mdot * dt"],
       ],
       build: launchSim,
-    },
-    {
-      key: "pid",
-      tab: "PID attitude control",
-      title: "pid_attitude.m",
-      blurb: "A PID controller drives a spacecraft's pointing angle to a commanded setpoint, balancing rise time against overshoot — the control loop behind reaction-wheel attitude and UAV stabilization.",
-      caption: "PID attitude slew — angle tracking a 60° command.",
-      code: [
-        ["c", "% PID attitude control — single-axis slew"],
-        ["k", "Kp", "p", ", Ki, Kd = ", "n", "6.0", "p", ", ", "n", "0.5", "p", ", ", "n", "3.2", "p", ";"],
-        ["k", "theta", "p", " = ", "n", "0", "p", "; w = ", "n", "0", "p", "; ie = ", "n", "0", "p", ";"],
-        ["p", ""],
-        ["k", "for", "p", " k = ", "n", "1", "p", ":N", ""],
-        ["p", "    e   = ref - theta;", "c", "       % error"],
-        ["p", "    ie  = ie + e*dt;"],
-        ["p", "    u   = Kp*e + Ki*ie - Kd*w;", "c", " % torque"],
-        ["p", "    w   = w + (u/I)*dt;"],
-        ["p", "    theta = theta + w*dt;"],
-        ["k", "end", ""],
-      ],
-      build: pidSim,
     },
   ];
 
@@ -315,86 +301,6 @@
         ctx.beginPath(); ctx.arc(px(last), py(last), 4.5 * dpr, 0, Math.PI * 2); ctx.fill();
         ctx.shadowBlur = 0;
       }
-    }
-    function loop() { step(); draw(); raf = requestAnimationFrame(loop); }
-    reset();
-    return {
-      start: function () { if (!raf) { c.size(); loop(); } },
-      reset: function () { reset(); draw(); },
-      stop: function () { cancelAnimationFrame(raf); raf = null; },
-    };
-  }
-
-  /* ---- Demo 3: PID attitude control ---------------------------------- */
-  function pidSim(canvas) {
-    var c = makeCanvas(canvas), ctx = c.ctx, dpr = c.dpr;
-    var raf = null, hist = [], st, ref = Math.PI / 3; // 60 deg
-    function reset() {
-      cancelAnimationFrame(raf); raf = null; hist = [];
-      st = { th: 0, w: 0, ie: 0, t: 0 };
-    }
-    function step() {
-      var dt = 0.02, Kp = 6.0, Ki = 0.5, Kd = 3.2, I = 1.0, sub = 2;
-      for (var s = 0; s < sub; s++) {
-        var e = ref - st.th;
-        st.ie += e * dt;
-        var u = Kp * e + Ki * st.ie - Kd * st.w;
-        st.w += (u / I) * dt;
-        st.th += st.w * dt;
-        st.t += dt;
-        hist.push([st.t, st.th]);
-      }
-      if (st.t > 12) { hist.shift(); hist.shift(); } // scroll window once full
-    }
-    function draw() {
-      c.size();
-      var w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-      // left: rotating spacecraft icon; right: response curve
-      var split = w * 0.42;
-      // --- spacecraft ---
-      var cx = split * 0.5, cy = h * 0.5, R = Math.min(split, h) * 0.22;
-      ctx.save(); ctx.translate(cx, cy); ctx.rotate(-st.th);
-      ctx.strokeStyle = "#2a3656"; ctx.lineWidth = 1 * dpr;
-      ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = "#18233a"; ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2 * dpr;
-      ctx.beginPath(); ctx.rect(-R * 0.28, -R * 0.5, R * 0.56, R); ctx.fill(); ctx.stroke();
-      // solar panels
-      ctx.fillStyle = "#1e5fe0";
-      ctx.fillRect(-R * 1.05, -R * 0.18, R * 0.7, R * 0.36);
-      ctx.fillRect(R * 0.35, -R * 0.18, R * 0.7, R * 0.36);
-      // pointing arrow
-      ctx.strokeStyle = "#2dd4bf"; ctx.lineWidth = 2.5 * dpr;
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -R * 1.3); ctx.stroke();
-      ctx.restore();
-      // setpoint ray
-      ctx.save(); ctx.translate(cx, cy); ctx.rotate(-ref);
-      ctx.strokeStyle = "rgba(45,212,191,.35)"; ctx.lineWidth = 1.5 * dpr; ctx.setLineDash([4 * dpr, 4 * dpr]);
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -R * 1.5); ctx.stroke(); ctx.restore();
-      ctx.setLineDash([]);
-      // --- response curve ---
-      var gx0 = split + 16 * dpr, gy0 = h - 26 * dpr, gw = w - gx0 - 16 * dpr, gh = h - 40 * dpr;
-      ctx.strokeStyle = "rgba(159,177,202,.3)"; ctx.lineWidth = 1 * dpr;
-      ctx.beginPath(); ctx.moveTo(gx0, gy0); ctx.lineTo(gx0 + gw, gy0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(gx0, gy0); ctx.lineTo(gx0, gy0 - gh); ctx.stroke();
-      // setpoint line
-      var maxA = ref * 1.6;
-      var spY = gy0 - (ref / maxA) * gh;
-      ctx.strokeStyle = "rgba(45,212,191,.5)"; ctx.setLineDash([5 * dpr, 5 * dpr]);
-      ctx.beginPath(); ctx.moveTo(gx0, spY); ctx.lineTo(gx0 + gw, spY); ctx.stroke(); ctx.setLineDash([]);
-      // theta(t)
-      if (hist.length > 1) {
-        var t0 = hist[0][0], t1 = hist[hist.length - 1][0], span = Math.max(t1 - t0, 0.001);
-        ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2.2 * dpr; ctx.beginPath();
-        for (var i = 0; i < hist.length; i++) {
-          var X = gx0 + ((hist[i][0] - t0) / span) * gw;
-          var Y = gy0 - (hist[i][1] / maxA) * gh;
-          i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
-        }
-        ctx.stroke();
-      }
-      ctx.fillStyle = "rgba(159,177,202,.7)"; ctx.font = (10 * dpr) + "px sans-serif";
-      ctx.fillText("θ → 60° setpoint", gx0 + 6 * dpr, gy0 - gh + 12 * dpr);
     }
     function loop() { step(); draw(); raf = requestAnimationFrame(loop); }
     reset();
