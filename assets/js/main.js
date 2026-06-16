@@ -84,7 +84,7 @@
     return (
       '<article class="card reveal' + (p.featured ? " card--featured" : "") + '" data-delay="' + (i % 3) + '">' +
         '<a class="card__medialink" href="project.html?id=' + esc(p.id) + '" aria-label="' + esc(p.title) + '">' +
-          '<div class="card__media">' + media + period + "</div>" +
+          '<div class="card__media' + (p.thumbFit === "contain" ? " card__media--contain" : "") + '">' + media + period + "</div>" +
         "</a>" +
         '<div class="card__body">' +
           '<span class="card__cat">' + esc(p.category || "") + "</span>" +

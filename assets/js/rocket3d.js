@@ -48,7 +48,7 @@ function splitIntoBands(mesh, N) {
     else g.computeVertexNormals();
     meshes.push(new THREE.Mesh(g, mesh.material));
   });
-  return meshes;
+  return { meshes, axis };
 }
 
 function init() {
@@ -112,12 +112,14 @@ function init() {
 
     // If the model is a single fused mesh (the launch vehicle came from one welded
     // STL), slice it into bands along its long axis so the exploded view works too.
+    let splitAxis = null;
     if (container.children.length <= 1 && container.children[0]) {
-      const bands = splitIntoBands(container.children[0], 6);
-      if (bands.length > 1) {
+      const split = splitIntoBands(container.children[0], 6);
+      if (split.meshes.length > 1) {
         materials.add(container.children[0].material);
         container.clear();
-        bands.forEach((b) => { b.name = ''; container.add(b); });
+        split.meshes.forEach((b) => { b.name = ''; container.add(b); });
+        splitAxis = split.axis;   // sliced model: explode purely along this axis
       }
     }
 
@@ -151,7 +153,7 @@ function init() {
     container.rotation.x = -Math.PI / 2; // STEP Z-up → glTF Y-up (vehicle stands upright)
     container.visible = false;
     spin.add(container);
-    return { container, radius, materials: [...materials] };
+    return { container, radius, materials: [...materials], splitAxis };
   }
 
   function onLoaded(i, g) {
@@ -175,8 +177,17 @@ function init() {
   function poseExplode(idx, f) {
     const m = models[idx]; if (!m) return;
     m.container.children.forEach((p) => {
-      if (p.userData.shell) p.position.set(p.userData.shellShift * f, 0, 0);
-      else p.position.copy(tmp.copy(p.userData.offset).multiplyScalar(EXPLODE_K * f));
+      if (p.userData.shell) {
+        p.position.set(p.userData.shellShift * f, 0, 0);
+      } else if (m.splitAxis) {
+        // Sliced fused model: separate cleanly along the long axis only, so the
+        // bands stay coaxial (no sideways drift / overlap = no "glitched" look).
+        tmp.set(0, 0, 0);
+        tmp[m.splitAxis] = p.userData.offset[m.splitAxis];
+        p.position.copy(tmp.multiplyScalar(EXPLODE_K * f));
+      } else {
+        p.position.copy(tmp.copy(p.userData.offset).multiplyScalar(EXPLODE_K * f));
+      }
     });
   }
 

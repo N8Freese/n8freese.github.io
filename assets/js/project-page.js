@@ -49,10 +49,10 @@
     toolBlock(p.tools),
     block("Results", bullets(p.results)),
     p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
-    p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
     p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
     galleryBlock(p.gallery),
+    p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
     pager(prev, next),
   ].join("");
 

@@ -229,6 +229,7 @@ window.PROJECTS = [
     tags: ["Fusion 360", "MATLAB", "Hardware", "Data analysis"],
     featured: false,
     thumb: "assets/img/spectre-cover.png",
+    thumbFit: "contain",
     accent: "#ff8a4d",
     demo: "",
     links: [],
