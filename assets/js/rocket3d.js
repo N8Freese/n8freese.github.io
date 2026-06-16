@@ -58,7 +58,7 @@ function init() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const FOV = 30;
-  const EXPLODE_K = 0.7;     // spread distance relative to each part's offset
+  const EXPLODE_K = 0.55;    // spread distance relative to each part's offset
   const SOURCES = [
     'assets/rocket/full-launch-vehicle.glb',
     'assets/rocket/stage2-refuel-mated.glb',
@@ -74,7 +74,7 @@ function init() {
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.add(new THREE.DirectionalLight(0xffffff, 2.2).translateX(4).translateY(8).translateZ(6));
-  scene.add(new THREE.HemisphereLight(0xbfd6ff, 0x202a3a, 0.6));
+  scene.add(new THREE.HemisphereLight(0xdce0e6, 0x26282c, 0.6));
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 5000);
 
@@ -180,7 +180,12 @@ function init() {
 
   function placeCamera() {
     const m = models[active]; if (!m) return;
-    const dist = (m.radius / Math.sin(THREE.MathUtils.degToRad(FOV) / 2)) * (1.12 + 0.7 * explodeCur);
+    const vfov = THREE.MathUtils.degToRad(FOV);
+    // Pull back further as the model explodes so spread parts stay framed.
+    let dist = (m.radius / Math.sin(vfov / 2)) * (1.2 + 1.15 * explodeCur);
+    // On portrait/narrow canvases (mobile) widen the framing so nothing clips.
+    const aspect = camera.aspect || 1;
+    if (aspect < 1) dist /= aspect;
     const elev = THREE.MathUtils.degToRad(16);  // slight top-down 3/4 view
     camera.position.set(0, dist * Math.sin(elev), dist * Math.cos(elev));
     camera.lookAt(0, 0, 0);

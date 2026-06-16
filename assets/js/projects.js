@@ -37,9 +37,9 @@ window.PROJECTS = [
       "Led a 6-person team designing a crewed two-stage LOX/CH₄ lunar vehicle, launch through splashdown.",
     period: "Jan 2026 – May 2026",
     role: "Project & Systems Lead",
-    tags: ["Systems", "MATLAB", "NASA CEA", "CATIA V5", "Fusion 360", "Trade Studies"],
+    tags: ["Fusion", "MATLAB", "NASA CEA", "CATIA V5", "Trade Studies"],
     featured: true,
-    thumb: "assets/img/lunar-mission.jpg",
+    thumb: "assets/img/lunar-mission-cover.png",
     accent: "#7c5cff",
     demo: "",
     model: "assets/rocket/full-launch-vehicle.glb",
@@ -61,9 +61,14 @@ window.PROJECTS = [
     ],
     learned:
       "Leading the systems integration taught me how to balance competing subsystem demands against a fixed requirements set, and how disciplined mass and ΔV budgeting drives nearly every downstream design decision.",
+    code: {
+      title: "test2.m",
+      src: "assets/code/test2.m",
+      lang: "MATLAB",
+      caption: "Staging / ΔV budget summary — two-stage LOX/CH₄ vehicle sizing (MATLAB).",
+    },
     gallery: [
-      { src: "assets/img/lunar-mission.jpg", caption: "Integrated launch-vehicle CAD assembly (CATIA V5)" },
-      { src: "assets/img/lunar-staging.png", caption: "Staging / ΔV budget summary" },
+      { src: "assets/img/lunar-engine.png", caption: "Engine assembly detail" },
     ],
     needs: [
       "Optional: a high-res CAD render/screenshot for the card & gallery — .png",
@@ -116,7 +121,7 @@ window.PROJECTS = [
     role: "CAD & Software Engineer",
     tags: ["Fusion 360", "Rust", "Structural design", "Embedded", "Real-time"],
     featured: true,
-    thumb: "assets/img/mayott-uav.jpg",
+    thumb: "assets/img/mayott-cover.jpg",
     accent: "#22c3a6",
     demo: "",
     links: [
@@ -139,9 +144,7 @@ window.PROJECTS = [
     gallery: [
       { src: "assets/img/mayott-uav.jpg", caption: "Heavy-lift UAV frame (Fusion 360 render)" },
     ],
-    needs: [
-      "Optional: a public GitHub link to the Rust flight software (if shareable) — URL",
-    ],
+    needs: [],
   },
 
   {
@@ -186,7 +189,7 @@ window.PROJECTS = [
     role: "Manufacturing Member",
     tags: ["CATIA V5", "SolidWorks", "OpenRocket", "Manufacturing"],
     featured: false,
-    thumb: "assets/img/artemis.jpg",
+    thumb: "assets/img/artemis-cover.png",
     accent: "#ff8a4d",
     demo: "",
     model: "assets/rocket/artemis.glb",
@@ -219,7 +222,7 @@ window.PROJECTS = [
     role: "Hardware Member",
     tags: ["Fusion 360", "MATLAB", "Hardware", "Data analysis"],
     featured: false,
-    thumb: "assets/img/spectre.jpg",
+    thumb: "assets/img/spectre-cover.png",
     accent: "#ff8a4d",
     demo: "",
     links: [],
@@ -237,8 +240,8 @@ window.PROJECTS = [
     ],
     learned:
       "My first hands-on rocketry team — it grounded my analysis work in the reality of building, testing, and iterating on physical hardware.",
-    gallery: [{ src: "assets/img/spectre.jpg", caption: "Spectre rocket hardware / test photo" }],
-    needs: ["Photo of the rocket or test setup — .jpg / .png"],
+    gallery: [],
+    needs: ["3 web-ready CAD models (Spectre Mk1 Full Assy, SM_Current, Canard) — need decimated .glb/.gltf ≤ ~5 MB each (current files are STEP, 30–53 MB)"],
   },
 
   /* ----- Coursework projects (kept as additional entries) ----------------- */
@@ -283,7 +286,7 @@ window.PROJECTS = [
     role: "Coursework",
     tags: ["Space environment", "Mission analysis", "Test planning"],
     featured: false,
-    thumb: "assets/img/earth-moon-relay.jpg",
+    thumb: "assets/img/moon-relay-cover.svg",
     accent: "#7c5cff",
     demo: "",
     links: [
@@ -302,7 +305,9 @@ window.PROJECTS = [
       "Tied each dominant environment to its driving design and qualification requirement.",
     ],
     learned: "Learned how the space environment drives qualification and test requirements early in design.",
-    gallery: [{ src: "assets/img/earth-moon-relay.jpg", caption: "Mission / environment diagram" }],
-    needs: ["Mission diagram or analysis figure — .png"],
+    gallery: [
+      { pdf: "assets/earth-moon-relay.pdf", name: "final.pdf", caption: "Full report — Earth–Moon Relay Pathfinder environmental analysis & test plan (PDF)" },
+    ],
+    needs: [],
   },
 ];

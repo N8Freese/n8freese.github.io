@@ -48,12 +48,14 @@
     block("Engineering process", bullets(p.approach)),
     toolBlock(p.tools),
     block("Results", bullets(p.results)),
+    p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
     p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
     galleryBlock(p.gallery),
-    needsBlock(p.needs),
     pager(prev, next),
   ].join("");
+
+  mountPdfViewers();
 
   // load any demo on the page
   if (window.__mountDemos) window.__mountDemos();
@@ -73,6 +75,7 @@
       mv.setAttribute("alt", p.title + " (3D model)");
       mv.setAttribute("auto-rotate", "");
       mv.setAttribute("camera-controls", "");
+      mv.setAttribute("disable-zoom", "");   // rotation only — zoom disabled in case-study views
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("exposure", "1.05");
       mv.setAttribute("camera-orbit", "30deg 80deg 90%");
@@ -81,7 +84,61 @@
     }).catch(function () {});
   }
 
+  // code preview → expandable modal (shared component, see codeviewer.js)
+  var codeHost = document.getElementById("codeview");
+  if (codeHost && p.code && window.mountCodeViewer) {
+    window.mountCodeViewer(codeHost, {
+      title: p.code.title, src: p.code.src, lang: p.code.lang,
+      caption: p.code.caption, previewLines: 16,
+    });
+  }
+
   /* ---- helpers -------------------------------------------------------- */
+  function codeBlock(code) {
+    return '<div id="codeview" class="codeview">' +
+      '<div class="codeview__loading">Loading ' + esc(code.title) + " …</div></div>";
+  }
+
+  // PDF gallery items: clipped preview card that opens the full PDF in a modal.
+  function mountPdfViewers() {
+    document.querySelectorAll(".pdffig").forEach(function (fig) {
+      var src = fig.getAttribute("data-pdf");
+      var name = fig.getAttribute("data-name") || "Document";
+
+      var modal = document.createElement("div");
+      modal.className = "codemodal codemodal--pdf";
+      modal.hidden = true;
+      modal.innerHTML =
+        '<div class="codemodal__backdrop" data-act="close"></div>' +
+        '<div class="codemodal__panel is-full" role="dialog" aria-modal="true" tabindex="-1" aria-label="' + esc(name) + '">' +
+          '<div class="demo__bar"><span class="dots dots--live">' +
+            '<button type="button" class="dot dot--red"   data-act="close" title="Close"></button>' +
+            '<button type="button" class="dot dot--amber" data-act="close" title="Minimize"></button>' +
+            '<button type="button" class="dot dot--green" data-act="full"  title="Expand / restore"></button>' +
+          '</span><span class="codeview__name">' + esc(name) + ' · PDF</span>' +
+          '<a class="codemodal__link" href="' + esc(src) + '" target="_blank" rel="noopener">Open in new tab ↗</a></div>' +
+          '<iframe class="codemodal__pdf" title="' + esc(name) + '" src="' + esc(src) + '"></iframe>' +
+        "</div>";
+      document.body.appendChild(modal);
+
+      var panel = modal.querySelector(".codemodal__panel");
+      function open()  { modal.hidden = false; document.body.style.overflow = "hidden"; try { panel.focus(); } catch (e) {} }
+      function close() { modal.hidden = true; document.body.style.overflow = ""; }
+
+      fig.addEventListener("click", open);
+      fig.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+      });
+      modal.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-act]");
+        if (!btn) return;
+        if (btn.getAttribute("data-act") === "full") panel.classList.toggle("is-full");
+        else close();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !modal.hidden) close(); });
+    });
+  }
+
   function metaRow(p) {
     var bits = [];
     if (p.role) bits.push("<span><b>Role:</b> " + esc(p.role) + "</span>");
@@ -111,6 +168,16 @@
   function galleryBlock(g) {
     if (!g || !g.length) return "";
     var figs = g.map(function (item) {
+      if (item.pdf) {
+        var nm = item.name || (item.pdf.split("/").pop());
+        return '<figure class="detail__fig detail__fig--pdf">' +
+          '<div class="frame pdffig" data-pdf="' + esc(item.pdf) + '" data-name="' + esc(nm) + '" ' +
+            'role="button" tabindex="0" aria-label="Open ' + esc(item.caption || nm) + '">' +
+            '<embed class="pdffig__embed" src="' + esc(item.pdf) + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">' +
+            '<span class="pdffig__badge">📄 Open PDF ⤢</span>' +
+          "</div>" +
+          (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
+      }
       var media = item.src
         ? '<div class="frame" style="padding:0"><img src="' + esc(item.src) + '" alt="' + esc(item.caption || "") + '" loading="lazy" ' +
           "onerror=\"this.parentNode.innerHTML='Add: " + esc(item.src) + "'\"></div>"
@@ -124,11 +191,6 @@
     return '<div id="detail-model" class="rocket-viewer">' +
       '<div class="rocket-viewer__placeholder"><p>🚀 3D model coming soon</p>' +
       "<small>Drop <code>" + esc(src) + "</code> to enable.</small></div></div>";
-  }
-  function needsBlock(needs) {
-    if (!needs || !needs.length) return "";
-    return '<div class="detail__needs"><h3>📎 Assets still needed for this project</h3><ul>' +
-      needs.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("") + "</ul></div>";
   }
   function pager(prev, next) {
     return '<div class="detail__nav">' +
