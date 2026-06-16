@@ -1,5 +1,5 @@
 /* ============================================================================
- * projects.js — Single source of truth for all portfolio projects.
+ * projects.js - Single source of truth for all portfolio projects.
  *
  * Add or edit a project HERE and it automatically appears as:
  *   1) a card on index.html (#projects)
@@ -20,9 +20,9 @@
  *   model       optional GLB path for an embedded 3D viewer on the detail page
  *   links       array of { label, href }
  *   problem     "The problem / objective" paragraph
- *   approach    array of bullet strings — the engineering process
+ *   approach    array of bullet strings - the engineering process
  *   tools       array of tools/methods used
- *   results     array of bullet strings — outcomes (quantified where possible)
+ *   results     array of bullet strings - outcomes (quantified where possible)
  *   learned     "What I learned" paragraph
  *   gallery     array of { src, caption } image slots for the detail page
  *   needs       array of strings: assets still needed from you (shown as a note)
@@ -31,7 +31,7 @@
 window.PROJECTS = [
   {
     id: "lunar-mission",
-    title: "Crewed Lunar Mission — Preliminary Design",
+    title: "Crewed Lunar Mission: Preliminary Design",
     category: "Project & Systems Lead · ERAU",
     tagline:
       "Led a 6-person team designing a crewed two-stage LOX/CH₄ lunar vehicle, launch through splashdown.",
@@ -45,7 +45,7 @@ window.PROJECTS = [
     model: "assets/rocket/full-launch-vehicle.glb",
     links: [],
     problem:
-      "Design a crewed two-stage launch vehicle capable of delivering a crew to the lunar surface and returning them safely — covering every phase from launch through splashdown — while meeting a fixed set of mission requirements.",
+      "Design a crewed two-stage launch vehicle capable of delivering a crew to the lunar surface and returning them safely, covering every phase from launch through splashdown, while meeting a fixed set of mission requirements.",
     approach: [
       "Led a 6-person team and owned the systems-engineering loop: requirements flow-down, interface definition, and integration across all subsystems.",
       "Performed vehicle sizing and mass budgeting in MATLAB, iterating the rocket equation across stages and propellant fractions.",
@@ -65,14 +65,20 @@ window.PROJECTS = [
       title: "test2.m",
       src: "assets/code/test2.m",
       lang: "MATLAB",
-      caption: "Staging / ΔV budget summary — two-stage LOX/CH₄ vehicle sizing (MATLAB).",
+      caption: "Staging / ΔV budget summary: two-stage LOX/CH₄ vehicle sizing (MATLAB).",
+    },
+    // PDR document button (drop the PDF at assets/AE441-PDR.pdf to activate the link)
+    pdr: {
+      label: "Preliminary Design Review (PDF)",
+      src: "assets/AE441-PDR.pdf",
+      blurb: "Full Preliminary Design Review covering the vehicle architecture, staging, propulsion, and subsystem trades.",
     },
     gallery: [
       { src: "assets/img/lunar-engine.png", caption: "Engine assembly detail" },
     ],
     needs: [
-      "Optional: a high-res CAD render/screenshot for the card & gallery — .png",
-      "Optional: any sizing/trade-study plots from MATLAB — .png",
+      "Optional: a high-res CAD render/screenshot for the card & gallery - .png",
+      "Optional: any sizing/trade-study plots from MATLAB - .png",
     ],
   },
 
@@ -106,14 +112,14 @@ window.PROJECTS = [
       "Supported controller training and simulated missions with live telemetry overlays.",
     ],
     learned:
-      "Working alongside flight operations taught me to optimize for the user under real-time constraints — and that a measured 13–21× speedup comes from profiling first, then targeting the true bottleneck, not from guessing.",
+      "Working alongside flight operations taught me to optimize for the user under real-time constraints, and that a measured 13–21× speedup comes from profiling first, then targeting the true bottleneck, not from guessing.",
     gallery: [],
     needs: [],
   },
 
   {
     id: "mayott-uav",
-    title: "Mayott Aerospace — Heavy-Lift UAV",
+    title: "Mayott Aerospace: Heavy-Lift UAV",
     category: "CAD & Software Engineer · Mayott Aerospace",
     tagline:
       "Frame CAD optimized for weight & structural efficiency, plus flight software written in Rust for memory safety and real-time performance.",
@@ -140,7 +146,7 @@ window.PROJECTS = [
       "Flight software under active development in Rust for safety-critical, real-time operation.",
     ],
     learned:
-      "Owning both the CAD and the flight software shows how tightly mechanical and software constraints couple on a real airframe — and why Rust's guarantees are attractive for safety-critical real-time control.",
+      "Owning both the CAD and the flight software shows how tightly mechanical and software constraints couple on a real airframe, and why Rust's guarantees are attractive for safety-critical real-time control.",
     gallery: [
       { src: "assets/img/mayott-uav.jpg", caption: "Heavy-lift UAV frame (Fusion 360 render)" },
     ],
@@ -174,7 +180,7 @@ window.PROJECTS = [
       "Maintained verification artifacts (procedures, test plans, JIRA) for next-gen avionics.",
     ],
     learned:
-      "Verification work shows how much of real avionics engineering is rigorous, traceable documentation — and how automation pays off across a long test campaign.",
+      "Verification work shows how much of real avionics engineering is rigorous, traceable documentation, and how automation pays off across a long test campaign.",
     gallery: [],
     needs: [],
   },
@@ -209,7 +215,7 @@ window.PROJECTS = [
     learned:
       "Working within a 15-person build team taught me how design changes ripple through manufacturing and integration, and the value of simulation before you cut hardware.",
     gallery: [{ src: "assets/img/artemis.jpg", caption: "Artemis rocket CAD / build photo" }],
-    needs: ["Photo or CAD render of the rocket — .jpg / .png"],
+    needs: ["Photo or CAD render of the rocket - .jpg / .png"],
   },
 
   {
@@ -239,9 +245,9 @@ window.PROJECTS = [
       "Closed the loop from test data back into design via MATLAB analysis.",
     ],
     learned:
-      "My first hands-on rocketry team — it grounded my analysis work in the reality of building, testing, and iterating on physical hardware.",
+      "My first hands-on rocketry team: it grounded my analysis work in the reality of building, testing, and iterating on physical hardware.",
     gallery: [],
-    needs: ["3 web-ready CAD models (Spectre Mk1 Full Assy, SM_Current, Canard) — need decimated .glb/.gltf ≤ ~5 MB each (current files are STEP, 30–53 MB)"],
+    needs: ["3 web-ready CAD models (Spectre Mk1 Full Assy, SM_Current, Canard) - need decimated .glb/.gltf ≤ ~5 MB each (current files are STEP, 30–53 MB)"],
   },
 
   /* ----- Coursework projects (kept as additional entries) ----------------- */
@@ -274,7 +280,7 @@ window.PROJECTS = [
     ],
     learned: "Connected hand-calculation beam theory to a proper FEA workflow and result interpretation.",
     gallery: [{ src: "assets/img/nastran.png", caption: "Displacement contour / FEA result" }],
-    needs: ["FEA result image — .png"],
+    needs: ["FEA result image - .png"],
   },
 
   {
@@ -295,7 +301,7 @@ window.PROJECTS = [
     problem:
       "Assess the space-environment effects on an Earth–Moon relay pathfinder and define an appropriate environmental test plan.",
     approach: [
-      "Characterized the cislunar radiation environment — Van Allen belt crossings during trans-lunar injection, solar energetic particles, and deep-space galactic cosmic rays — distinguishing TID, single-event effects, and displacement damage.",
+      "Characterized the cislunar radiation environment: Van Allen belt crossings during trans-lunar injection, solar energetic particles, and deep-space galactic cosmic rays, distinguishing TID, single-event effects, and displacement damage.",
       "Estimated aluminum-equivalent shielding and dose, and analyzed thermal eclipse cycling and micrometeorite flux for the trajectory.",
       "Mapped each environment to a standard qualification test and rationale to build the test plan.",
     ],
@@ -306,7 +312,7 @@ window.PROJECTS = [
     ],
     learned: "Learned how the space environment drives qualification and test requirements early in design.",
     gallery: [
-      { pdf: "assets/earth-moon-relay.pdf", name: "final.pdf", caption: "Full report — Earth–Moon Relay Pathfinder environmental analysis & test plan (PDF)" },
+      { pdf: "assets/earth-moon-relay.pdf", name: "final.pdf", caption: "Full report: Earth–Moon Relay Pathfinder environmental analysis & test plan (PDF)" },
     ],
     needs: [],
   },

@@ -1,5 +1,5 @@
 /* ============================================================================
- * demo.js — tabbed "Code Showcase".
+ * demo.js - tabbed "Code Showcase".
  *
  * Usage:  <div data-demo-tabs></div>
  * Renders a tab strip; each tab shows a short blurb and a clipped source-code
@@ -17,7 +17,7 @@
       tab: "Artemis II Trajectory",
       title: "HW4_ArtemisII_March_11_Launch.m",
       lang: "MATLAB",
-      blurb: "An Artemis II–style translunar trajectory tool: propagates the spacecraft state under Earth, Moon, and Sun gravity (n-body) with tuned injection parameters to target a lunar free-return — the kind of orbital-mechanics analysis used in mission design.",
+      blurb: "An Artemis II–style translunar trajectory tool: propagates the spacecraft state under Earth, Moon, and Sun gravity (n-body) with tuned injection parameters to target a lunar free-return, the kind of orbital-mechanics analysis used in mission design.",
       src: "assets/code/artemis-ii-trajectory.m",
     },
     {

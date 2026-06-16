@@ -1,5 +1,5 @@
 /* ============================================================================
- * project-page.js — renders a full case study at project.html?id=<id>
+ * project-page.js - renders a full case study at project.html?id=<id>
  * Pulls data from assets/js/projects.js (window.PROJECTS).
  * ==========================================================================*/
 (function () {
@@ -29,7 +29,7 @@
     return;
   }
 
-  document.title = p.title + " — Nate Freese";
+  document.title = p.title + " | Nate Freese";
   var metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", p.tagline || p.title);
 
@@ -49,6 +49,7 @@
     toolBlock(p.tools),
     block("Results", bullets(p.results)),
     p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
+    p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
     p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
     galleryBlock(p.gallery),
@@ -75,7 +76,7 @@
       mv.setAttribute("alt", p.title + " (3D model)");
       mv.setAttribute("auto-rotate", "");
       mv.setAttribute("camera-controls", "");
-      mv.setAttribute("disable-zoom", "");   // rotation only — zoom disabled in case-study views
+      mv.setAttribute("disable-zoom", "");   // rotation only - zoom disabled in case-study views
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("exposure", "1.05");
       mv.setAttribute("camera-orbit", "30deg 80deg 90%");
@@ -97,6 +98,12 @@
   function codeBlock(code) {
     return '<div id="codeview" class="codeview">' +
       '<div class="codeview__loading">Loading ' + esc(code.title) + " …</div></div>";
+  }
+
+  function pdrBlock(pdr) {
+    return (pdr.blurb ? "<p>" + esc(pdr.blurb) + "</p>" : "") +
+      '<a class="btn pdr__btn" href="' + esc(pdr.src) + '" target="_blank" rel="noopener">📄 ' +
+      esc(pdr.label || "View document (PDF)") + " ↗</a>";
   }
 
   // PDF gallery items: clipped preview card that opens the full PDF in a modal.

@@ -1,5 +1,5 @@
 /* ============================================================================
- * Nate Freese — Portfolio
+ * Nate Freese - Portfolio
  * Plain CSS, no build step. Dark "deep space" theme.
  * Sections: tokens · base · nav · hero · sections · about · skills ·
  *           projects · demo · 3D · timeline · education · contact · detail page
@@ -236,7 +236,7 @@ img { max-width: 100%; display: block; }
 }
 .about__text p { color: var(--muted); margin: 0 0 16px; font-size: 1.05rem; }
 .about__text p strong { color: var(--text); }
-/* Highlighted key phrase — professional accent marker */
+/* Highlighted key phrase - professional accent marker */
 .hl {
   color: var(--accent); font-weight: 600;
   background: linear-gradient(transparent 62%, rgba(201, 206, 215, .18) 0);
@@ -442,14 +442,16 @@ img { max-width: 100%; display: block; }
 .timeline__place { color: var(--muted); font-size: .9rem; margin: 2px 0 8px; }
 .timeline__item ul { color: var(--muted); margin: 8px 0 0; padding-left: 18px; }
 .timeline__item li { margin-bottom: 6px; }
-/* Employer logo chip (nominative use — identifies employer, no endorsement implied) */
+/* Employer logo chip (nominative use - identifies employer, no endorsement implied) */
 .timeline__logo {
   position: absolute; top: 0; right: 0; display: grid; place-items: center;
-  width: 88px; height: 50px; padding: 8px 12px;
+  width: 88px; height: 50px; padding: 8px 12px; overflow: hidden;
   background: #fff; border: 1px solid var(--border-2); border-radius: 10px;
   box-shadow: var(--shadow);
 }
-.timeline__logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* px caps fit every logo fully inside the 88×50 chip (percentage heights don't
+   resolve reliably on a grid child, which let taller logos overflow). */
+.timeline__logo img { max-width: 100%; max-height: 34px; width: auto; height: auto; object-fit: contain; }
 .timeline__head { padding-right: 100px; }
 @media (max-width: 560px) {
   .timeline__logo { position: static; margin-bottom: 12px; width: 80px; height: 46px; }
@@ -605,6 +607,9 @@ img { max-width: 100%; display: block; }
 }
 .detail__fig--pdf .pdffig:hover { box-shadow: inset 0 0 0 1px var(--accent); }
 .detail__fig--pdf .pdffig:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* PDR / document button on case studies */
+.pdr__btn { margin-top: 4px; }
 
 /* ---------- Scroll-reveal ----------------------------------------------- */
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s var(--ease), transform .6s var(--ease); }

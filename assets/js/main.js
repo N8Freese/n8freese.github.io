@@ -1,5 +1,5 @@
 /* ============================================================================
- * main.js — homepage behavior
+ * main.js - homepage behavior
  *   · footer year
  *   · sticky-nav shadow + mobile menu
  *   · scroll-reveal animations (IntersectionObserver)
@@ -8,6 +8,12 @@
  * ==========================================================================*/
 (function () {
   "use strict";
+
+  /* ---- Always land at the top -----------------------------------------
+   * Stop the browser from restoring a previous scroll position (which made
+   * the page open part-way down at Projects). Fresh loads start at the hero. */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  if (!location.hash) window.scrollTo(0, 0);
 
   /* ---- Footer year ----------------------------------------------------- */
   var yearEl = document.getElementById("year");

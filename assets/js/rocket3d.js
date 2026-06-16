@@ -101,7 +101,9 @@ function init() {
       const geo = o.geometry.clone();
       geo.applyMatrix4(o.matrixWorld);
       const mat = o.material;
-      mat.metalness = 0.85; mat.roughness = 0.4; mat.envMapIntensity = 1.0; mat.needsUpdate = true;
+      mat.metalness = 0.85; mat.roughness = 0.4; mat.envMapIntensity = 1.0;
+      mat.side = THREE.DoubleSide;   // sliced/open band faces render solid (no see-through flicker)
+      mat.needsUpdate = true;
       materials.add(mat);
       const mesh = new THREE.Mesh(geo, mat);
       mesh.name = o.name || (o.parent && o.parent.name) || '';

@@ -1,5 +1,5 @@
 /* ============================================================================
- * codeviewer.js — shared "code editor" preview that expands into a modal.
+ * codeviewer.js - shared "code editor" preview that expands into a modal.
  *
  *   window.mountCodeViewer(host, {
  *     title, src, lang, caption, previewLines
