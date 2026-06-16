@@ -53,7 +53,7 @@
   var grid = document.getElementById("projects-grid");
   if (grid && window.PROJECTS) {
     var ordered = window.PROJECTS.slice().sort(function (a, b) {
-      return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      return (a.order || 99) - (b.order || 99);
     });
     grid.innerHTML = ordered.map(cardHTML).join("");
     // reveal newly added cards

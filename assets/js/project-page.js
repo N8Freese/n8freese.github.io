@@ -16,7 +16,9 @@
   }
 
   var root = document.getElementById("detail");
-  var list = window.PROJECTS || [];
+  var list = (window.PROJECTS || []).slice().sort(function (a, b) {
+    return (a.order || 99) - (b.order || 99);
+  });
   var id = new URLSearchParams(location.search).get("id");
   var idx = list.findIndex(function (p) { return p.id === id; });
   var p = list[idx];

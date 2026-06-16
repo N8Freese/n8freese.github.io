@@ -118,8 +118,8 @@ function init() {
       if (split.meshes.length > 1) {
         materials.add(container.children[0].material);
         container.clear();
-        split.meshes.forEach((b) => { b.name = ''; container.add(b); });
-        splitAxis = split.axis;   // sliced model: explode purely along this axis
+        split.meshes.forEach((b, i) => { b.name = ''; b.userData.bandIndex = i; container.add(b); });
+        splitAxis = split.axis;   // sliced model: explode along this axis (+ lateral on some bands)
       }
     }
 
@@ -174,17 +174,22 @@ function init() {
   }
 
   const tmp = new THREE.Vector3();
+  const PERP = { x: 'z', y: 'x', z: 'x' };   // a perpendicular axis for lateral slide
   function poseExplode(idx, f) {
     const m = models[idx]; if (!m) return;
     m.container.children.forEach((p) => {
       if (p.userData.shell) {
         p.position.set(p.userData.shellShift * f, 0, 0);
       } else if (m.splitAxis) {
-        // Sliced fused model: separate cleanly along the long axis only, so the
-        // bands stay coaxial (no sideways drift / overlap = no "glitched" look).
+        // Sliced fused model: spread along the long axis, and have every other band
+        // also slide out to the side (alternating directions) so the explosion reads
+        // as parts coming apart rather than a uniform stack expansion.
+        var a = m.splitAxis, perp = PERP[a];
         tmp.set(0, 0, 0);
-        tmp[m.splitAxis] = p.userData.offset[m.splitAxis];
-        p.position.copy(tmp.multiplyScalar(EXPLODE_K * f));
+        tmp[a] = p.userData.offset[a] * EXPLODE_K * f;
+        var i = p.userData.bandIndex || 0;
+        if (i % 2 === 1) tmp[perp] = ((i % 4 === 1) ? 1 : -1) * m.radius * 0.8 * f;
+        p.position.copy(tmp);
       } else {
         p.position.copy(tmp.copy(p.userData.offset).multiplyScalar(EXPLODE_K * f));
       }

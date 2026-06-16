@@ -31,6 +31,7 @@
 window.PROJECTS = [
   {
     id: "lunar-mission",
+    order: 3,
     title: "Crewed Lunar Mission: Preliminary Design",
     category: "Project & Systems Lead · ERAU",
     tagline:
@@ -84,6 +85,7 @@ window.PROJECTS = [
 
   {
     id: "nasa-jsc-viz",
+    order: 4,
     title: "NASA JSC Mission Visualization Tools",
     category: "KBR & LZ Technology · NASA Johnson Space Center",
     tagline:
@@ -119,6 +121,7 @@ window.PROJECTS = [
 
   {
     id: "mayott-uav",
+    order: 2,
     title: "Mayott Aerospace: Heavy-Lift UAV",
     category: "CAD & Software Engineer · Mayott Aerospace",
     tagline:
@@ -155,6 +158,7 @@ window.PROJECTS = [
 
   {
     id: "collins-avionics",
+    order: 1,
     title: "Avionics Test Automation",
     category: "System Engineering Intern · Collins Aerospace",
     tagline:
@@ -187,6 +191,7 @@ window.PROJECTS = [
 
   {
     id: "artemis-rocket",
+    order: 5,
     title: "ERFSEDS Artemis Rocket",
     category: "Manufacturing Member · ERAU",
     tagline:
@@ -220,6 +225,7 @@ window.PROJECTS = [
 
   {
     id: "spectre-rocket",
+    order: 6,
     title: "ERPL Spectre Rocket",
     category: "Hardware Member · ERAU",
     tagline:
@@ -255,6 +261,7 @@ window.PROJECTS = [
 
   {
     id: "nastran-fea",
+    order: 7,
     title: "NASTRAN Structural Analysis",
     category: "AE 318 · Coursework",
     tagline: "Finite-element structural model using CBEAM/PBEAM elements and a SOL 101 linear static solution.",
@@ -286,6 +293,7 @@ window.PROJECTS = [
 
   {
     id: "earth-moon-relay",
+    order: 8,
     title: "Earth–Moon Relay Pathfinder",
     category: "AE 429 · Coursework",
     tagline: "Space-environment analysis and test plan for a lunar communications relay pathfinder mission.",
@@ -296,9 +304,7 @@ window.PROJECTS = [
     thumb: "assets/img/moon-relay-cover.svg",
     accent: "#7c5cff",
     demo: "",
-    links: [
-      { label: "Read the report (PDF)", href: "assets/earth-moon-relay.pdf" },
-    ],
+    links: [],
     problem:
       "Assess the space-environment effects on an Earth–Moon relay pathfinder and define an appropriate environmental test plan.",
     approach: [
@@ -312,9 +318,12 @@ window.PROJECTS = [
       "Tied each dominant environment to its driving design and qualification requirement.",
     ],
     learned: "Learned how the space environment drives qualification and test requirements early in design.",
-    gallery: [
-      { pdf: "assets/earth-moon-relay.pdf", name: "final.pdf", caption: "Full report: Earth–Moon Relay Pathfinder environmental analysis & test plan (PDF)" },
-    ],
+    pdr: {
+      label: "Read the full report (PDF)",
+      src: "assets/earth-moon-relay.pdf",
+      blurb: "Full space-environment analysis and qualification test plan for the Earth–Moon relay pathfinder.",
+    },
+    gallery: [],
     needs: [],
   },
 ];
