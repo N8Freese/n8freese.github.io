@@ -1,0 +1,4 @@
+Contact: mailto:nathanylfreese@gmail.com
+Expires: 2027-07-01T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://n8freese.github.io/.well-known/security.txt

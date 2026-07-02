@@ -59,6 +59,14 @@
   ].join("");
 
   mountPdfViewers();
+  mountLightbox();
+
+  // gallery image fallback (no inline handlers — CSP-safe)
+  root.querySelectorAll("img[data-missing-note]").forEach(function (img) {
+    img.addEventListener("error", function () {
+      img.parentNode.textContent = "Add: " + img.getAttribute("data-missing-note");
+    });
+  });
 
   // load any demo on the page
   if (window.__mountDemos) window.__mountDemos();
@@ -104,7 +112,7 @@
 
   function pdrBlock(pdr) {
     return (pdr.blurb ? "<p>" + esc(pdr.blurb) + "</p>" : "") +
-      '<a class="btn pdr__btn" href="' + esc(pdr.src) + '" target="_blank" rel="noopener">📄 ' +
+      '<a class="btn pdr__btn" href="' + esc(pdr.src) + '" target="_blank" rel="noopener">' +
       esc(pdr.label || "View document (PDF)") + " ↗</a>";
   }
 
@@ -148,6 +156,79 @@
     });
   }
 
+  // Gallery lightbox: click an image to view it large; ‹ › buttons and arrow keys
+  // navigate between image items in both directions; Esc or backdrop closes.
+  function mountLightbox() {
+    var figs = [].slice.call(root.querySelectorAll(
+      ".detail__gallery .detail__fig:not(.detail__fig--pdf):not(.detail__fig--video)"));
+    var items = [];
+    figs.forEach(function (fig) {
+      var img = fig.querySelector("img");
+      if (!img) return;
+      var cap = fig.querySelector("figcaption");
+      var idx = items.push({ src: img.getAttribute("src"), caption: cap ? cap.textContent : "" }) - 1;
+      var frame = fig.querySelector(".frame");
+      frame.classList.add("is-zoomable");
+      frame.setAttribute("role", "button");
+      frame.setAttribute("tabindex", "0");
+      frame.setAttribute("aria-label", "View " + (items[idx].caption || "image") + " full size");
+      frame.addEventListener("click", function () { open(idx); });
+      frame.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(idx); }
+      });
+    });
+    if (!items.length) return;
+
+    var modal = document.createElement("div");
+    modal.className = "codemodal lightbox";
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="codemodal__backdrop" data-act="close"></div>' +
+      '<div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="Image viewer" tabindex="-1">' +
+        '<button type="button" class="lightbox__btn lightbox__btn--close" data-act="close" aria-label="Close">×</button>' +
+        (items.length > 1 ? '<button type="button" class="lightbox__btn lightbox__btn--prev" data-act="prev" aria-label="Previous image">‹</button>' : "") +
+        '<img class="lightbox__img" alt="">' +
+        (items.length > 1 ? '<button type="button" class="lightbox__btn lightbox__btn--next" data-act="next" aria-label="Next image">›</button>' : "") +
+        '<p class="lightbox__cap"></p>' +
+      "</div>";
+    document.body.appendChild(modal);
+
+    var panel = modal.querySelector(".lightbox__panel");
+    var imgEl = modal.querySelector(".lightbox__img");
+    var capEl = modal.querySelector(".lightbox__cap");
+    var cur = 0;
+
+    function show(i) {
+      cur = (i + items.length) % items.length;
+      imgEl.src = items[cur].src;
+      imgEl.alt = items[cur].caption || "";
+      capEl.textContent = (items[cur].caption || "") +
+        (items.length > 1 ? "  ·  " + (cur + 1) + " / " + items.length : "");
+    }
+    function open(i) {
+      show(i);
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+      try { panel.focus(); } catch (e) {}
+    }
+    function close() { modal.hidden = true; document.body.style.overflow = ""; }
+
+    modal.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      var act = btn.getAttribute("data-act");
+      if (act === "prev") show(cur - 1);
+      else if (act === "next") show(cur + 1);
+      else close();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (modal.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") show(cur - 1);
+      else if (e.key === "ArrowRight") show(cur + 1);
+    });
+  }
+
   function metaRow(p) {
     var bits = [];
     if (p.role) bits.push("<span><b>Role:</b> " + esc(p.role) + "</span>");
@@ -183,13 +264,26 @@
           '<div class="frame pdffig" data-pdf="' + esc(item.pdf) + '" data-name="' + esc(nm) + '" ' +
             'role="button" tabindex="0" aria-label="Open ' + esc(item.caption || nm) + '">' +
             '<embed class="pdffig__embed" src="' + esc(item.pdf) + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">' +
-            '<span class="pdffig__badge">📄 Open PDF ⤢</span>' +
+            '<span class="pdffig__badge">Open PDF</span>' +
+          "</div>" +
+          (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
+      }
+      if (item.video) {
+        // preload="auto": clips are small (a few MB), and full buffering makes the
+        // scrubber seek reliably in both directions even on servers without Range support
+        return '<figure class="detail__fig detail__fig--video">' +
+          '<div class="frame frame--video">' +
+            '<video class="detail__video" controls preload="auto" playsinline controlsList="nodownload"' +
+            (item.poster ? ' poster="' + esc(item.poster) + '"' : "") + ">" +
+              '<source src="' + esc(item.video) + '" type="video/mp4">' +
+              "Your browser does not support embedded video." +
+            "</video>" +
+            (item.badge ? '<span class="detail__mediabadge">' + esc(item.badge) + "</span>" : "") +
           "</div>" +
           (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
       }
       var media = item.src
-        ? '<div class="frame" style="padding:0"><img src="' + esc(item.src) + '" alt="' + esc(item.caption || "") + '" loading="lazy" ' +
-          "onerror=\"this.parentNode.innerHTML='Add: " + esc(item.src) + "'\"></div>"
+        ? '<div class="frame" style="padding:0"><img src="' + esc(item.src) + '" alt="' + esc(item.caption || "") + '" loading="lazy" data-missing-note="' + esc(item.src) + '"></div>'
         : '<div class="frame">Image slot</div>';
       return '<figure class="detail__fig">' + media +
         (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
@@ -198,7 +292,7 @@
   }
   function modelViewer(src) {
     return '<div id="detail-model" class="rocket-viewer">' +
-      '<div class="rocket-viewer__placeholder"><p>🚀 3D model coming soon</p>' +
+      '<div class="rocket-viewer__placeholder"><p>3D model coming soon</p>' +
       "<small>Drop <code>" + esc(src) + "</code> to enable.</small></div></div>";
   }
   function pager(prev, next) {

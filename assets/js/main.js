@@ -60,6 +60,13 @@
     grid.querySelectorAll(".reveal").forEach(function (el) {
       if (io) io.observe(el); else el.classList.add("is-visible");
     });
+    // thumbnail fallback (no inline handlers — CSP-safe)
+    grid.querySelectorAll("img[data-fallback]").forEach(function (img) {
+      img.addEventListener("error", function () {
+        img.style.display = "none";
+        if (img.nextElementSibling) img.nextElementSibling.style.display = "flex";
+      });
+    });
   }
 
   function esc(s) {
@@ -72,10 +79,9 @@
     var media = p.thumbStyle === "logo" && p.thumb
       ? '<div class="card__logo"><img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + ' logo" loading="lazy"></div>'
       : p.thumb
-      ? '<img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + '" loading="lazy" ' +
-        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
-        '<div class="ph" style="display:none"><span class="glyph">✦</span><span>Image: ' + esc(p.thumb) + '</span></div>'
-      : '<div class="ph"><span class="glyph">✦</span><span>Add image</span></div>';
+      ? '<img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + '" loading="lazy" data-fallback>' +
+        '<div class="ph" style="display:none"><span>Image: ' + esc(p.thumb) + '</span></div>'
+      : '<div class="ph"><span>Add image</span></div>';
 
     var tags = (p.tags || []).slice(0, 4).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
     var period = p.period && p.period !== "Coursework"

@@ -47,7 +47,7 @@
     host.innerHTML =
       '<div class="codeview__card" role="button" tabindex="0" aria-label="Expand ' + esc(opts.title) + ' source">' +
         '<div class="demo__bar">' + dotsStatic() + barLabel(opts) +
-          '<span class="codeview__hint">⤢ Click to expand</span></div>' +
+          '<span class="codeview__hint">Click to expand</span></div>' +
         '<pre class="demo__pre codeview__pre">' + esc(preview) + (more ? "\n…" : "") + "</pre>" +
         '<div class="codeview__fade"></div>' +
       "</div>" +

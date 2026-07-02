@@ -2,3 +2,24 @@
 *.log
 
 .claude/
+
+# Internal planning notes — never publish
+MISSING_PORTFOLIO_ITEMS.md
+
+# Source CAD & raw footage must never reach the public repo.
+# Only decimated web meshes (.glb/.gltf) and compressed .mp4 belong here.
+*.step
+*.stp
+*.STEP
+*.stl
+*.STL
+*.igs
+*.iges
+*.CATPart
+*.CATProduct
+*.sldprt
+*.sldasm
+*.f3d
+*.f3z
+*.mov
+*.MOV
