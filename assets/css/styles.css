@@ -383,6 +383,24 @@ img { max-width: 100%; display: block; }
 }
 .demos__blurb { color: var(--muted); font-size: .98rem; margin: 0 0 18px; max-width: 760px; }
 
+/* Code + live-simulation split: source on the left, running display on the right */
+.demos__split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.demos__run {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: #0c0e15; overflow: hidden;
+}
+.demos__run .demo__bar { background: var(--card); }
+.demos__replay { margin-left: auto; }
+.demos__canvas { display: block; width: 100%; height: 360px; }
+.demos__cap {
+  color: var(--muted); font-size: .85rem; margin: 0;
+  padding: 10px 14px; border-top: 1px solid var(--border);
+}
+@media (max-width: 920px) {
+  .demos__split { grid-template-columns: 1fr; }
+  .demos__canvas { height: 320px; }
+}
+
 /* ---------- 3D viewer ---------------------------------------------------- */
 .rocket-viewer {
   position: relative;
