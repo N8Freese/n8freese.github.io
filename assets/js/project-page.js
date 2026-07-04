@@ -268,6 +268,20 @@
           "</div>" +
           (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
       }
+      if (item.model) {
+        // Interactive CAD view: self-hosted model-viewer, auto-rotating turntable,
+        // orbit enabled so visitors can inspect the part.
+        return '<figure class="detail__fig detail__fig--model">' +
+          '<model-viewer class="detail__mv" src="' + esc(item.model) + '" ' +
+            'alt="' + esc(item.caption || "3D model") + '" ' +
+            'camera-controls auto-rotate loading="eager" touch-action="pan-y" ' +
+            'interaction-prompt="none" shadow-intensity="1" exposure="1.1" ' +
+            'camera-orbit="30deg 75deg 105%" field-of-view="32deg">' +
+            '<div slot="poster" class="detail__mvposter">Loading 3D model…</div>' +
+          "</model-viewer>" +
+          (item.badge ? '<span class="detail__mediabadge">' + esc(item.badge) + "</span>" : "") +
+          (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
+      }
       if (item.video) {
         // preload="auto": clips are small (a few MB), and full buffering makes the
         // scrubber seek reliably in both directions even on servers without Range support
