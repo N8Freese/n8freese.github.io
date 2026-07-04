@@ -294,10 +294,11 @@
     function draw(ctx, pt, w, h2) {
       clear(ctx, w, h2);
       var idx = Math.min(M - 1, Math.floor(pt / ldt));
-      var animH = Math.round(h2 * 0.46);
+      var narrow = w < 480;
+      var animH = Math.round(h2 * (narrow ? 0.4 : 0.46));
 
       // --- animated vehicle (front view): roll + altitude ---
-      var railX = 44, railTop = 16, railBot = animH - 12;
+      var railX = narrow ? 34 : 44, railTop = 16, railBot = animH - 12;
       function altY(a) { return railBot - (a / 1.8) * (railBot - railTop); }
       ctx.strokeStyle = COL.axis; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(railX, railTop); ctx.lineTo(railX, railBot); ctx.stroke();
@@ -315,7 +316,7 @@
 
       // quad body
       var qx = railX + (w - railX) / 2, qy = altY(lZ[idx]);
-      var roll = lRoll[idx] * Math.PI / 180, arm = Math.min(70, (w - railX) * 0.16);
+      var roll = lRoll[idx] * Math.PI / 180, arm = Math.min(70, (w - railX) * (narrow ? 0.22 : 0.16));
       ctx.save();
       ctx.translate(qx, qy);
       ctx.rotate(-roll);
@@ -329,22 +330,23 @@
       ctx.beginPath(); ctx.arc(0, 1, 5, 0, 2 * Math.PI); ctx.fill();
       ctx.restore();
 
-      // disturbance annotations
+      // disturbance annotations (label pushed to whichever corner has room)
       var tNow = lt[idx];
       ctx.font = MONO;
+      var labelX = narrow ? railX + 6 : w - 92;
       if (tNow > 4) {
         ctx.fillStyle = COL.blue;
-        ctx.fillText("wind gust", w - 92, railTop + 12);
+        ctx.fillText("wind gust", labelX, railTop + 12);
         var gph = Math.sin(2 * Math.PI * 0.7 * tNow);
         ctx.strokeStyle = COL.blue; ctx.lineWidth = 1.4;
         ctx.beginPath();
-        ctx.moveTo(w - 92, railTop + 24);
-        ctx.quadraticCurveTo(w - 76, railTop + 24 - 5 * gph, w - 60, railTop + 24);
+        ctx.moveTo(labelX, railTop + 24);
+        ctx.quadraticCurveTo(labelX + 16, railTop + 24 - 5 * gph, labelX + 32, railTop + 24);
         ctx.stroke();
       }
       if (tNow > 8) {
         ctx.fillStyle = COL.amber;
-        ctx.fillText("-15% thrust", w - 92, railTop + 44);
+        ctx.fillText("-15% thrust", labelX, railTop + 44);
       }
 
       // --- response charts ---
@@ -409,10 +411,12 @@
     function draw(ctx, pt, w, h2) {
       clear(ctx, w, h2);
       var idx = Math.min(M - 1, Math.floor((pt / DUR) * (M - 1)));
+      var narrow = w < 480;
 
-      // --- pendulum animation (left) ---
-      var px = Math.round(w * 0.26), py = Math.round(h2 * 0.5);
-      var Ls = Math.min(w * 0.2, h2 * 0.34);
+      // --- pendulum animation (left, or stacked top on narrow) ---
+      var animW = narrow ? w : Math.round(w * 0.44);
+      var px = Math.round(animW * 0.5), py = narrow ? Math.round(h2 * 0.28) : Math.round(h2 * 0.5);
+      var Ls = narrow ? Math.min(w * 0.18, h2 * 0.18) : Math.min(w * 0.2, h2 * 0.34);
       // mount
       ctx.strokeStyle = COL.axis;
       ctx.lineWidth = 1;
@@ -441,16 +445,18 @@
       ctx.beginPath(); ctx.arc(bX, bY, 8, 0, 2 * Math.PI); ctx.fill();
       ctx.fillStyle = COL.text;
       ctx.font = MONO;
-      ctx.fillText("released 3° from inverted", 12, h2 - 10);
+      if (!narrow) ctx.fillText("released 3° from inverted", 12, h2 - 10);
 
-      // --- theta(t) chart (right) ---
-      var chX = Math.round(w * 0.47);
-      drawChart(ctx, { x: chX, y: 22, w: w - chX - 14, h: h2 - 56 }, {
+      // --- theta(t) chart (right on wide, below on narrow) ---
+      var chX = narrow ? 14 : Math.round(w * 0.47);
+      var chY = narrow ? Math.round(h2 * 0.52) : 22;
+      var chH = narrow ? h2 - chY - 30 : h2 - 56;
+      drawChart(ctx, { x: chX, y: chY, w: w - chX - 14, h: chH }, {
         tMax: Tf, yMin: -Math.PI - 0.3, yMax: Math.PI + 0.3, label: "θ (rad), wrapped",
         series: [{ t: lt, y: lwrap, color: COL.teal, cutN: idx + 1 }],
       });
       ctx.fillStyle = COL.text;
-      ctx.fillText("t = " + lt[idx].toFixed(1) + " s   ζ = " + zeta.toFixed(4), chX, h2 - 10);
+      ctx.fillText("t = " + lt[idx].toFixed(1) + " s   ζ = " + zeta.toFixed(4), chX, h2 - 8);
     }
     return makePlayer(canvas, draw, DUR);
   }

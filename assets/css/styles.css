@@ -398,14 +398,28 @@ img { max-width: 100%; display: block; }
 }
 @media (max-width: 920px) {
   .demos__split { grid-template-columns: 1fr; }
-  .demos__canvas { height: 320px; }
+  .demos__canvas { height: 380px; }
+}
+@media (max-width: 520px) {
+  .demos__canvas { height: 340px; }
+  .demos__blurb { font-size: .95rem; }
+  .demos__tab { font-size: .85rem; padding: 8px 14px; }
+  .demos__cap { font-size: .82rem; padding: 10px 12px; }
+  /* Titles/blurbs get busier on tiny screens — give the code preview a touch
+     more breathing room so its title bar isn't jammed against the code. */
+  .codeview__pre { font-size: .78rem; padding: 14px 14px; }
 }
 
 /* ---------- 3D viewer ---------------------------------------------------- */
 .rocket-viewer {
   position: relative;
-  width: 100%; height: clamp(420px, 60vh, 600px); border-radius: var(--radius);
+  width: 100%; height: clamp(360px, 60vh, 600px); border-radius: var(--radius);
   border: 1px solid var(--border); overflow: hidden; background: #0a0f1a; box-shadow: var(--shadow);
+}
+@media (max-width: 520px) {
+  .rocket-viewer { height: clamp(340px, 52vh, 460px); }
+  .rocket-viewer__seg button { font-size: .78rem; padding: 5px 11px; }
+  .rocket-viewer__hint { font-size: .74rem; padding: 5px 12px; bottom: 10px; }
 }
 .rocket-viewer model-viewer { width: 100%; height: 100%; }
 .rocket-viewer__canvas {
@@ -578,6 +592,13 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border); border-radius: var(--radius); background: #0c0e15;
   transition: border-color .2s var(--ease), transform .2s var(--ease);
 }
+/* On narrow viewports, clip long code lines with a gentle right-edge fade so
+   it's visually obvious the preview is a teaser — Click to expand opens the
+   full source in a scrollable modal. */
+@media (max-width: 520px) {
+  .codeview__fade { background: linear-gradient(90deg, transparent 60%, #0c0e15 100%),
+                                linear-gradient(transparent, #0c0e15); height: 100%; }
+}
 .codeview__card:hover { border-color: var(--border-2); transform: translateY(-2px); }
 .codeview__card .demo__bar { background: var(--card); }
 .codeview__hint { margin-left: auto; color: var(--accent); font-size: .78rem; }
@@ -673,7 +694,7 @@ img { max-width: 100%; display: block; }
 .lightbox__btn--prev { grid-column: 1; }
 .lightbox__btn--next { grid-column: 3; }
 .lightbox__btn--close {
-  position: absolute; top: -14px; right: -8px; z-index: 2;
+  position: absolute; top: -8px; right: 4px; z-index: 2;
   width: 36px; height: 36px; font-size: 1.2rem;
 }
 @media (max-width: 640px) {

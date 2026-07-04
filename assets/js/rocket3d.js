@@ -333,11 +333,16 @@ function init() {
   function placeCamera() {
     const m = models[active]; if (!m) return;
     const vfov = THREE.MathUtils.degToRad(FOV);
-    // Pull back further as the model explodes so spread parts stay framed.
-    let dist = (m.radius / Math.sin(vfov / 2)) * (1.18 + 0.85 * explodeCur);
-    // On portrait/narrow canvases (mobile) widen the framing so nothing clips.
+    // Use whichever FOV (horizontal vs vertical) is more constrained so the
+    // bounding sphere fits in both axes. On portrait viewports the horizontal
+    // FOV is smaller, but we cap how far we back off (max 1.6x) so a tall/
+    // narrow model like a rocket still reads at usable size on phones.
     const aspect = camera.aspect || 1;
-    if (aspect < 1) dist /= aspect;
+    const hHalf = Math.atan(Math.tan(vfov / 2) * aspect);
+    const useHalf = Math.min(vfov / 2, hHalf);
+    let dist = (m.radius / Math.sin(useHalf)) * (1.12 + 0.8 * explodeCur);
+    const portraitMax = m.radius / Math.sin(vfov / 2) * 1.6 * (1 + explodeCur * 0.5);
+    if (dist > portraitMax) dist = portraitMax;
     const elev = THREE.MathUtils.degToRad(14);  // slight top-down 3/4 view
     camera.position.set(0, dist * Math.sin(elev), dist * Math.cos(elev));
     camera.lookAt(0, 0, 0);
