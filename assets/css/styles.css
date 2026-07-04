@@ -385,6 +385,9 @@ img { max-width: 100%; display: block; }
 
 /* Code + live-simulation split: source on the left, running display on the right */
 .demos__split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+/* min-width:0 lets the grid children shrink below their content's min-content
+   width (the code preview never wraps) instead of overflowing the viewport. */
+.demos__view, .demos__run { min-width: 0; }
 .demos__run {
   border: 1px solid var(--border); border-radius: var(--radius);
   background: #0c0e15; overflow: hidden;
@@ -397,7 +400,7 @@ img { max-width: 100%; display: block; }
   padding: 10px 14px; border-top: 1px solid var(--border);
 }
 @media (max-width: 920px) {
-  .demos__split { grid-template-columns: 1fr; }
+  .demos__split { grid-template-columns: minmax(0, 1fr); }
   .demos__canvas { height: 380px; }
 }
 @media (max-width: 520px) {
