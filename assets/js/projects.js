@@ -170,7 +170,7 @@ window.PROJECTS = [
     title: "Avionics Test Automation",
     category: "System Engineering Intern · Collins Aerospace",
     tagline:
-      "Python test automation plus verification and evaluation of an internal AI tool that drafts test procedures and test plans from system requirements.",
+      "Python test automation that cut a 301-file transponder test campaign's runtime by 50%, plus evaluation of an internal AI tool that drafts test procedures from system requirements.",
     period: "May 2026 – Present",
     role: "System Engineering Intern",
     tags: ["Python", "Automation", "Verification", "AI evaluation", "Avionics"],
@@ -183,16 +183,16 @@ window.PROJECTS = [
     problem:
       "Improve the efficiency and traceability of transponder testing for next-generation avionics systems, and establish how well AI-assisted tooling can support a rigorous verification workflow.",
     approach: [
-      "Developing Python automation scripts to support transponder testing simulations and improve testing efficiency.",
-      "Creating and updating system test procedures, test plans, and JIRA documentation for verification.",
-      "Verifying, comparing, and evaluating an internal Collins Aerospace AI tool that generates draft test procedures and test plans from system requirements and related documentation.",
-      "Assessing how accurately the tool interprets requirements and where its output supports — or falls short of — engineer-authored test-planning standards.",
+      "Built Python automation that simulates keyboard/mouse input to execute a 301-file transponder test campaign, cutting test runtime by 50%.",
+      "Authored test cases and formal test procedures, tracking verification progress in JIRA and GitLab.",
+      "Verified, compared, and evaluated an internal Collins Aerospace AI tool that generates draft test procedures and test plans from system requirements and related documentation.",
+      "Assessed how accurately the tool interprets requirements across 50+ requirements, providing and implementing feedback that improved its accuracy and efficiency.",
     ],
-    tools: ["Python", "JIRA", "Systems test procedures", "AI-assisted verification"],
+    tools: ["Python", "JIRA", "GitLab", "Systems test procedures", "AI-assisted verification"],
     results: [
-      "Automation scripts supporting transponder test simulations and improved testing throughput.",
-      "Maintained verification artifacts (procedures, test plans, JIRA) for next-gen avionics.",
-      "Structured evaluations comparing AI-generated test procedures against engineer-authored baselines, informing how the tool fits into test planning.",
+      "Automated a 301-file transponder test campaign, cutting runtime by 50%.",
+      "Evaluated the AI test-generation tool across 50+ requirements; feedback I provided and implemented improved its accuracy and efficiency.",
+      "Maintained verification artifacts — test cases, procedures, and JIRA/GitLab tracking — for next-gen avionics.",
     ],
     learned:
       "Verification work shows how much of real avionics engineering is rigorous, traceable documentation — and evaluating an AI tool against that standard taught me to judge a test procedure by how faithfully it traces back to its requirements.",
