@@ -265,9 +265,9 @@ window.PROJECTS = [
     learned:
       "My first hands-on rocketry team: it grounded my analysis work in the reality of building, testing, and iterating on physical hardware.",
     gallery: [
-      { model: "assets/rocket/spectre-full-assy.glb", caption: "Spectre Mk1 — full airframe assembly (drag to rotate)" },
-      { model: "assets/rocket/spectre-sm.glb", caption: "Service module (drag to rotate)" },
+      { model: "assets/rocket/spectre-full-assy.glb", feature: true, caption: "Spectre Mk1 — full airframe assembly (drag to rotate)" },
       { model: "assets/rocket/spectre-canard.glb", caption: "Canard control surface, v4.0 (drag to rotate)" },
+      { model: "assets/rocket/spectre-sm.glb", caption: "Service module (drag to rotate)" },
     ],
     needs: [],
   },

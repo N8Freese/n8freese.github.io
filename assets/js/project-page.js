@@ -271,7 +271,8 @@
       if (item.model) {
         // Interactive CAD view: self-hosted model-viewer, auto-rotating turntable,
         // orbit enabled so visitors can inspect the part.
-        return '<figure class="detail__fig detail__fig--model">' +
+        return '<figure class="detail__fig detail__fig--model' +
+          (item.feature ? " detail__fig--model-feature" : "") + '">' +
           '<model-viewer class="detail__mv" src="' + esc(item.model) + '" ' +
             'alt="' + esc(item.caption || "3D model") + '" ' +
             'camera-controls auto-rotate loading="eager" touch-action="pan-y" ' +

@@ -572,9 +572,13 @@ img { max-width: 100%; display: block; }
   color: var(--faint); font-size: .9rem; background: #0a0f1a;
 }
 @media (min-width: 700px) {
-  /* two CAD viewers per row on wider screens, third spans full width */
+  /* CAD viewers pair two-up on wider screens; a "feature" model (e.g. the full
+     assembly) spans the full width as a larger showcase box, like the homepage
+     3D viewer, with the remaining parts paired beneath it. */
   .detail__fig--model { grid-column: auto; }
   .detail__mv { height: clamp(300px, 40vh, 420px); }
+  .detail__fig--model-feature { grid-column: 1 / -1; }
+  .detail__fig--model-feature .detail__mv { height: clamp(420px, 60vh, 600px); }
 }
 /* "Sample" chip on media previews — same visual family as .card__period */
 .detail__mediabadge {
