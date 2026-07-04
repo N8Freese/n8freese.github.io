@@ -91,7 +91,7 @@ window.PROJECTS = [
     tagline:
       "Python/PyQt5 tools visualizing antenna blockage, tracking, and Orion/Starliner sims with live telemetry overlays.",
     period: "Jan 2025 – Aug 2025",
-    role: "Engineering Technician I",
+    role: "Engineering Intern",
     tags: ["Python", "PyQt5", "Telemetry", "Linux", "GitLab", "Optimization"],
     featured: true,
     thumb: "assets/img/logos/nasa.svg",

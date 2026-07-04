@@ -76,8 +76,8 @@ Put `assets/img/headshot.jpg`, then in `index.html` (About section) replace the
 `<span>…</span>` inside `.about__photo` with
 `<img src="assets/img/headshot.jpg" alt="Nate Freese" />`.
 
-### Update the résumé
-Replace `assets/Nate_Freese_Resume.pdf`. Every "Résumé" link/button uses it.
+### Update the resume
+Replace `assets/Nate_Freese_Resume.pdf`. Every "Resume" link/button uses it.
 
 ### Add a 3D model
 Drop a **decimated** `.glb` in `assets/rocket/` and point a project's `model` field at it.
