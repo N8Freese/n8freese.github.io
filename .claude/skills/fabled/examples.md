@@ -28,9 +28,9 @@ In any Claude Code session where this skill is installed (`.claude/skills/fabled
 Error in logs: "TypeError: cannot read 'total' of undefined" in cart.js.
 Repro: unknown — happens for ~2% of checkouts. Start from the evidence, not a guess.
 ```
-Emergency variant:
+Emergency Debug variant (production down / user blocked):
 ```
-/fabled debug (emergency): prod is down after the 14:02 deploy. Stabilize first,
+/fabled emergency debug: prod is down after the 14:02 deploy. Stabilize first,
 root-cause second. You may propose a rollback before diagnosing.
 ```
 

@@ -17,7 +17,7 @@ Rules:
 - Report failures verbatim (paste the relevant output), never paraphrased into softness.
 - A check you *meant* to run but didn't = not run. The report says so.
 
-## Done-check (before saying "done" — every mode)
+## Done-check (before saying "done" — Full Rigor & Handoff; Lite's shorter equivalent lives in SKILL.md §Verify/§Validation)
 
 - [ ] Acceptance criteria from the plan: each one demonstrably met (point at evidence).
 - [ ] Strongest available verification rung executed, results recorded.
@@ -32,7 +32,7 @@ Any unchecked box → either fix it or state it explicitly in the report. Silenc
 
 ## Quality rubrics
 
-Score 1–5 in Full Rigor Mode (and for handoffs); in Lite Mode use as a mental sweep. Anything ≤2 must be fixed or explicitly accepted by the user.
+Score 1–5 in Full Rigor Mode (and for handoffs). Anything ≤2 must be fixed or explicitly accepted by the user.
 
 **Correctness** — 5: verified on happy path + edge cases + error paths, by tests or observed runs. 3: happy path verified; edges reasoned about only. 1: unverified or known-broken edge.
 
@@ -46,7 +46,7 @@ Score 1–5 in Full Rigor Mode (and for handoffs); in Lite Mode use as a mental 
 
 **User intent alignment** — 5: delivers what was actually asked, at asked scope; ambiguities surfaced, not guessed. 3: minor scope drift, disclosed. 1: solved an adjacent problem or silently redefined the task.
 
-**Token/cost efficiency** — 5: mode matched risk; no re-reads of unchanged files; targeted context gathering. 3: some waste (full reads where grep sufficed). 1: re-derived known facts, re-read repeatedly, Full Rigor on a trivial task.
+**Token/cost efficiency** — 5: mode matched risk; no redundant re-reads (re-reading before an edit after truncation is required, not waste); targeted context gathering. 3: some waste (full reads where grep sufficed). 1: re-derived known facts, re-read content still in hand, Full Rigor on a trivial task.
 
 **Documentation quality** — 5: decisions recorded where the project keeps them; stale docs fixed; report is a clean re-grounding. 3: report good, no durable record. 1: undocumented decisions, or docs now lie about behavior.
 
@@ -60,4 +60,4 @@ NOT VERIFIED:
 ASSUMPTIONS STILL OPEN:
 - <assumption> — risk if wrong: <impact>
 ```
-Include this block (with real content or "none") in every Full Rigor and Handoff report. In Lite Mode, one sentence covering the same three facts suffices.
+Include this block (with real content or "none") in every Full Rigor and Handoff report. (Lite's one-sentence equivalent is defined in SKILL.md §Report.)

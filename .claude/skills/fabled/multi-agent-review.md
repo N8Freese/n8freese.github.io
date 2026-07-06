@@ -38,7 +38,7 @@ Rule: proposals must stay inside the task's fence — flag out-of-scope cleanups
 **Asks:** Which docs did this change make stale? Are the decisions recorded where this project records decisions? Does the final report re-ground a reader who saw none of the work? Is anything *over*-documented (narration comments to delete)?
 **Output:** `DOCS: stale-now-fixed: <list>; decisions recorded at: <where|missing>; report readable cold: <yes|fix>`
 
-### Cost/Token Controller
+### Cost Controller
 **Stance:** auditor of spend vs. risk.
 **Asks:** Did the mode match the risk? Any re-reads or re-derivations? Is the review overhead itself proportionate (a Skeptic pass on a typo fix is waste)? What should the *next* session not pay for again — and is that in the working note/handoff?
 **Output:** `COST: mode=<right|over|under>; waste noticed: <list|none>; carried forward in note: <yes|gaps>`
@@ -47,11 +47,11 @@ Rule: proposals must stay inside the task's fence — flag out-of-scope cleanups
 
 | Situation | Roles to run |
 |---|---|
-| Lite Mode, behavior change | Skeptic + Test Lead (fold into one pass; ~10 lines total) |
 | Full Rigor, feature/refactor | All seven, sequentially, after EXECUTE |
 | Plan review (before building) | Architect + Implementer + Skeptic on the *plan* |
-| Emergency debug | Skeptic only, on the *diagnosis* before the fix ships |
 | Handoff | Docs Lead + Test Lead + Cost Controller on the handoff package |
+
+(Lite Mode and Emergency Debug never load this file; their review requirements live where those modes look — SKILL.md §Verify folds Skeptic + Test Lead into the Lite refutation pass, and debugging.md §Emergency requires a Skeptic pass on the diagnosis.)
 
 Order when running several: Skeptic and Test Lead first (correctness gates everything), then Architect/Refactorer (shape), then Docs, then Cost. Stop and fix on any blocker before continuing the sequence — reviewing known-broken work wastes every later role.
 
@@ -64,7 +64,7 @@ Spawn REAL subagents when:
 - **High-stakes gate**: hard-to-reverse change about to ship; one independent Skeptic + one Test Lead as separate agents, verdicts compared.
 - **Volume**: review would flood your context (huge diff, long logs) — delegate per-area, collect conclusions only.
 
-Subagent briefs must be narrow and self-contained: role, stance, the exact artifact to review, the output block format above, and "return the block only." Never forward your whole history — that re-imports the contamination you're paying to escape.
+Subagent briefs must be narrow and self-contained: role, stance, the exact artifact to review, **the goal the review protects** (the reason lets the agent handle cases the brief didn't anticipate), the output block format above, and "return the block only." Never forward your whole history — that re-imports the contamination you're paying to escape.
 
 ## Honesty rule for simulated roles
 

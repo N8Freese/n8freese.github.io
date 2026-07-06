@@ -62,13 +62,13 @@ Default terse. Expand only when: the decision is hard to reverse, the user asked
 
 ## Working note (the running scratch summary)
 
-Maintain a 3–8 line note (in-message or scratch file for long tasks):
+Maintain a 3–8 line note (in-message or scratch file for long tasks) — field list defined in SKILL.md §Orient, expanded here:
 ```
 TASK: <one sentence>
-MODE: lite|full|debug|exec|handoff
+MODE: lite|full|debug|emergency-debug|exec|handoff
 KEY FILES: <paths>
 DONE: <steps completed + verification status>
 NEXT: <single next action>
 OPEN: <unverified assumptions, user questions pending>
 ```
-Update it when state changes. After context truncation or interruption, this note is the recovery point — it must always be current enough to resume from.
+Update it when state changes. **Keep it clean**: the moment an entry proves wrong, correct or delete it — a stale note you trust is worse than no note (SKILL.md principle 10). After context truncation or interruption, this note is the recovery point — it must always be current enough to resume from.

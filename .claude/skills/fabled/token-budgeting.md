@@ -1,6 +1,6 @@
 # Token budgeting — efficiency doctrine
 
-Goal: Fable-grade output at Sonnet-session prices. Tokens are spent in three places — context gathering, iteration/rework, and communication. Rework is the most expensive and is bought down by *discipline*, not by reading less. Never save tokens by skipping verification; save them everywhere else.
+Goal: Fable-grade discipline — not capability — at Sonnet-session prices. Tokens are spent in three places — context gathering, iteration/rework, and communication. Rework is the most expensive and is bought down by *discipline*, not by reading less. Never save tokens by skipping verification; save them everywhere else.
 
 ## Doctrine
 
@@ -11,7 +11,7 @@ Goal: Fable-grade output at Sonnet-session prices. Tokens are spent in three pla
 - Resist completionism: you do not need to understand the whole codebase to change one corner of it correctly. You need the corner and its edges.
 
 ### 2. Never pay twice
-- **No re-reads of unchanged files.** Your working note carries what you learned. If you're about to re-read, first ask: what specific fact do I need? Often it's already in the note.
+- **No redundant re-reads.** Your working note carries what you learned; if you're about to re-read, first ask what specific fact you need — often it's already in the note. Exception: re-reading the needed line range before an edit, after context truncation or a long gap, is *required*, not waste — the rule targets re-reading content you still reliably hold.
 - No re-deriving: decisions made earlier in the session are made. Re-open a decision only on new evidence, and say what the evidence is.
 - Batch independent tool calls in one round (parallel reads/greps) instead of serial single calls — fewer round-trips, less narration between them.
 
@@ -33,18 +33,18 @@ Maintained per `thinking-style.md`. It exists so that neither you nor a successo
 Being wrong is the most expensive thing a session can do: a wrong assumption discovered late costs more than every full-file read combined. So the ONE place to overspend in Lite Mode is **verifying load-bearing assumptions early**.
 
 ### 6. Subagents cost real money
-One model simulating review roles (`multi-agent-review.md`) costs ~10% of spawning real agents. Spawn a real subagent only for: fresh-context verification of high-stakes work (contaminated-context risk), genuinely parallel independent searches, or work that would flood your context (huge log analysis). Give subagents *narrow* briefs and ask for *conclusions*, not transcripts.
+One model simulating review roles costs a fraction of spawning real agents. Spawn real subagents only per the criteria in `multi-agent-review.md` §Simulated vs. real (fresh-context verification, genuinely parallel searches, context-flooding volume). Give subagents *narrow* briefs and ask for *conclusions*, not transcripts.
 
-## Budget guidance by task size
+## Where the spend belongs, by task shape
 
-Rough shares of session spend — a self-check, not an accounting exercise. If your actuals are wildly off, your mode choice is probably wrong.
+Relative emphasis, not percentages (you can't measure per-phase spend mid-session — use the signals below as the actual self-check):
 
-| Task | Orient | Plan | Execute | Verify | Report |
-|---|---|---|---|---|---|
-| Small fix | 15% | 5% | 40% | 30% | 10% |
-| Feature | 20% | 10% | 40% | 25% | 5% |
-| Debug | 35% (repro+localize) | 5% | 25% | 30% | 5% |
-| Architecture | 40% | 35% | — | 10% (challenge) | 15% |
+| Task | Most spend belongs in | Least |
+|---|---|---|
+| Small fix | Execute + verify | Planning |
+| Feature | Execute, with real orient + verify shares | Reporting |
+| Debug | Repro + localize (orient), then verify | Planning |
+| Architecture | Orient (constraints) + plan (options) | Execution (none) |
 
 Signals you're overspending: re-reading a file a second time; a plan longer than the diff will be; narrating actions; reading "for background" without a named question.
 Signals you're underspending (worse): editing unread files; "should work"; no named verification; assumptions unlogged.

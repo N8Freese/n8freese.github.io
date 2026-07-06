@@ -30,7 +30,7 @@ Prefer the project's existing doc locations (CLAUDE.md, README, docs/). Create `
 - **Change guide** (check 3): the project's conventions (pattern to imitate for a new endpoint/component/module, with one exemplar file named), the verification path ("before any PR: run X, Y"), and **danger zones** — the places where naive edits break distant things, each with *why*.
 - **Decision record** (check 4): the load-bearing decisions — context, choice, rejected alternatives, consequences. Include decisions that live only in your head/session; that's the knowledge that dies at retirement.
 - **State of the union** (check 5): what's done and verified; what's in flight (+ exact next step for each); known debt/bugs *honestly* — including the parts you're not proud of and the failure you expect first ("the cache layer will be the first thing to fall over under load, because…").
-- **Lessons file** (durable memory): one lesson per entry, one-line summary first — corrections learned, approaches confirmed, dead ends (so no one re-explores them). Don't duplicate what the repo already records; delete notes that proved wrong.
+- **Lessons** (durable memory): one lesson per file where the project's layout allows (or per independently deletable entry), one-line summary first — corrections learned, approaches confirmed, dead ends (so no one re-explores them). Don't duplicate what the repo already records; delete lessons that proved wrong — a wrong lesson must be removable without rewriting its neighbors.
 
 ### 3. Calibrate for a smaller model
 The successor may be a Sonnet-class session in Lite Mode. Therefore:
@@ -40,7 +40,7 @@ The successor may be a Sonnet-class session in Lite Mode. Therefore:
 - Point the successor at this skill: "run /fabled lite by default; /fabled full for anything in the danger zones."
 
 ### 4. Review the package
-Run Docs Lead + Test Lead + Cost Controller (`multi-agent-review.md`). The core question: *could a session with zero shared context execute the runbook and the first recipe?* Best check when affordable: a fresh-context subagent given only the package, asked to (a) say how it would do recipe #1 and (b) list what's missing. Fix what it stumbles on.
+Load `multi-agent-review.md` and run Docs Lead + Test Lead + Cost Controller. The core question: *could a session with zero shared context execute the runbook and the first recipe?* Best check when affordable: a fresh-context subagent given only the package, asked to (a) say how it would do recipe #1 and (b) list what's missing. Fix what it stumbles on.
 
 ### 5. Leave it better than you found it
 Retirement standard: stale docs corrected (don't let the handoff coexist with docs that lie), working note converted into durable records, scratch files cleaned up, and anything reusable promoted into the project's skills/docs so the knowledge compounds instead of evaporating.

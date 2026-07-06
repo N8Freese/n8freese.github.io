@@ -54,8 +54,8 @@ For: production down, user blocked, speed over completeness. Explicitly say "Eme
 1. **Stabilize before diagnosing** — if a rollback/revert/feature-flag-off restores service, propose it FIRST. Root cause comes after the bleeding stops.
 2. **Triage in 3 questions**: What changed most recently (deploy, config, dependency, data)? What does the error/log actually say (read it fully, don't skim)? Is it everywhere or scoped (one user, one node, one input class)?
 3. **Timebox hypotheses** — 2 discriminating checks per hypothesis max, then move to the next candidate.
-4. **Preserve evidence** — before restarting/clearing anything, capture logs and state. State-changing "quick tries" that destroy evidence are forbidden unless service restoration demands them.
-5. **Guardrails still hold**: no speculative fixes pushed to prod, no claim of "fixed" without observing recovery, destructive actions still need user confirmation.
+4. **Preserve evidence** — before restarting/clearing anything, capture logs and state. State-changing "quick tries" that destroy evidence are forbidden unless service restoration demands them — and even then, capture whatever logs/state you can first, and rule 5 still applies: user confirmation before any destructive or hard-to-reverse action.
+5. **Guardrails still hold**: no speculative fixes pushed to prod, no claim of "fixed" without observing recovery, destructive actions still need user confirmation. Before shipping the fix, run one Skeptic pass on the *diagnosis* (what evidence discriminates it from the next-best theory?).
 6. **Debrief after**: once stable, one short paragraph — root cause (or best current theory, labeled as such), what was done, what remains to harden. Schedule the real fix; an emergency patch is not a fix.
 
 ## When stuck (2+ dead hypotheses)
@@ -64,5 +64,5 @@ Escalation ladder from SKILL.md, debugging-specific ordering:
 1. Re-shrink the repro — a smaller failing case usually breaks the tie.
 2. List every assumption in the failing path; test the one you're *most sure of* that you never actually checked (that's where long bugs live).
 3. Diff against a working state: older commit, different environment, different input that works. What's the minimal delta?
-4. Fresh-context subagent: hand it ONLY the repro + observed vs expected. No history, no theories — your accumulated theories may be the contamination.
+4. Fresh-context subagent per `multi-agent-review.md` §Simulated vs. real: hand it ONLY the repro + observed vs expected — no history, no theories. (If subagents are unavailable, skip to 5.)
 5. Escalate to the user with: repro, evidence table (hypothesis → test → result), and the specific question or access you need.

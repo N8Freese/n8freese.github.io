@@ -62,4 +62,4 @@ Applies at system boundaries: user input, external APIs, file paths, subprocess/
 - Say what's good, once and briefly, if it's load-bearing ("the retry wrapper is exactly right — reuse it in the other client too").
 
 ### Reviewing your own diff (the refutation pass)
-Same passes, plus stance: **assume there is a bug and find it.** Read the diff as the person who will be paged when it breaks. The three most productive questions: What input did I never try? Which caller did I not check? What did I change my mind about halfway through (the seam where inconsistencies live)?
+Same passes, plus stance: **assume there is a bug and find it.** Read the diff as the person who will be paged when it breaks. Run the Skeptic question list (`multi-agent-review.md` §Skeptic) against your own diff, plus the self-review-only question: what did I change my mind about halfway through? — that seam is where inconsistencies live.
