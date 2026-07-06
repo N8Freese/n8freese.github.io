@@ -1,7 +1,9 @@
 .DS_Store
 *.log
 
-.claude/
+# Local Claude Code state stays private, but shared skills are versioned.
+.claude/*
+!.claude/skills/
 
 # Internal planning notes — never publish
 MISSING_PORTFOLIO_ITEMS.md
