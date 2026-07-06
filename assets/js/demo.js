@@ -21,9 +21,9 @@
       tab: "Artemis II Trajectory",
       title: "HW4_ArtemisII_March_11_Launch.m",
       lang: "MATLAB",
-      blurb: "An Artemis II–style translunar trajectory tool: propagates the spacecraft state under Earth, Moon, and Sun gravity (n-body) with tuned injection parameters to target a lunar free-return, the kind of orbital-mechanics analysis used in mission design.",
+      blurb: "An Artemis II-style translunar trajectory tool: propagates the spacecraft state under Earth, Moon, and Sun gravity (n-body) with tuned injection parameters to target a lunar free-return, the kind of orbital-mechanics analysis used in mission design.",
       src: "assets/code/artemis-ii-trajectory.m",
-      simCaption: "Live: the same RK4 propagation running in your browser — translunar injection, lunar flyby, free return.",
+      simCaption: "Live: the same RK4 propagation running in your browser. Translunar injection, lunar flyby, free return.",
     },
     {
       key: "uav-pid",
@@ -32,7 +32,7 @@
       lang: "MATLAB",
       blurb: "A multi-axis quadrotor flight controller: cascaded PID on roll, pitch, yaw, and altitude with anti-windup, setpoint tracking, and disturbance rejection (wind-gust torque + thrust loss), integrated in a fixed-step rigid-body simulation loop.",
       src: "assets/code/uav_pid_control.m",
-      simCaption: "Live: the closed-loop response — the quad tracks roll and altitude commands through a gust and a 15% thrust loss.",
+      simCaption: "Live: the closed-loop response. The quad tracks roll and altitude commands through a gust and a 15% thrust loss.",
     },
     {
       key: "project1",

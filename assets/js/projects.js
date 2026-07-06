@@ -12,7 +12,7 @@
  *   tagline     one-line summary shown on the card
  *   period      dates, e.g. "Jan 2026 – May 2026"
  *   role        your role on the project
- *   tags        array of short tech tags (CATIA, MATLAB, Rust, ...)
+ *   tags        array of short tech tags (CATIA, MATLAB, Python, ...)
  *   featured    true = larger card, shown first
  *   thumb       card image path (assets/img/...). Leave "" for a styled placeholder.
  *   accent      optional hex to tint the card/detail header
@@ -123,12 +123,12 @@ window.PROJECTS = [
     id: "mayott-uav",
     order: 2,
     title: "Mayott Aerospace: Heavy-Lift UAV",
-    category: "CAD & Software Engineer · Mayott Aerospace",
+    category: "CAD & Simulation Engineer · Mayott Aerospace",
     tagline:
-      "Frame CAD, Rust flight software, and an Unreal Engine 5 simulation pipeline for machine-learning obstacle avoidance on a heavy-lift UAV.",
+      "Frame and payload-attachment CAD plus a photorealistic Unreal Engine 5 simulation, integrated with PX4, for testing autonomous flight on a heavy-lift UAV.",
     period: "Apr 2026 – Present",
-    role: "CAD & Software Engineer",
-    tags: ["Rust", "Unreal Engine 5", "Machine Learning", "Fusion 360", "Real-time"],
+    role: "CAD & Simulation Engineer",
+    tags: ["Fusion 360", "SolidWorks", "Unreal Engine 5", "PX4", "Simulation"],
     featured: true,
     thumb: "assets/img/mayott-cover.jpg",
     accent: "#22c3a6",
@@ -137,28 +137,25 @@ window.PROJECTS = [
       { label: "Project overview (Prezi)", href: "https://prezi.com/view/GMI03G0bwPB44Vn5zlHD/?referral_token=o2aFxklnB3FN" },
     ],
     problem:
-      "Develop a heavy-lift UAV with a frame that is light yet structurally efficient, flight software that is memory-safe and real-time capable, and a simulation environment realistic enough to develop and validate autonomous obstacle avoidance before flight testing.",
+      "Develop a heavy-lift UAV with a frame and payload attachment system that are light yet structurally efficient, and a simulation environment realistic enough to test and validate autonomous flight capabilities before real flights.",
     approach: [
-      "Modeling heavy-lift UAV frame components in Fusion 360, optimizing geometry for weight and structural efficiency.",
-      "Developing flight software in Rust, targeting memory safety and deterministic real-time behavior.",
-      "Building a photorealistic flight-simulation environment in Unreal Engine 5 with Cosys-AirSim and Cesium global terrain, tied to the PX4 autopilot stack.",
-      "Developing machine-learning-based obstacle detection and avoidance, using simulated multi-camera feeds to train and evaluate the perception stack safely before real flights.",
-      "Bridging the mechanical, software, and simulation sides of the airframe as a single integrated design.",
+      "Modeling heavy-lift UAV frame components and a 300+ lb payload attachment system in Fusion 360 and SolidWorks, optimizing for strength-to-weight ratio and manufacturability.",
+      "Developing a photorealistic flight simulation in Unreal Engine 5 with Cosys-AirSim and Cesium global terrain, integrated with the PX4 autopilot.",
+      "Using the simulator for simulation-driven testing and validation of autonomous flight capabilities.",
     ],
-    tools: ["Rust", "Unreal Engine 5", "Cosys-AirSim", "Machine learning (perception)", "PX4", "Fusion 360", "Structural optimization"],
+    tools: ["Fusion 360", "SolidWorks", "Unreal Engine 5", "Cosys-AirSim", "PX4", "Structural optimization"],
     results: [
-      "Frame components modeled and iterated for a favorable strength-to-weight balance.",
-      "Flight software under active development in Rust for safety-critical, real-time operation.",
-      "Unreal Engine 5 simulation environment standing up the train-in-sim / validate-in-sim loop for ML obstacle avoidance.",
+      "Frame and payload-attachment components modeled and iterated for strength-to-weight and manufacturability.",
+      "Unreal Engine 5 + PX4 simulation environment supporting simulation-driven testing of autonomous flight.",
     ],
     learned:
-      "Owning the CAD, the flight software, and the simulation shows how tightly mechanical, software, and autonomy constraints couple on a real airframe — and why a high-fidelity simulator is the only safe place to iterate on ML-driven flight behavior.",
+      "Owning both the CAD and the simulation shows how tightly mechanical and autonomy constraints couple on a real airframe, and why a high-fidelity simulator is the safest place to test flight behavior before committing to hardware.",
     gallery: [
       {
         video: "assets/video/mayott-drone-demo-sample.mp4",
         poster: "assets/img/mayott-demo-poster.jpg",
         badge: "Sample",
-        caption: "Flight demonstration — 10-second sample clip (2026)",
+        caption: "Flight demonstration: 10-second sample clip (2026)",
       },
     ],
     needs: [],
@@ -170,7 +167,7 @@ window.PROJECTS = [
     title: "Avionics Test Automation",
     category: "System Engineering Intern · Collins Aerospace",
     tagline:
-      "Python test automation that cut a 301-file transponder test campaign's runtime by 50%, plus evaluation of an internal AI tool that drafts test procedures from system requirements.",
+      "Python test automation that cut a 301-file transponder test campaign's runtime by 50%, plus evaluation of an internal AI test-generation tool across 50+ requirements.",
     period: "May 2026 – Present",
     role: "System Engineering Intern",
     tags: ["Python", "Automation", "Verification", "AI evaluation", "Avionics"],
@@ -183,19 +180,19 @@ window.PROJECTS = [
     problem:
       "Improve the efficiency and traceability of transponder testing for next-generation avionics systems, and establish how well AI-assisted tooling can support a rigorous verification workflow.",
     approach: [
-      "Built Python automation that simulates keyboard/mouse input to execute a 301-file transponder test campaign, cutting test runtime by 50%.",
-      "Authored test cases and formal test procedures, tracking verification progress in JIRA and GitLab.",
-      "Verified, compared, and evaluated an internal Collins Aerospace AI tool that generates draft test procedures and test plans from system requirements and related documentation.",
-      "Assessed how accurately the tool interprets requirements across 50+ requirements, providing and implementing feedback that improved its accuracy and efficiency.",
+      "Developing Python automation that simulates keyboard/mouse input to run a 301-file transponder test campaign, cutting test runtime by 50%.",
+      "Developing formal verification procedures while tracking requirements and version control in Jama, JIRA, and GitLab.",
+      "Evaluating an internal Collins Aerospace AI tool that generates draft test procedures and plans from system requirements, comparing its output against engineer-authored baselines across 50+ requirements.",
+      "Implementing evaluation feedback that improved the tool's accuracy and efficiency.",
     ],
-    tools: ["Python", "JIRA", "GitLab", "Systems test procedures", "AI-assisted verification"],
+    tools: ["Python", "Jama", "JIRA", "GitLab", "Systems test procedures", "AI-assisted verification"],
     results: [
       "Automated a 301-file transponder test campaign, cutting runtime by 50%.",
-      "Evaluated the AI test-generation tool across 50+ requirements; feedback I provided and implemented improved its accuracy and efficiency.",
-      "Maintained verification artifacts — test cases, procedures, and JIRA/GitLab tracking — for next-gen avionics.",
+      "Evaluated the AI test-generation tool across 50+ requirements; implemented feedback improved its accuracy and efficiency.",
+      "Maintained verification artifacts (procedures, requirements tracking) in Jama, JIRA, and GitLab for next-gen avionics.",
     ],
     learned:
-      "Verification work shows how much of real avionics engineering is rigorous, traceable documentation — and evaluating an AI tool against that standard taught me to judge a test procedure by how faithfully it traces back to its requirements.",
+      "Verification work shows how much of real avionics engineering is rigorous, traceable documentation, and evaluating an AI tool against that standard taught me to judge a test procedure by how faithfully it traces back to its requirements.",
     gallery: [],
     needs: [],
   },
@@ -253,9 +250,9 @@ window.PROJECTS = [
     problem:
       "Contribute to the structure of an active-stabilization high-powered rocket and use flight/test data to drive continuous design improvement.",
     approach: [
-      "Built structural components of the rocket as part of a 10-student team.",
-      "Used Fusion 360 to refine the design and minimize aerodynamic forces.",
-      "Analyzed and documented test data in MATLAB to drive iterative improvements.",
+      "Contributed to the design, assembly, and testing of the active-stabilization system, including canard integration, within a 10-member team.",
+      "Modeled structural components in Fusion 360, refining the design to minimize aerodynamic forces.",
+      "Soldered avionics hardware and analyzed test data in MATLAB to drive iterative improvements.",
     ],
     tools: ["Fusion 360", "MATLAB", "Hand assembly / soldering"],
     results: [
@@ -265,7 +262,7 @@ window.PROJECTS = [
     learned:
       "My first hands-on rocketry team: it grounded my analysis work in the reality of building, testing, and iterating on physical hardware.",
     gallery: [
-      { model: "assets/rocket/spectre-full-assy.glb", feature: true, caption: "Spectre Mk1 — full airframe assembly (drag to rotate)" },
+      { model: "assets/rocket/spectre-full-assy.glb", feature: true, caption: "Spectre Mk1 full airframe assembly (drag to rotate)" },
       { model: "assets/rocket/spectre-canard.glb", caption: "Canard control surface, v4.0 (drag to rotate)" },
       { model: "assets/rocket/spectre-sm.glb", caption: "Service module (drag to rotate)" },
     ],
