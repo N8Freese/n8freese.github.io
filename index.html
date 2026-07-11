@@ -202,6 +202,24 @@
         <small>Interactive model requires WebGL &amp; JavaScript.</small>
       </div>
     </div>
+
+    <!-- Engine nozzle flow: quasi-1D isentropic sim (assets/js/nozzle-sim.js) -->
+    <div class="nozzlehome">
+      <h3 class="nozzlehome__title">Engine nozzle flow</h3>
+      <p class="section__hint">Quasi-1D isentropic flow through the vehicle's LOX/CH₄ engine bells, solved live from the area ratio at each station: slow flow is blue, and the supersonic expansion runs to red at the exit. Want a closer look at the engines? <a href="project.html?id=lunar-mission">View them in 3D in the case study →</a></p>
+      <div class="demos__run nozzlesim">
+        <div class="demo__bar"><span class="dots"><i></i><i></i><i></i></span>
+          <span class="codeview__name">quasi-1D isentropic flow — live</span>
+          <button type="button" class="demo__btn" data-nozzle-stage="S1" aria-pressed="true">Stage 1</button>
+          <button type="button" class="demo__btn" data-nozzle-stage="S2" aria-pressed="false">Stage 2</button>
+        </div>
+        <div class="nozzlesim__stage">
+          <canvas class="nozzlesim__canvas" data-nozzle></canvas>
+          <button type="button" class="demo__btn nozzlesim__play" data-nozzle-play aria-pressed="false">▶ Run simulation</button>
+        </div>
+        <p class="demos__cap">Actual Rao bell contours from our engine design (Rt = 132.3 mm; stage 1 ε = 40 sea-level bell, stage 2 ε = 100 vacuum bell; γ = 1.2 LOX/CH₄ combustion products). A 1D flow model, not CFD.</p>
+      </div>
+    </div>
   </section>
 
   <!-- EXPERIENCE -->
@@ -286,6 +304,7 @@
   <script src="assets/js/codeviewer.js"></script>
   <script src="assets/js/sims.js"></script>
   <script src="assets/js/demo.js"></script>
+  <script src="assets/js/nozzle-sim.js"></script>
   <script type="module" src="assets/js/rocket3d.js"></script>
 </body>
 </html>

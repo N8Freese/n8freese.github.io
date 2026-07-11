@@ -684,7 +684,10 @@ img { max-width: 100%; display: block; }
 /* PDR / document button on case studies */
 .pdr__btn { margin-top: 4px; }
 
-/* ---------- Nozzle flow sim (case study) --------------------------------- */
+/* ---------- Nozzle flow sim (homepage, under the 3D model) ---------------- */
+.nozzlehome { margin-top: clamp(36px, 6vw, 56px); }
+.nozzlehome__title { font-size: 1.3rem; margin: 0 0 10px; }
+.nozzlehome .section__hint { margin-bottom: 20px; max-width: none; }
 .nozzlesim { margin-top: 4px; }
 .nozzlesim__stage { position: relative; }
 .nozzlesim__canvas { display: block; width: 100%; height: 340px; }

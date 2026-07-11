@@ -54,7 +54,6 @@
     p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
     galleryBlock(p.gallery),
-    p.nozzle ? block("Nozzle flow simulation", nozzleBlock(p.nozzle)) : "",
     p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
     pager(prev, next),
   ].join("");
@@ -109,22 +108,6 @@
   function codeBlock(code) {
     return '<div id="codeview" class="codeview">' +
       '<div class="codeview__loading">Loading ' + esc(code.title) + " …</div></div>";
-  }
-
-  // Live quasi-1D nozzle-flow panel (solver + renderer in nozzle-sim.js)
-  function nozzleBlock(nz) {
-    return '<div class="demos__run nozzlesim">' +
-      '<div class="demo__bar"><span class="dots"><i></i><i></i><i></i></span>' +
-      '<span class="codeview__name">quasi-1D isentropic flow — live</span>' +
-      '<button type="button" class="demo__btn" data-nozzle-stage="S1" aria-pressed="true">Stage 1</button>' +
-      '<button type="button" class="demo__btn" data-nozzle-stage="S2" aria-pressed="false">Stage 2</button>' +
-      "</div>" +
-      '<div class="nozzlesim__stage">' +
-        '<canvas class="nozzlesim__canvas" data-nozzle></canvas>' +
-        '<button type="button" class="demo__btn nozzlesim__play" data-nozzle-play aria-pressed="false">▶ Run simulation</button>' +
-      "</div>" +
-      (nz.caption ? '<p class="demos__cap">' + esc(nz.caption) + "</p>" : "") +
-      "</div>";
   }
 
   function pdrBlock(pdr) {

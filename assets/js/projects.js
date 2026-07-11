@@ -78,10 +78,6 @@ window.PROJECTS = [
       { model: "assets/rocket/prelim-stage1-engine.glb", caption: "Stage 1 engine (drag to rotate)" },
       { model: "assets/rocket/prelim-stage2-engine.glb", caption: "Stage 2 engine (drag to rotate)" },
     ],
-    nozzle: {
-      caption:
-        "Quasi-1D isentropic flow through the actual Rao bell contours from our engine design (Rt = 132.3 mm; stage 1 ε = 40 sea-level bell, stage 2 ε = 100 vacuum bell; γ = 1.2 LOX/CH₄ combustion products). Mach number is solved from the area ratio at each station: slow flow is blue, and the supersonic expansion runs to red at the exit. A 1D flow model, not CFD.",
-    },
     needs: [
       "Optional: any sizing/trade-study plots from MATLAB - .png",
     ],
