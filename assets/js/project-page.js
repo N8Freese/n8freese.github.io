@@ -53,6 +53,10 @@
     p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
     p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
+    p.modelNote
+      ? '<p class="detail__xlink">' + esc(p.modelNote.text) +
+        ' <a href="' + esc(p.modelNote.href) + '">' + esc(p.modelNote.label) + " →</a></p>"
+      : "",
     galleryBlock(p.gallery),
     p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
     pager(prev, next),

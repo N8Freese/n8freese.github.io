@@ -44,6 +44,11 @@ window.PROJECTS = [
     accent: "#7c5cff",
     demo: "",
     model: "assets/rocket/full-launch-vehicle.glb",
+    modelNote: {
+      text: "Want the full exploded view of the launch stack, or to run the engine nozzle flow simulation live?",
+      label: "Open the interactive section on the homepage",
+      href: "index.html#rocket",
+    },
     links: [],
     problem:
       "Design a crewed two-stage launch vehicle capable of delivering a crew to the lunar surface and returning them safely, covering every phase from launch through splashdown, while meeting a fixed set of mission requirements.",
@@ -202,7 +207,7 @@ window.PROJECTS = [
   {
     id: "artemis-rocket",
     order: 5,
-    title: "ERFSEDS Artemis Rocket",
+    title: "ERFSEDS Artemini Rocket",
     category: "Manufacturing Member · ERAU",
     tagline:
       "Scaled-down Artemis rocket: 3-D models in CATIA V5 / SolidWorks and OpenRocket flight optimization with a 15-student team.",
@@ -229,7 +234,7 @@ window.PROJECTS = [
     ],
     learned:
       "Working within a 15-person build team taught me how design changes ripple through manufacturing and integration, and the value of simulation before you cut hardware.",
-    gallery: [{ src: "assets/img/artemis.jpg", caption: "Artemis rocket CAD / build photo" }],
+    gallery: [{ src: "assets/img/artemis.jpg", caption: "Artemini rocket CAD / build photo" }],
     needs: ["Photo or CAD render of the rocket - .jpg / .png"],
   },
 
