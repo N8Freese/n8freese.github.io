@@ -10,7 +10,7 @@
   <meta name="author" content="Nathanyl Freese" />
   <meta name="keywords" content="aerospace engineer, spacecraft systems, CAD, CATIA, MATLAB, Unreal Engine, NASA, launch vehicle, robotics, UAV, FEA, portfolio" />
   <link rel="canonical" href="https://n8freese.github.io/" />
-  <meta name="theme-color" content="#0c0d0f" />
+  <meta name="theme-color" content="#f7f8fa" />
 
   <!-- Security: strict same-origin content policy (hash allows the import map below).
        GitHub Pages can't set response headers, so this is delivered via meta tags. -->
@@ -30,6 +30,8 @@
 
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- Applies light/dark mode before first paint (saved choice or OS preference) -->
+  <script src="assets/js/theme.js"></script>
 
   <!-- Structured data for richer search results -->
   <script type="application/ld+json">
@@ -43,8 +45,7 @@
     "url": "https://n8freese.github.io/",
     "alumniOf": "Embry-Riddle Aeronautical University",
     "sameAs": [
-      "https://www.linkedin.com/in/nathanyl-freese/",
-      "https://github.com/N8Freese"
+      "https://www.linkedin.com/in/nathanyl-freese/"
     ]
   }
   </script>
@@ -69,52 +70,54 @@
       <a href="#projects">Projects</a>
       <a href="#experience">Experience</a>
       <a href="#contact">Contact</a>
-      <a class="btn" href="assets/Nate_Freese_Resume.pdf" download>Resume</a>
+      <a class="btn" href="assets/nathanyl_freese_resume.pdf" download>Resume</a>
+      <button class="nav__theme" type="button" aria-label="Switch to dark mode">
+        <svg class="ico-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="ico-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
     </nav>
   </header>
 
   <!-- HERO -->
   <section id="top" class="hero">
-    <div class="hero__grid" aria-hidden="true"></div>
-    <div class="hero__inner reveal">
+    <div class="hero__inner">
       <h1 class="hero__name">Nathanyl <span class="accent">“Nate”</span> Freese</h1>
       <p class="hero__pitch">
         Aerospace engineer building <strong>spacecraft systems, launch vehicles, and flight simulation</strong>, from CAD and FEA to autonomous flight testing.
       </p>
       <p class="hero__sub">
-        Currently a System Engineering Intern at Collins Aerospace. Previously built mission-visualization tools at NASA Johnson Space Center, led a crewed lunar-vehicle preliminary design, and develop CAD and Unreal Engine 5 simulation for autonomous heavy-lift UAVs.
+        Currently a System Engineering Intern at Collins Aerospace and a CAD &amp; Simulation Engineer for heavy-lift UAVs at Mayott Aerospace. Previously built mission-visualization tools at NASA Johnson Space Center and led a crewed lunar-vehicle preliminary design.
       </p>
       <div class="hero__cta">
         <a class="btn" href="#projects">View Projects</a>
-        <a class="btn btn--ghost" href="assets/Nate_Freese_Resume.pdf" download>Download Resume (PDF)</a>
+        <a class="btn btn--ghost" href="assets/nathanyl_freese_resume.pdf" download>Download Resume (PDF)</a>
       </div>
       <div class="hero__links">
         <a href="mailto:nathanylfreese@gmail.com"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>
         <a href="https://www.linkedin.com/in/nathanyl-freese/" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.72C24 .77 23.2 0 22.22 0Z"/></svg>LinkedIn</a>
-        <a href="https://github.com/N8Freese" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub</a>
       </div>
       <div class="hero__stats">
         <div class="hero__stat"><div class="n">3.97</div><div class="l">GPA · Tau Beta Pi</div></div>
         <div class="hero__stat"><div class="n">2</div><div class="l">Internships · KBR &amp; Collins</div></div>
-        <div class="hero__stat"><div class="n">8</div><div class="l">Engineering projects</div></div>
+        <div class="hero__stat"><div class="n">7</div><div class="l">Engineering projects</div></div>
       </div>
     </div>
   </section>
 
   <!-- ABOUT -->
   <section id="about" class="section">
-    <p class="section__eyebrow reveal">About</p>
-    <h2 class="section__title reveal">Engineer across the full stack: hardware to software.</h2>
+    <p class="section__eyebrow">About</p>
+    <h2 class="section__title">Engineer across the full stack: hardware to software.</h2>
     <div class="about" style="margin-top:28px">
-      <div class="about__photo reveal" aria-label="Nate Freese headshot">
+      <div class="about__photo" aria-label="Nate Freese headshot">
         <img src="assets/img/headshot.jpg" alt="Nate Freese" />
       </div>
-      <div class="about__text reveal" data-delay="1">
+      <div class="about__text">
         <p>
           I'm an <strong>Aerospace Engineering</strong> Student at <strong>Embry-Riddle (GPA 3.97, Tau Beta Pi)</strong>, graduating December 2026. I'm happiest at the intersection of <strong>spacecraft systems, structural design, and software</strong>: the work that turns mission requirements into hardware that flies.
         </p>
         <p>
-          At <strong>NASA Johnson Space Center</strong> I built Python/PyQt5 visualization tools used in controller training and simulated missions, and optimized one for a <strong>13× performance gain</strong>. I led a 6-person team through the preliminary design of a crewed two-stage LOX/CH₄ lunar vehicle, and I currently develop CAD and an Unreal Engine 5 + PX4 simulation environment for autonomous flight testing on heavy-lift UAVs at <strong>Mayott Aerospace</strong> while interning in systems engineering at <strong>Collins Aerospace</strong>.
+          Right now I'm a System Engineering Intern at <strong>Collins Aerospace</strong>, building Python test automation and evaluating AI-assisted verification tooling, and I develop CAD and an Unreal Engine 5 + PX4 simulation environment for autonomous flight testing on heavy-lift UAVs at <strong>Mayott Aerospace</strong>. Before that I built Python/PyQt5 visualization tools at <strong>NASA Johnson Space Center</strong> used in controller training and simulated missions, optimizing one for a <strong>13× performance gain</strong>, and led a 6-person team through the preliminary design of a crewed two-stage LOX/CH₄ lunar vehicle.
         </p>
         <div class="about__focus">
           <span class="chip">Spacecraft systems</span>
@@ -131,28 +134,28 @@
 
   <!-- SKILLS -->
   <section id="skills" class="section">
-    <p class="section__eyebrow reveal">Skills</p>
-    <h2 class="section__title reveal">Toolset</h2>
+    <p class="section__eyebrow">Skills</p>
+    <h2 class="section__title">Toolset</h2>
     <div class="skills" style="margin-top:28px">
-      <div class="skills__group reveal" data-delay="0">
+      <div class="skills__group">
         <h3><span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4.5v11L12 22l-8-4.5v-11L12 2Z"/><path d="M12 22V11.5M4 6.5l8 5 8-5"/></svg></span> CAD &amp; Design</h3>
         <div class="skills__list">
           <span>CATIA V5</span><span>SolidWorks</span><span>Fusion 360</span><span>Creo Parametric</span>
         </div>
       </div>
-      <div class="skills__group reveal" data-delay="1">
+      <div class="skills__group">
         <h3><span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-6 3 3 5-7"/></svg></span> Analysis &amp; Simulation</h3>
         <div class="skills__list">
           <span>MATLAB</span><span>NASTRAN</span><span>Ansys Fluent</span><span>NASA CEA</span><span>OpenRocket</span><span>Unreal Engine 5</span><span>Cosys-AirSim</span><span>PX4</span>
         </div>
       </div>
-      <div class="skills__group reveal" data-delay="2">
+      <div class="skills__group">
         <h3><span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg></span> Programming</h3>
         <div class="skills__list">
           <span>Python</span><span>C</span><span>MATLAB</span><span>PyQt5</span>
         </div>
       </div>
-      <div class="skills__group reveal" data-delay="0">
+      <div class="skills__group">
         <h3><span class="ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg></span> Tools &amp; Workflow</h3>
         <div class="skills__list">
           <span>GitHub</span><span>GitLab</span><span>SVN</span><span>JIRA</span><span>JAMA</span><span>Linux CLI</span><span>VS Code</span>
@@ -163,9 +166,9 @@
 
   <!-- PROJECTS -->
   <section id="projects" class="section">
-    <p class="section__eyebrow reveal">Projects</p>
-    <h2 class="section__title reveal">Selected work</h2>
-    <p class="section__hint reveal">Spacecraft, launch vehicles, robotics, and simulation. Click any project for the full case study.</p>
+    <p class="section__eyebrow">Projects</p>
+    <h2 class="section__title">Selected work</h2>
+    <p class="section__hint">Spacecraft, launch vehicles, robotics, and simulation. Click any project for the full case study.</p>
     <div class="projects" id="projects-grid">
       <!-- Cards are generated from assets/js/projects.js -->
       <noscript><p style="color:var(--muted)">Enable JavaScript to view projects, or see the resume PDF.</p></noscript>
@@ -174,18 +177,18 @@
 
   <!-- ENGINEERING DEMOS (tabbed) -->
   <section class="section section--feature">
-    <p class="section__eyebrow reveal">Interactive</p>
-    <h2 class="section__title reveal">Code showcase: engineering MATLAB</h2>
-    <p class="section__hint reveal">A few representative MATLAB projects. Each tab pairs the source with a live simulation of what it computes: the same equations, ported to JavaScript and running in your browser. The display plays automatically as you scroll past; use Replay to run it again, and click the code to expand the full source.</p>
-    <div data-demo-tabs class="reveal"></div>
+    <p class="section__eyebrow">Interactive</p>
+    <h2 class="section__title">Code showcase: engineering MATLAB</h2>
+    <p class="section__hint">A few representative MATLAB projects. Each tab pairs the source with a live simulation of what it computes: the same equations, ported to JavaScript and running in your browser. The display plays automatically as you scroll past; use Replay to run it again, and click the code to expand the full source.</p>
+    <div data-demo-tabs></div>
   </section>
 
   <!-- 3D ROCKET MODEL -->
   <section id="rocket" class="section">
-    <p class="section__eyebrow reveal">3D Model</p>
-    <h2 class="section__title reveal">Crewed lunar launch vehicle: interactive 3D</h2>
-    <p class="section__hint reveal">Auto-rotating · click or tap the model to explode it into its components and reassemble · switch between the launch stack and the on-orbit refuel &amp; crew configuration. Zoom is disabled for a stable view.</p>
-    <div id="rocket-viewer" class="rocket-viewer reveal" data-rocket>
+    <p class="section__eyebrow">3D Model</p>
+    <h2 class="section__title">Crewed lunar launch vehicle: interactive 3D</h2>
+    <p class="section__hint">Auto-rotating · click or tap the model to explode it into its components and reassemble · switch between the launch stack and the on-orbit refuel &amp; crew configuration. Zoom is disabled for a stable view.</p>
+    <div id="rocket-viewer" class="rocket-viewer" data-rocket>
       <div class="rocket-viewer__controls">
         <div class="rocket-viewer__seg" role="tablist" aria-label="Select vehicle">
           <button class="is-active" data-model="0" type="button" aria-selected="true">Launch vehicle</button>
@@ -203,9 +206,9 @@
 
   <!-- EXPERIENCE -->
   <section id="experience" class="section">
-    <p class="section__eyebrow reveal">Experience</p>
-    <h2 class="section__title reveal">Where I've worked</h2>
-    <div class="timeline reveal" style="margin-top:32px">
+    <p class="section__eyebrow">Experience</p>
+    <h2 class="section__title">Where I've worked</h2>
+    <div class="timeline" style="margin-top:32px">
       <div class="timeline__item">
         <span class="timeline__logo" aria-hidden="true"><img src="assets/img/logos/collins.svg" alt="" loading="lazy" /></span>
         <div class="timeline__head">
@@ -215,7 +218,7 @@
         <p class="timeline__place">Melbourne, FL</p>
         <ul>
           <li>Developing Python automation simulating keyboard/mouse input to run 301 transponder test files, cutting test runtime by <strong>50%</strong>.</li>
-          <li>Evaluating an internal AI test-case generation tool across <strong>50+ requirements</strong>, implementing feedback to improve accuracy.</li>
+          <li>Evaluating an internal AI test-case generation tool across <strong>86 requirements</strong> and multiple systems, implementing feedback to improve output accuracy.</li>
           <li>Developing formal verification procedures while tracking requirements and version control in Jama, JIRA, and GitLab.</li>
         </ul>
       </div>
@@ -249,9 +252,9 @@
 
   <!-- EDUCATION -->
   <section id="education" class="section">
-    <p class="section__eyebrow reveal">Education</p>
-    <h2 class="section__title reveal">Academics</h2>
-    <div class="edu reveal" style="margin-top:24px">
+    <p class="section__eyebrow">Education</p>
+    <h2 class="section__title">Academics</h2>
+    <div class="edu" style="margin-top:24px">
       <div>
         <h3>Embry-Riddle Aeronautical University</h3>
         <p class="edu__meta">B.S. Aerospace Engineering · Daytona Beach Campus · Expected December 2026</p>
@@ -266,16 +269,15 @@
 
   <!-- CONTACT -->
   <footer id="contact" class="contact">
-    <div class="contact__inner reveal">
-      <h2 class="contact__title">Let's build something.</h2>
-      <p class="contact__text">Open to aerospace, robotics, and software/hardware engineering opportunities. The fastest way to reach me is email.</p>
+    <div class="contact__inner">
+      <h2 class="contact__title">Get in touch.</h2>
+      <p class="contact__text">Open to systems, aerospace, manufacturing, UAV, and propulsion engineering opportunities. The fastest way to reach me is email.</p>
       <div class="contact__links">
         <a class="iconlink" href="mailto:nathanylfreese@gmail.com"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>nathanylfreese@gmail.com</a>
         <a class="iconlink" href="https://www.linkedin.com/in/nathanyl-freese/" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.72C24 .77 23.2 0 22.22 0Z"/></svg>LinkedIn</a>
-        <a class="iconlink" href="https://github.com/N8Freese" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub</a>
-        <a class="iconlink" href="assets/Nate_Freese_Resume.pdf" download><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5"/><path d="M4 21h16"/></svg>Resume</a>
+        <a class="iconlink" href="assets/nathanyl_freese_resume.pdf" download><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5"/><path d="M4 21h16"/></svg>Resume</a>
       </div>
-      <p class="footer__note">© <span id="year"></span> Nathanyl Freese · Built with plain HTML, CSS &amp; JS on GitHub Pages</p>
+      <p class="footer__note">© <span id="year"></span> Nathanyl Freese</p>
     </div>
   </footer>
 

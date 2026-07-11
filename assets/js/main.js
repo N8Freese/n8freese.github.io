@@ -2,7 +2,6 @@
  * main.js - homepage behavior
  *   · footer year
  *   · sticky-nav shadow + mobile menu
- *   · scroll-reveal animations (IntersectionObserver)
  *   · render project cards from assets/js/projects.js
  * (The homepage 3D launch-vehicle viewer is handled by assets/js/rocket3d.js.)
  * ==========================================================================*/
@@ -36,30 +35,13 @@
     }
   }
 
-  /* ---- Scroll-reveal --------------------------------------------------- */
-  var reveals = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window && reveals.length) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add("is-visible"); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add("is-visible"); });
-  }
-
   /* ---- Render project cards ------------------------------------------- */
   var grid = document.getElementById("projects-grid");
   if (grid && window.PROJECTS) {
-    var ordered = window.PROJECTS.slice().sort(function (a, b) {
+    var ordered = window.PROJECTS.filter(function (p) { return !p.hidden; }).sort(function (a, b) {
       return (a.order || 99) - (b.order || 99);
     });
     grid.innerHTML = ordered.map(cardHTML).join("");
-    // reveal newly added cards
-    grid.querySelectorAll(".reveal").forEach(function (el) {
-      if (io) io.observe(el); else el.classList.add("is-visible");
-    });
     // thumbnail fallback (no inline handlers — CSP-safe)
     grid.querySelectorAll("img[data-fallback]").forEach(function (img) {
       img.addEventListener("error", function () {
@@ -75,7 +57,7 @@
     });
   }
 
-  function cardHTML(p, i) {
+  function cardHTML(p) {
     var media = p.thumbStyle === "logo" && p.thumb
       ? '<div class="card__logo"><img src="' + esc(p.thumb) + '" alt="' + esc(p.title) + ' logo" loading="lazy"></div>'
       : p.thumb
@@ -88,7 +70,7 @@
       ? '<span class="card__period">' + esc(p.period) + "</span>" : "";
 
     return (
-      '<article class="card reveal' + (p.featured ? " card--featured" : "") + '" data-delay="' + (i % 3) + '">' +
+      '<article class="card' + (p.featured ? " card--featured" : "") + '">' +
         '<a class="card__medialink" href="project.html?id=' + esc(p.id) + '" aria-label="' + esc(p.title) + '">' +
           '<div class="card__media' + (p.thumbFit === "contain" ? " card__media--contain" : "") + '">' + media + period + "</div>" +
         "</a>" +

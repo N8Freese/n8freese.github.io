@@ -2,7 +2,7 @@ clc;
 clear;
 close all;
 
-%% ==================== TUNING KNOBS (APRIL 3 LAUNCH) ====================
+%% Tuning knobs (April 3 launch)
 v_mag = 10.84;
 lead_angle_deg = 111.0;
 v_plane_nudge = -0.03;
@@ -13,20 +13,20 @@ tf_days = 10.0;
 tf = tf_days * 86400;
 
 % Constants
-muE   = 398600;          % Earth GM [km^3/s^2]
-muM   = 4903;            % Moon GM [km^3/s^2]
-muS   = 132712440018;    % Sun GM [km^3/s^2]
-rE    = 6378;            % Earth radius [km]
-rMoon = 384400;          % Mean Earth-Moon distance [km]
-rMphys = 1737.4;         % Moon physical radius [km]
-AU    = 149597870.7;     % Astronomical unit [km]
+muE = 398600; % Earth GM [km^3/s^2]
+muM = 4903; % Moon GM [km^3/s^2]
+muS = 132712440018; % Sun GM [km^3/s^2]
+rE = 6378; % Earth radius [km]
+rMoon = 384400; % mean Earth-Moon distance [km]
+rMphys = 1737.4; % Moon physical radius [km]
+AU = 149597870.7; % astronomical unit [km]
 
-h = 150;                 % RK4 step size [s]
+h = 150; % RK4 step size [s]
 tspan = t0:h:tf;
 
 use_sun_gravity = false; % true = include solar third-body gravity
 
-%% ==================== MOON & SUN DATA ====================
+%% Moon & Sun ephemeris data
 moon_raw_data = [
 16 55 16.21 -27 51 57.8
 17 49 02.67 -28 23 50.9
@@ -60,16 +60,16 @@ sun_raw_data = [
 % one ephemeris point per day
 t_pts = (0:size(moon_raw_data,1)-1) * 86400;
 
-%% ==================== PARSE MOON DATA ====================
-RA_deg_M  = 15 * (moon_raw_data(:,1) + moon_raw_data(:,2)/60 + moon_raw_data(:,3)/3600);
+%% Parse Moon data
+RA_deg_M = 15 * (moon_raw_data(:,1) + moon_raw_data(:,2)/60 + moon_raw_data(:,3)/3600);
 DEC_deg_M = signed_dms_to_deg(moon_raw_data(:,4), moon_raw_data(:,5), moon_raw_data(:,6));
 
 mx_pts = rMoon .* cosd(DEC_deg_M) .* cosd(RA_deg_M);
 my_pts = rMoon .* cosd(DEC_deg_M) .* sind(RA_deg_M);
 mz_pts = rMoon .* sind(DEC_deg_M);
 
-%% ==================== PARSE SUN DATA ====================
-RA_deg_S  = 15 * (sun_raw_data(:,1) + sun_raw_data(:,2)/60 + sun_raw_data(:,3)/3600);
+%% Parse Sun data
+RA_deg_S = 15 * (sun_raw_data(:,1) + sun_raw_data(:,2)/60 + sun_raw_data(:,3)/3600);
 DEC_deg_S = signed_dms_to_deg(sun_raw_data(:,4), sun_raw_data(:,5), sun_raw_data(:,6));
 
 % Your table does not include Sun range, so assume 1 AU
@@ -79,14 +79,14 @@ sx_pts = rSun .* cosd(DEC_deg_S) .* cosd(RA_deg_S);
 sy_pts = rSun .* cosd(DEC_deg_S) .* sind(RA_deg_S);
 sz_pts = rSun .* sind(DEC_deg_S);
 
-%% ==================== INITIAL SPACECRAFT STATE ====================
+%% Initial spacecraft state
 % Moon position at t0
 m0 = [interp1(t_pts, mx_pts, t0, 'pchip');
       interp1(t_pts, my_pts, t0, 'pchip');
       interp1(t_pts, mz_pts, t0, 'pchip')];
 
 % Better Moon velocity estimate using central difference
-dtVel = 43200;   % 12 hr
+dtVel = 43200; % 12 hr
 m_minus = [interp1(t_pts, mx_pts, t0 - dtVel, 'pchip', 'extrap');
            interp1(t_pts, my_pts, t0 - dtVel, 'pchip', 'extrap');
            interp1(t_pts, mz_pts, t0 - dtVel, 'pchip', 'extrap')];
@@ -126,19 +126,19 @@ v0 = v_mag * that0 + v_plane_nudge * hhat;
 ySC = zeros(6, numel(tspan));
 ySC(:,1) = [r0; v0];
 
-%% ==================== RK4 SOLVER WITH IMPACT STOP ====================
+%% RK4 solver with impact stop
 hitEarth = false;
-hitMoon  = false;
-stopIdx  = numel(tspan);
+hitMoon = false;
+stopIdx = numel(tspan);
 
 for i = 1:numel(tspan)-1
     ti = tspan(i);
     yi = ySC(:,i);
 
-    k1 = trajectory(ti,     yi,         t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
-    k2 = trajectory(ti+h/2, yi+h*k1/2,  t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
-    k3 = trajectory(ti+h/2, yi+h*k2/2,  t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
-    k4 = trajectory(ti+h,   yi+h*k3,    t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
+    k1 = trajectory(ti, yi, t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
+    k2 = trajectory(ti+h/2, yi+h*k1/2, t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
+    k3 = trajectory(ti+h/2, yi+h*k2/2, t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
+    k4 = trajectory(ti+h, yi+h*k3, t_pts, mx_pts, my_pts, mz_pts, sx_pts, sy_pts, sz_pts, muE, muM, muS, use_sun_gravity);
 
     y_next = yi + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
     ySC(:,i+1) = y_next;
@@ -163,10 +163,10 @@ for i = 1:numel(tspan)-1
 end
 
 % Trim arrays so no post-impact junk gets plotted
-ySC   = ySC(:,1:stopIdx);
+ySC = ySC(:,1:stopIdx);
 tspan = tspan(1:stopIdx);
 
-%% ==================== CLOSEST APPROACH TO MOON ====================
+%% Closest approach to the Moon
 m_path = zeros(numel(tspan), 3);
 dist = zeros(1, numel(tspan));
 
@@ -193,12 +193,10 @@ else
     fprintf('Integration completed full time span.\n');
 end
 
-%% ==================== PLOTS ====================
+%% Plots
 [xe, ye, ze] = sphere(40);
 
-% ---------------------------------------------------------
-% FIGURE 1: EARTH-MOON VIEW
-% ---------------------------------------------------------
+% Figure 1: Earth-Moon view
 figure('Color','w','Name','Earth-Moon View');
 hold on;
 grid on;
@@ -225,9 +223,7 @@ zlim([-lim lim]);
 legend('Earth','Moon Trajectory', ...
        'Moon', 'Spacecraft Trajectory', 'Location', 'best');
 
-% ---------------------------------------------------------
-% FIGURE 2: SOLAR SYSTEM SCALE VIEW
-% ---------------------------------------------------------
+% Figure 2: solar system scale view
 figure('Color','w','Name','Solar System View');
 hold on;
 grid on;
@@ -248,7 +244,7 @@ zlabel('z [km]');
 legend('Earth', 'Moon Trajectory', 'Spacecraft Trajectory', 'Sun', ...
        'Line of Sight to Sun', 'Location', 'best');
 
-%% ==================== DYNAMICS FUNCTION ====================
+%% Dynamics function
 function dydt = trajectory(t, y, t_pts, mx, my, mz, sx, sy, sz, muE, muM, muS, use_sun)
     rv = y(1:3);
     vv = y(4:6);
@@ -273,14 +269,14 @@ function dydt = trajectory(t, y, t_pts, mx, my, mz, sx, sy, sz, muE, muM, muS, u
     dydt = [vv; aE + aM + aS];
 end
 
-%% ==================== HELPER: SIGNED DEC PARSER ====================
+%% Helper: signed DEC parser
 function dec_deg = signed_dms_to_deg(d, m, s)
     sgn = ones(size(d));
     sgn(d < 0) = -1;
     dec_deg = sgn .* (abs(d) + m/60 + s/3600);
 end
 
-%% ==================== HELPER: RODRIGUES ROTATION ====================
+%% Helper: Rodrigues rotation
 function v_rot = rodrigues_rotate(v, k, theta)
     k = k / norm(k);
     v_rot = v*cos(theta) + cross(k, v)*sin(theta) + k*dot(k, v)*(1 - cos(theta));

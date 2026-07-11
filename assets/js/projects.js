@@ -75,10 +75,14 @@ window.PROJECTS = [
       blurb: "Full Preliminary Design Review covering the vehicle architecture, staging, propulsion, and subsystem trades.",
     },
     gallery: [
-      { src: "assets/img/lunar-engine.png", caption: "Engine assembly detail" },
+      { model: "assets/rocket/prelim-stage1-engine.glb", caption: "Stage 1 engine (drag to rotate)" },
+      { model: "assets/rocket/prelim-stage2-engine.glb", caption: "Stage 2 engine (drag to rotate)" },
     ],
+    nozzle: {
+      caption:
+        "Quasi-1D isentropic flow through the actual Rao bell contours from our engine design (Rt = 132.3 mm; stage 1 ε = 40 sea-level bell, stage 2 ε = 100 vacuum bell; γ = 1.2 LOX/CH₄ combustion products). Mach number is solved from the area ratio at each station: slow flow is blue, and the supersonic expansion runs to red at the exit. A 1D flow model, not CFD.",
+    },
     needs: [
-      "Optional: a high-res CAD render/screenshot for the card & gallery - .png",
       "Optional: any sizing/trade-study plots from MATLAB - .png",
     ],
   },
@@ -128,7 +132,7 @@ window.PROJECTS = [
       "Frame and payload-attachment CAD plus a photorealistic Unreal Engine 5 simulation, integrated with PX4, for testing autonomous flight on a heavy-lift UAV.",
     period: "Apr 2026 – Present",
     role: "CAD & Simulation Engineer",
-    tags: ["Fusion 360", "SolidWorks", "Unreal Engine 5", "PX4", "Simulation"],
+    tags: ["SolidWorks", "Unreal Engine 5", "PX4", "Cosys-AirSim", "Simulation"],
     featured: true,
     thumb: "assets/img/mayott-cover.jpg",
     accent: "#22c3a6",
@@ -139,13 +143,15 @@ window.PROJECTS = [
     problem:
       "Develop a heavy-lift UAV with a frame and payload attachment system that are light yet structurally efficient, and a simulation environment realistic enough to test and validate autonomous flight capabilities before real flights.",
     approach: [
-      "Modeling heavy-lift UAV frame components and a 300+ lb payload attachment system in Fusion 360 and SolidWorks, optimizing for strength-to-weight ratio and manufacturability.",
+      "Designing mounting systems to evaluate optimal sensor placement and achieve full 360-degree coverage for future autonomous flight operations.",
+      "Modeling heavy-lift frame components and a payload attachment system designed to hold up to 300 lb in SolidWorks.",
       "Developing a photorealistic flight simulation in Unreal Engine 5 with Cosys-AirSim and Cesium global terrain, integrated with the PX4 autopilot.",
       "Using the simulator for simulation-driven testing and validation of autonomous flight capabilities.",
     ],
-    tools: ["Fusion 360", "SolidWorks", "Unreal Engine 5", "Cosys-AirSim", "PX4", "Structural optimization"],
+    tools: ["SolidWorks", "Unreal Engine 5", "Cosys-AirSim", "PX4"],
     results: [
-      "Frame and payload-attachment components modeled and iterated for strength-to-weight and manufacturability.",
+      "Frame components and a payload attachment system modeled in SolidWorks to carry payloads up to 300 lb.",
+      "Sensor mounting concepts sized for full 360-degree coverage in future autonomous flight operations.",
       "Unreal Engine 5 + PX4 simulation environment supporting simulation-driven testing of autonomous flight.",
     ],
     learned:
@@ -167,7 +173,7 @@ window.PROJECTS = [
     title: "Avionics Test Automation",
     category: "System Engineering Intern · Collins Aerospace",
     tagline:
-      "Python test automation that cut a 301-file transponder test campaign's runtime by 50%, plus evaluation of an internal AI test-generation tool across 50+ requirements.",
+      "Python test automation that cut a 301-file transponder test campaign's runtime by 50%, plus evaluation of an internal AI test-generation tool across 86 requirements.",
     period: "May 2026 – Present",
     role: "System Engineering Intern",
     tags: ["Python", "Automation", "Verification", "AI evaluation", "Avionics"],
@@ -182,13 +188,13 @@ window.PROJECTS = [
     approach: [
       "Developing Python automation that simulates keyboard/mouse input to run a 301-file transponder test campaign, cutting test runtime by 50%.",
       "Developing formal verification procedures while tracking requirements and version control in Jama, JIRA, and GitLab.",
-      "Evaluating an internal Collins Aerospace AI tool that generates draft test procedures and plans from system requirements, comparing its output against engineer-authored baselines across 50+ requirements.",
-      "Implementing evaluation feedback that improved the tool's accuracy and efficiency.",
+      "Evaluating an internal Collins Aerospace AI tool that generates draft test procedures and plans from system requirements, comparing its output against engineer-authored baselines across 86 requirements and multiple systems.",
+      "Implementing evaluation feedback to improve the tool's output accuracy.",
     ],
     tools: ["Python", "Jama", "JIRA", "GitLab", "Systems test procedures", "AI-assisted verification"],
     results: [
       "Automated a 301-file transponder test campaign, cutting runtime by 50%.",
-      "Evaluated the AI test-generation tool across 50+ requirements; implemented feedback improved its accuracy and efficiency.",
+      "Evaluated the AI test-generation tool across 86 requirements and multiple systems; implemented feedback that improved its output accuracy.",
       "Maintained verification artifacts (procedures, requirements tracking) in Jama, JIRA, and GitLab for next-gen avionics.",
     ],
     learned:
@@ -214,13 +220,13 @@ window.PROJECTS = [
     model: "assets/rocket/artemis.glb",
     links: [],
     problem:
-      "Build a scaled-down version of the Artemis rocket with sound aerodynamics, stability, and structural integrity as part of a large student team.",
+      "Build a scaled-down version of the Artemis rocket to enable local launches, with sound aerodynamics, stability, and structural reliability, as part of a large student team.",
     approach: [
       "Developed 3-D models of the scaled Artemis rocket in CATIA V5 and SolidWorks.",
-      "Ran OpenRocket simulations to optimize trajectory, stability, and flight parameters.",
-      "Collaborated with a 15-student team to integrate design modifications and ensure structural integrity.",
+      "Ran OpenRocket and MATLAB simulations to optimize trajectory, stability, and flight parameters.",
+      "Collaborated with a 15-member team to integrate design modifications and ensure structural reliability.",
     ],
-    tools: ["CATIA V5", "SolidWorks", "OpenRocket"],
+    tools: ["CATIA V5", "SolidWorks", "OpenRocket", "MATLAB"],
     results: [
       "Delivered 3-D models supporting manufacturing and integration.",
       "Tuned trajectory and stability parameters through simulation.",
@@ -274,6 +280,7 @@ window.PROJECTS = [
   {
     id: "nastran-fea",
     order: 7,
+    hidden: true, // temporarily off the site until result images are ready; flip to false to restore
     title: "NASTRAN Structural Analysis",
     category: "AE 318 · Coursework",
     tagline: "Finite-element structural model using CBEAM/PBEAM elements and a SOL 101 linear static solution.",

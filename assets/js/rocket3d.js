@@ -75,29 +75,48 @@ function splitByComponents(mesh) {
   }
   if (groups.size < 2) return null;
 
-  // build raw components with centroids
+  // build raw components with centroids + bounds
   const a = new THREE.Vector3();
   function soupFrom(tris) {
     const p = [], n = [], cen = new THREE.Vector3();
+    const min = new THREE.Vector3(Infinity, Infinity, Infinity);
+    const max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     tris.forEach((t) => {
       for (let k = 0; k < 3; k++) {
         const i = index ? index.getX(t * 3 + k) : t * 3 + k;
         a.fromBufferAttribute(pos, i);
-        p.push(a.x, a.y, a.z); cen.add(a);
+        p.push(a.x, a.y, a.z); cen.add(a); min.min(a); max.max(a);
         if (nor) n.push(nor.getX(i), nor.getY(i), nor.getZ(i));
       }
     });
     cen.divideScalar(tris.length * 3);
-    return { p, n, cen, tris: tris.length };
+    return { p, n, cen, min, max, diag: min.distanceTo(max) };
   }
-  const comps = [...groups.values()].map(soupFrom).sort((x, y) => y.tris - x.tris);
+  // Rank by GEOMETRIC size, not triangle count: after decimation a smooth
+  // propellant tank is a huge part with few triangles while an engine bell is
+  // a tiny part with many, so face counts pick exactly the wrong main parts.
+  const comps = [...groups.values()].map(soupFrom).sort((x, y) => y.diag - x.diag);
+  const modelDiag = geo.boundingBox.min.distanceTo(geo.boundingBox.max);
+
+  // absorb near-coincident shells (a tank's inner + outer wall) into one part
+  const merged = [];
+  comps.forEach((s) => {
+    const twin = merged.find((k) =>
+      k.cen.distanceTo(s.cen) < modelDiag * 0.01 &&
+      Math.abs(k.diag - s.diag) < Math.max(k.diag, s.diag) * 0.2);
+    if (twin) {
+      for (let i = 0; i < s.p.length; i++) twin.p.push(s.p[i]);
+      for (let i = 0; i < s.n.length; i++) twin.n.push(s.n[i]);
+      twin.min.min(s.min); twin.max.max(s.max);
+    } else merged.push(s);
+  });
 
   // keep substantial pieces as parts; fold slivers into the nearest kept part
-  const MIN_TRIS = Math.max(150, triCount * 0.002);
-  const MAX_PARTS = 12;
-  const kept = comps.filter((s, i) => i < MAX_PARTS && s.tris >= MIN_TRIS);
+  const MIN_DIAG = modelDiag * 0.035;
+  const MAX_PARTS = 30;
+  const kept = merged.filter((s, i) => i < MAX_PARTS && s.diag >= MIN_DIAG);
   if (kept.length < 2) return null;
-  comps.forEach((s) => {
+  merged.forEach((s) => {
     if (kept.includes(s)) return;
     let best = kept[0], bd = Infinity;
     kept.forEach((k) => { const d = k.cen.distanceToSquared(s.cen); if (d < bd) { bd = d; best = k; } });
@@ -151,7 +170,7 @@ function init() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const FOV = 30;
-  const EXPLODE_K = 0.55;    // axial spread relative to each part's offset
+  const EXPLODE_K = 0.48;    // axial spread relative to each part's offset
   const RADIAL_K = 0.30;     // gentle sideways separation for off-axis parts
   const SOURCES = [
     'assets/rocket/full-launch-vehicle.glb',
@@ -275,6 +294,46 @@ function init() {
       m.userData.shellShift = (shellIdx++ % 2 === 0 ? -1 : 1) * dia * 1.1;
     });
 
+    // Nested internals: a part whose axial span sits inside a larger-radius
+    // part is invisible in a purely axial explode. WIDE internals (propellant
+    // tanks, near the hull's radius) slide out sideways to become visible;
+    // NARROW hardware (engine bells) stays with its stage. Models that already
+    // use named shell slides (the refuel config) are skipped.
+    if (!container.children.some((m) => m.userData.shell)) {
+      const lat = ['x', 'y', 'z'].filter((ax) => ax !== axis);
+      const info = container.children.map((m) => {
+        const bb = m.geometry.boundingBox;
+        const rad = Math.max(bb.max[lat[0]] - bb.min[lat[0]], bb.max[lat[1]] - bb.min[lat[1]]) / 2;
+        return { m, lo: bb.min[axis], hi: bb.max[axis], rad, side: 1 };
+      });
+      info.forEach((part) => {
+        const span = part.hi - part.lo || 1;
+        // tightest larger-radius part that axially contains this one
+        let host = null;
+        info.forEach((b) => {
+          if (b === part || b.rad <= part.rad * 1.05) return;
+          if (Math.min(part.hi, b.hi) - Math.max(part.lo, b.lo) < 0.6 * span) return;
+          if (!host || b.rad < host.rad) host = b;
+        });
+        if (host && part.rad > 0.5 * host.rad) {
+          // diagonal (both lateral axes) so the spread stays visible at every
+          // turntable angle; alternate corners within one hull
+          const s = host.side * host.rad * 3.1 * Math.SQRT1_2;
+          part.m.userData.latA = lat[0];
+          part.m.userData.latB = lat[1];
+          part.m.userData.latShiftA = s;
+          part.m.userData.latShiftB = s;
+          host.side = -host.side;
+        }
+      });
+      // give the topmost part (crew capsule) a little extra axial separation
+      let top = null;
+      container.children.forEach((m) => {
+        if (!top || m.userData.offset[axis] > top.userData.offset[axis]) top = m;
+      });
+      if (top) top.userData.axialBoost = 1.35;
+    }
+
     const radius = new THREE.Box3().setFromObject(container)
       .getBoundingSphere(new THREE.Sphere()).radius;
 
@@ -325,7 +384,12 @@ function init() {
       tmp.copy(o);
       tmp[axis] = 0;
       tmp.multiplyScalar(RADIAL_K * f);
-      tmp[axis] = o[axis] * EXPLODE_K * f;
+      tmp[axis] = o[axis] * EXPLODE_K * (p.userData.axialBoost || 1) * f;
+      // nested internals (propellant tanks) slide out sideways to clear the hull
+      if (p.userData.latShiftA) {
+        tmp[p.userData.latA] += p.userData.latShiftA * f;
+        tmp[p.userData.latB] += p.userData.latShiftB * f;
+      }
       p.position.copy(tmp);
     });
   }
@@ -340,7 +404,7 @@ function init() {
     const aspect = camera.aspect || 1;
     const hHalf = Math.atan(Math.tan(vfov / 2) * aspect);
     const useHalf = Math.min(vfov / 2, hHalf);
-    let dist = (m.radius / Math.sin(useHalf)) * (1.12 + 0.8 * explodeCur);
+    let dist = (m.radius / Math.sin(useHalf)) * (1.04 + 0.55 * explodeCur);
     const portraitMax = m.radius / Math.sin(vfov / 2) * 1.6 * (1 + explodeCur * 0.5);
     if (dist > portraitMax) dist = portraitMax;
     const elev = THREE.MathUtils.degToRad(14);  // slight top-down 3/4 view

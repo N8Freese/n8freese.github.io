@@ -20,7 +20,7 @@ assets/
   img/                  # project + profile images, favicon, OG image
   rocket/               # web-ready (decimated) .glb models for the 3D viewers
   video/                # compressed .mp4 project videos (H.264, faststart)
-  Nate_Freese_Resume.pdf
+  nathanyl_freese_resume.pdf
 ```
 
 ## How to update content
@@ -77,7 +77,7 @@ Put `assets/img/headshot.jpg`, then in `index.html` (About section) replace the
 `<img src="assets/img/headshot.jpg" alt="Nate Freese" />`.
 
 ### Update the resume
-Replace `assets/Nate_Freese_Resume.pdf`. Every "Resume" link/button uses it.
+Replace `assets/nathanyl_freese_resume.pdf`. Every "Resume" link/button uses it.
 
 ### Add a 3D model
 Drop a **decimated** `.glb` in `assets/rocket/` and point a project's `model` field at it.

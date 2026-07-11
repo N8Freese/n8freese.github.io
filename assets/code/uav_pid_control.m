@@ -1,28 +1,23 @@
-% uav_pid_control.m
-% Cascaded PID attitude + altitude control of a small quadrotor.
-% Fixed-step closed-loop simulation: rigid-body rotational dynamics,
-% first-order motor lag, gust disturbance, and a mid-flight thrust loss.
-
 clc; clear; close all;
 
 %% Simulation setup
-dt   = 0.002;                           % time step [s] (500 Hz loop)
-tEnd = 12;                              % duration [s]
-n    = round(tEnd/dt);
-t    = (0:n-1)*dt;
+dt = 0.002; % time step [s] (500 Hz loop)
+tEnd = 12; % duration [s]
+n = round(tEnd/dt);
+t = (0:n-1)*dt;
 
 %% Vehicle parameters
-m   = 1.2;                              % mass [kg]
-g   = 9.81;                             % gravity [m/s^2]
-Ixx = 0.015; Iyy = 0.015; Izz = 0.028;  % inertia [kg m^2]
-tauMotor = 0.03;                        % thrust lag time constant [s]
+m = 1.2; % mass [kg]
+g = 9.81; % gravity [m/s^2]
+Ixx = 0.015; Iyy = 0.015; Izz = 0.028; % inertia [kg m^2]
+tauMotor = 0.03; % thrust lag time constant [s]
 
 %% PID gains [Kp Ki Kd] per axis, with integrator clamps (anti-windup)
-gainRoll  = [6.0 1.2 2.2];
+gainRoll = [6.0 1.2 2.2];
 gainPitch = [6.0 1.2 2.2];
-gainYaw   = [3.5 0.5 0.8];
-gainAlt   = [8.0 2.5 5.0];
-intLimit  = [0.6 0.6 0.4 4.0];
+gainYaw = [3.5 0.5 0.8];
+gainAlt = [8.0 2.5 5.0];
+intLimit = [0.6 0.6 0.4 4.0];
 
 %% Reference: roll/pitch steps, yaw ramp, altitude staircase
 ref = @(tt) [0.20*(tt > 1), ...
@@ -31,11 +26,11 @@ ref = @(tt) [0.20*(tt > 1), ...
              1.0*(tt > 0.5) + 0.5*(tt > 7)];
 
 %% Initial state
-att   = [0 0 0];                        % [phi theta psi] [rad]
-rate  = [0 0 0];                        % body rates [p q r] [rad/s]
-z     = 0;  zDot = 0;                   % altitude [m], climb rate [m/s]
-T     = m*g;                            % thrust [N], starts at hover
-intE  = zeros(1,4);
+att = [0 0 0]; % [phi theta psi] [rad]
+rate = [0 0 0]; % body rates [p q r] [rad/s]
+z = 0; zDot = 0; % altitude [m], climb rate [m/s]
+T = m*g; % thrust [N], starts at hover
+intE = zeros(1,4);
 prevE = zeros(1,4);
 
 logAtt = zeros(n,3); logZ = zeros(n,1); logRef = zeros(n,4);
@@ -44,17 +39,17 @@ logAtt = zeros(n,3); logZ = zeros(n,1); logRef = zeros(n,4);
 for k = 1:n
     r = ref(t(k));
     e = r - [att z];
-    intE  = max(min(intE + e*dt, intLimit), -intLimit);
-    dE    = (e - prevE)/dt;
+    intE = max(min(intE + e*dt, intLimit), -intLimit);
+    dE = (e - prevE)/dt;
     prevE = e;
 
     % PID outputs are commanded angular / vertical accelerations
-    aCmd = [gainRoll  * [e(1); intE(1); dE(1)], ...
+    aCmd = [gainRoll * [e(1); intE(1); dE(1)], ...
             gainPitch * [e(2); intE(2); dE(2)], ...
-            gainYaw   * [e(3); intE(3); dE(3)], ...
-            gainAlt   * [e(4); intE(4); dE(4)]];
+            gainYaw * [e(3); intE(3); dE(3)], ...
+            gainAlt * [e(4); intE(4); dE(4)]];
 
-    Mx = Ixx*aCmd(1);  My = Iyy*aCmd(2);  Mz = Izz*aCmd(3);
+    Mx = Ixx*aCmd(1); My = Iyy*aCmd(2); Mz = Izz*aCmd(3);
     Tcmd = m*(g + aCmd(4)) / max(cos(att(1))*cos(att(2)), 0.5);
 
     % Disturbances: gust torque after 4 s, 15% thrust loss after 8 s
@@ -73,14 +68,14 @@ for k = 1:n
                (My + gust(2) + (Izz - Ixx)*p*rBody)/Iyy, ...
                (Mz + gust(3) + (Ixx - Iyy)*p*q)/Izz];
     rate = rate + rateDot*dt;
-    att  = att + rate*dt;
+    att = att + rate*dt;
 
     % Vertical translation
     zDDot = (T*cos(att(1))*cos(att(2)) - m*g)/m;
-    zDot  = zDot + zDDot*dt;
-    z     = z + zDot*dt;
+    zDot = zDot + zDDot*dt;
+    z = z + zDot*dt;
 
-    logAtt(k,:) = att;  logZ(k) = z;  logRef(k,:) = r;
+    logAtt(k,:) = att; logZ(k) = z; logRef(k,:) = r;
 end
 
 %% Results
