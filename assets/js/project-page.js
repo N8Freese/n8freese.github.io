@@ -21,6 +21,14 @@
   });
   var id = new URLSearchParams(location.search).get("id");
   var idx = list.findIndex(function (p) { return p.id === id; });
+  if (idx < 0) {
+    // old URLs: a project can list former ids under `aliases`
+    idx = list.findIndex(function (p) { return (p.aliases || []).indexOf(id) >= 0; });
+    if (idx >= 0) {
+      id = list[idx].id;
+      try { history.replaceState(null, "", "project.html?id=" + id); } catch (e) {}
+    }
+  }
   var p = list[idx];
 
   if (!p) {
@@ -45,20 +53,23 @@
     metaRow(p),
     tagRow(p.tags),
     p.tagline ? '<p class="detail__lead">' + esc(p.tagline) + "</p>" : "",
-    block("The problem", p.problem ? "<p>" + esc(p.problem) + "</p>" : ""),
-    p.demo ? block("Live demo", '<div data-demo="' + esc(p.demo) + '"></div>') : "",
-    block("Engineering process", bullets(p.approach)),
-    toolBlock(p.tools),
-    block("Results", bullets(p.results)),
-    p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
-    p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
+    p.sections ? sectionsBlock(p.sections) : [
+      block("The problem", p.problem ? "<p>" + esc(p.problem) + "</p>" : ""),
+      p.demo ? block("Live demo", '<div data-demo="' + esc(p.demo) + '"></div>') : "",
+      block("Engineering process", bullets(p.approach)),
+      toolBlock(p.tools),
+      block("Results", bullets(p.results)),
+      p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
+      p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
+    ].join(""),
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
     p.modelNote
       ? '<p class="detail__xlink">' + esc(p.modelNote.text) +
         ' <a href="' + esc(p.modelNote.href) + '">' + esc(p.modelNote.label) + " →</a></p>"
       : "",
+    p.sections ? toolBlock(p.tools) : "",
     galleryBlock(p.gallery),
-    p.pdr ? block("Project documentation", pdrBlock(p.pdr)) : "",
+    docsBlock(p.docs || (p.pdr ? [p.pdr] : null)),
     pager(prev, next),
   ].join("");
 
@@ -101,10 +112,11 @@
 
   // code preview → expandable modal (shared component, see codeviewer.js)
   var codeHost = document.getElementById("codeview");
-  if (codeHost && p.code && window.mountCodeViewer) {
+  var codeSpec = p.code || ((p.sections || []).filter(function (s) { return s.code; })[0] || {}).code;
+  if (codeHost && codeSpec && window.mountCodeViewer) {
     window.mountCodeViewer(codeHost, {
-      title: p.code.title, src: p.code.src, lang: p.code.lang,
-      caption: p.code.caption, previewLines: 16,
+      title: codeSpec.title, src: codeSpec.src, lang: codeSpec.lang,
+      caption: codeSpec.caption, previewLines: 16,
     });
   }
 
@@ -114,10 +126,30 @@
       '<div class="codeview__loading">Loading ' + esc(code.title) + " …</div></div>";
   }
 
-  function pdrBlock(pdr) {
-    return (pdr.blurb ? "<p>" + esc(pdr.blurb) + "</p>" : "") +
-      '<a class="btn pdr__btn" href="' + esc(pdr.src) + '" target="_blank" rel="noopener">' +
-      esc(pdr.label || "View document (PDF)") + " ↗</a>";
+  // One or more document buttons (PDR, CDR, reports). Each: { label, src, blurb }
+  function docsBlock(docs) {
+    if (!docs || !docs.length) return "";
+    return block("Project documentation", docs.map(function (d) {
+      return '<div class="docrow">' +
+        (d.blurb ? "<p>" + esc(d.blurb) + "</p>" : "") +
+        '<a class="btn pdr__btn" href="' + esc(d.src) + '" target="_blank" rel="noopener">' +
+        esc(d.label || "View document (PDF)") + " ↗</a></div>";
+    }).join(""));
+  }
+
+  // Free-form case study: ordered sections, each with paragraphs, bullets,
+  // an optional code preview, and its own figure grid.
+  function sectionsBlock(secs) {
+    return secs.map(function (sec) {
+      var body = "";
+      (sec.text || []).forEach(function (t) { body += "<p>" + esc(t) + "</p>"; });
+      body += bullets(sec.bullets);
+      if (sec.code) body += codeBlock(sec.code);
+      if (sec.note) body += "<p class=\"detail__xlink\">" + esc(sec.note.text) +
+        ' <a href="' + esc(sec.note.href) + '">' + esc(sec.note.label) + " →</a></p>";
+      if (sec.gallery && sec.gallery.length) body += galleryGrid(sec.gallery);
+      return block(sec.title, body);
+    }).join("");
   }
 
   // PDF gallery items: clipped preview card that opens the full PDF in a modal.
@@ -261,6 +293,9 @@
   }
   function galleryBlock(g) {
     if (!g || !g.length) return "";
+    return block("Gallery", galleryGrid(g));
+  }
+  function galleryGrid(g) {
     var figs = g.map(function (item) {
       if (item.pdf) {
         var nm = item.name || (item.pdf.split("/").pop());
@@ -304,10 +339,13 @@
       var media = item.src
         ? '<div class="frame" style="padding:0"><img src="' + esc(item.src) + '" alt="' + esc(item.caption || "") + '" loading="lazy" data-missing-note="' + esc(item.src) + '"></div>'
         : '<div class="frame">Image slot</div>';
-      return '<figure class="detail__fig">' + media +
+      var cls = "detail__fig" +
+        (item.fit === "contain" ? " detail__fig--contain" : "") +
+        (item.wide ? " detail__fig--wide" : "");
+      return '<figure class="' + cls + '">' + media +
         (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
     }).join("");
-    return block("Gallery", '<div class="detail__gallery">' + figs + "</div>");
+    return '<div class="detail__gallery">' + figs + "</div>";
   }
   function modelViewer(src) {
     return '<div id="detail-model" class="rocket-viewer">' +

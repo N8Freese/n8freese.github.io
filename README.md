@@ -20,7 +20,7 @@ assets/
   img/                  # project + profile images, favicon, OG image
   rocket/               # web-ready (decimated) .glb models for the 3D viewers
   video/                # compressed .mp4 project videos (H.264, faststart)
-  nathanyl_freese_resume.pdf
+  nathanyl_freese_resume.pdf, AE441-PDR.pdf, AE451-CDR.pdf
 ```
 
 ## How to update content
@@ -119,5 +119,5 @@ pretend otherwise. What this repo does:
 - **Self-hosted everything** — no CDNs, no analytics, no third-party requests.
 - `rel="noopener"` on all external links; `strict-origin-when-cross-origin` referrer policy.
 - `.well-known/security.txt` for responsible disclosure contact.
-- Employer content (NASA/Collins/Mayott) is limited to publicly shareable material —
+- Employer content (NASA/Collins) is limited to publicly shareable material —
   text, logos, and approved media only.

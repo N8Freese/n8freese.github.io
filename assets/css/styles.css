@@ -748,3 +748,10 @@ img { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto; }
 }
+
+/* Case-study figure variants (CDR renders, contour plots, drawing sheets) */
+.detail__fig--contain .frame { padding: 10px; }
+.detail__fig--contain img { object-fit: contain; }
+.detail__fig--wide { grid-column: 1 / -1; }
+.detail__fig--wide .frame { aspect-ratio: 21/9; }
+.docrow + .docrow { margin-top: 22px; }
