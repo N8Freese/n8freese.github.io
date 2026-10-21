@@ -2,23 +2,29 @@
 
 Personal portfolio for **Nathanyl "Nate" Freese**, Aerospace Engineering (ERAU).
 Plain **HTML / CSS / JS** — no build step, no dependencies to compile. Publishes to GitHub Pages as-is.
+Dark by default with a warm-paper light theme (toggle in the nav; the choice is remembered).
 
 ## Structure
 ```
-index.html              # homepage (hero, about, skills, projects, demo, 3D, experience, education, contact)
+index.html              # homepage (hero, glance, about, toolset, work, 3D + nozzle sim, code, experience, education, contact)
 project.html            # case-study template — renders project.html?id=<id> from data
 404.html                # styled not-found page
 robots.txt / sitemap.xml
 assets/
-  css/styles.css        # design system + all components (dark "deep space" theme)
+  css/styles.css        # design tokens (dark + light) and every component
   js/
     projects.js         # ⭐ SINGLE SOURCE OF TRUTH for all projects (edit here)
-    main.js             # nav, scroll-reveal, renders project cards, loads 3D model
-    project-page.js     # renders the case-study page from projects.js
-    demo.js             # reusable interactive "engineering demo" (orbit canvas sim)
-    model-viewer.min.js # vendored 3D viewer (self-hosted, no CDN)
+    cope-data.js        # CDR analysis outputs (nozzle contours, regen channels, ascent) that feed the live sims
+    main.js             # nav, project cards, hero contour art, scroll reveal
+    project-page.js     # renders the case-study page from projects.js (sections, tables, stats, docs)
+    rocket3d.js         # homepage Three.js viewer: launch stack, refuel config, both engines, drag + explode
+    nozzle-sim.js       # quasi-1D flow through the real Rao bells (Mach / T / p fields, plume, hover probe)
+    demo.js + sims.js   # Code Showcase tabs: real CDR MATLAB + canvas playback of its results
+    codeviewer.js       # code preview card + full-source modal
+    model-viewer.min.js # vendored 3D viewer for case-study galleries (self-hosted, no CDN)
   img/                  # project + profile images, favicon, OG image
-  rocket/               # web-ready (decimated) .glb models for the 3D viewers
+  rocket/               # web-ready .glb models (launch stack, refuel config, cope-s1/s2-engine, Artemini, Spectre parts)
+  code/                 # MATLAB shown in the Code Showcase and case studies (copied from the CDR folder)
   video/                # compressed .mp4 project videos (H.264, faststart)
   nathanyl_freese_resume.pdf, AE441-PDR.pdf, AE451-CDR.pdf
 ```
@@ -80,10 +86,17 @@ Put `assets/img/headshot.jpg`, then in `index.html` (About section) replace the
 Replace `assets/nathanyl_freese_resume.pdf`. Every "Resume" link/button uses it.
 
 ### Add a 3D model
-Drop a **decimated** `.glb` in `assets/rocket/` and point a project's `model` field at it.
+Drop a **decimated** `.glb` in `assets/rocket/` and point a gallery item's `model` field at it.
 Never commit source CAD (STEP/CATPart/SLDPRT) — `.gitignore` blocks it, and only
-low-poly web meshes belong in a public repo. Convert STEP → mesh in CAD, then STL → GLB
-with `../convert_models.py`, keeping each file ≤ ~5 MB.
+low-poly web meshes belong in a public repo. STL → GLB goes through `../convert_models.py`;
+STEP → GLB (with one PBR material per named body) uses `cascadio` + `trimesh` in
+`../.convert-venv` (see how `cope-s1-engine.glb` was built). Keep each file ≤ ~5 MB.
+
+### Refresh the CDR data behind the live sims
+`assets/js/cope-data.js` is exported from the CDR folder's `Engine/Stage{1,2}_Contour.csv`,
+`Engine/RegenCooling_Stage{1,2}_Channels.csv`, and `TVC/Ascent_Trajectory.csv`. Re-export it
+(downsampled, JSON) whenever those change; the nozzle sim, regen and ascent playbacks, and
+the hero contour art all read from it.
 
 ## Preview locally
 ```bash

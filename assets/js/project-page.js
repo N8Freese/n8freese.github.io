@@ -12,7 +12,10 @@
   var nav = document.querySelector(".nav");
   if (nav) {
     var t = nav.querySelector(".nav__toggle");
-    if (t) t.addEventListener("click", function () { nav.classList.toggle("is-open"); });
+    if (t) t.addEventListener("click", function () {
+      var open = nav.classList.toggle("is-open");
+      t.setAttribute("aria-expanded", open ? "true" : "false");
+    });
   }
 
   var root = document.getElementById("detail");
@@ -22,7 +25,6 @@
   var id = new URLSearchParams(location.search).get("id");
   var idx = list.findIndex(function (p) { return p.id === id; });
   if (idx < 0) {
-    // old URLs: a project can list former ids under `aliases`
     idx = list.findIndex(function (p) { return (p.aliases || []).indexOf(id) >= 0; });
     if (idx >= 0) {
       id = list[idx].id;
@@ -33,9 +35,9 @@
 
   if (!p) {
     root.innerHTML =
-      '<a class="detail__back" href="index.html#projects">← All projects</a>' +
+      '<a class="detail__back" href="index.html#projects">← All work</a>' +
       '<h1 class="detail__title">Project not found</h1>' +
-      '<p>That project doesn\'t exist. <a href="index.html#projects">Back to all projects →</a></p>';
+      '<p>That project doesn\'t exist. <a href="index.html#projects">Back to all work →</a></p>';
     return;
   }
 
@@ -45,29 +47,24 @@
 
   var prev = list[(idx - 1 + list.length) % list.length];
   var next = list[(idx + 1) % list.length];
+  var secNo = 0;
 
   root.innerHTML = [
-    '<a class="detail__back" href="index.html#projects">← All projects</a>',
+    '<a class="detail__back" href="index.html#projects">← All work</a>',
     '<p class="detail__cat">' + esc(p.category || "") + "</p>",
     '<h1 class="detail__title">' + esc(p.title) + "</h1>",
+    p.tagline ? '<p class="detail__lead">' + esc(p.tagline) + "</p>" : "",
     metaRow(p),
     tagRow(p.tags),
-    p.tagline ? '<p class="detail__lead">' + esc(p.tagline) + "</p>" : "",
+    statsRow(p.stats),
     p.sections ? sectionsBlock(p.sections) : [
       block("The problem", p.problem ? "<p>" + esc(p.problem) + "</p>" : ""),
-      p.demo ? block("Live demo", '<div data-demo="' + esc(p.demo) + '"></div>') : "",
-      block("Engineering process", bullets(p.approach)),
-      toolBlock(p.tools),
+      block("What I did", bullets(p.approach)),
       block("Results", bullets(p.results)),
-      p.code ? block(p.code.caption ? "Staging / ΔV budget" : "Code", codeBlock(p.code)) : "",
       p.learned ? block("What I learned", "<p>" + esc(p.learned) + "</p>") : "",
     ].join(""),
     p.model ? block("Interactive 3D", modelViewer(p.model)) : "",
-    p.modelNote
-      ? '<p class="detail__xlink">' + esc(p.modelNote.text) +
-        ' <a href="' + esc(p.modelNote.href) + '">' + esc(p.modelNote.label) + " →</a></p>"
-      : "",
-    p.sections ? toolBlock(p.tools) : "",
+    toolBlock(p.tools),
     galleryBlock(p.gallery),
     docsBlock(p.docs || (p.pdr ? [p.pdr] : null)),
     pager(prev, next),
@@ -76,22 +73,13 @@
   mountPdfViewers();
   mountLightbox();
 
-  // gallery image fallback (no inline handlers — CSP-safe)
   root.querySelectorAll("img[data-missing-note]").forEach(function (img) {
     img.addEventListener("error", function () {
       img.parentNode.textContent = "Add: " + img.getAttribute("data-missing-note");
     });
   });
 
-  // load any demo on the page
-  if (window.__mountDemos) window.__mountDemos();
-  else {
-    var s = document.createElement("script");
-    s.src = "assets/js/demo.js";
-    document.body.appendChild(s);
-  }
-
-  // model-viewer: load GLB if present, else keep placeholder
+  // model-viewer for the legacy top-level `model` field
   var mvHost = document.getElementById("detail-model");
   if (mvHost) {
     fetch(p.model, { method: "HEAD" }).then(function (res) {
@@ -101,7 +89,7 @@
       mv.setAttribute("alt", p.title + " (3D model)");
       mv.setAttribute("auto-rotate", "");
       mv.setAttribute("camera-controls", "");
-      mv.setAttribute("disable-zoom", "");   // rotation only - zoom disabled in case-study views
+      mv.setAttribute("disable-zoom", "");
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("exposure", "1.05");
       mv.setAttribute("camera-orbit", "30deg 80deg 90%");
@@ -110,54 +98,67 @@
     }).catch(function () {});
   }
 
-  // code preview → expandable modal (shared component, see codeviewer.js)
-  var codeHost = document.getElementById("codeview");
-  var codeSpec = p.code || ((p.sections || []).filter(function (s) { return s.code; })[0] || {}).code;
-  if (codeHost && codeSpec && window.mountCodeViewer) {
-    window.mountCodeViewer(codeHost, {
-      title: codeSpec.title, src: codeSpec.src, lang: codeSpec.lang,
-      caption: codeSpec.caption, previewLines: 16,
-    });
-  }
+  // code previews (one per section that has `code`, plus a legacy top-level `code`)
+  root.querySelectorAll("[data-codeview]").forEach(function (host) {
+    var spec = JSON.parse(host.getAttribute("data-codeview"));
+    if (window.mountCodeViewer) {
+      window.mountCodeViewer(host, { title: spec.title, src: spec.src, lang: spec.lang, caption: spec.caption, previewLines: 16 });
+    }
+  });
 
   /* ---- helpers -------------------------------------------------------- */
   function codeBlock(code) {
-    return '<div id="codeview" class="codeview">' +
+    return '<div class="codeview" data-codeview="' + esc(JSON.stringify({ title: code.title, src: code.src, lang: code.lang, caption: code.caption })) + '">' +
       '<div class="codeview__loading">Loading ' + esc(code.title) + " …</div></div>";
   }
 
-  // One or more document buttons (PDR, CDR, reports). Each: { label, src, blurb }
   function docsBlock(docs) {
     if (!docs || !docs.length) return "";
-    return block("Project documentation", docs.map(function (d) {
+    return block("Documents", docs.map(function (d) {
       return '<div class="docrow">' +
         (d.blurb ? "<p>" + esc(d.blurb) + "</p>" : "") +
-        '<a class="btn pdr__btn" href="' + esc(d.src) + '" target="_blank" rel="noopener">' +
+        '<a class="btn" href="' + esc(d.src) + '" target="_blank" rel="noopener">' +
         esc(d.label || "View document (PDF)") + " ↗</a></div>";
     }).join(""));
   }
 
-  // Free-form case study: ordered sections, each with paragraphs, bullets,
-  // an optional code preview, and its own figure grid.
+  function statsRow(stats) {
+    if (!stats || !stats.length) return "";
+    return '<div class="detail__stats">' + stats.map(function (s) {
+      return '<div class="stat"><div class="n">' + esc(s.n) + (s.u ? "<small>" + esc(s.u) + "</small>" : "") + '</div><div class="l">' + esc(s.l || "") + "</div></div>";
+    }).join("") + "</div>";
+  }
+
+  function tableBlock(tb) {
+    if (!tb || !tb.rows) return "";
+    var head = tb.head ? "<thead><tr>" + tb.head.map(function (h) { return "<th>" + esc(h) + "</th>"; }).join("") + "</tr></thead>" : "";
+    var body = "<tbody>" + tb.rows.map(function (r) {
+      return "<tr>" + r.map(function (c) {
+        if (c && typeof c === "object") return '<td class="' + (c.ok ? "ok" : "") + '">' + esc(c.t) + "</td>";
+        return "<td>" + esc(c) + "</td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    return '<div class="detail__tablewrap"><table class="detail__table">' + head + body + "</table></div>";
+  }
+
   function sectionsBlock(secs) {
     return secs.map(function (sec) {
       var body = "";
-      (sec.text || []).forEach(function (t) { body += "<p>" + esc(t) + "</p>"; });
+      (sec.text || []).forEach(function (tx) { body += "<p>" + esc(tx) + "</p>"; });
       body += bullets(sec.bullets);
+      if (sec.table) body += tableBlock(sec.table);
       if (sec.code) body += codeBlock(sec.code);
-      if (sec.note) body += "<p class=\"detail__xlink\">" + esc(sec.note.text) +
+      if (sec.note) body += '<p class="detail__xlink">' + esc(sec.note.text) +
         ' <a href="' + esc(sec.note.href) + '">' + esc(sec.note.label) + " →</a></p>";
       if (sec.gallery && sec.gallery.length) body += galleryGrid(sec.gallery);
       return block(sec.title, body);
     }).join("");
   }
 
-  // PDF gallery items: clipped preview card that opens the full PDF in a modal.
   function mountPdfViewers() {
     document.querySelectorAll(".pdffig").forEach(function (fig) {
       var src = fig.getAttribute("data-pdf");
       var name = fig.getAttribute("data-name") || "Document";
-
       var modal = document.createElement("div");
       modal.className = "codemodal codemodal--pdf";
       modal.hidden = true;
@@ -173,45 +174,35 @@
           '<iframe class="codemodal__pdf" title="' + esc(name) + '" src="' + esc(src) + '"></iframe>' +
         "</div>";
       document.body.appendChild(modal);
-
       var panel = modal.querySelector(".codemodal__panel");
       function open()  { modal.hidden = false; document.body.style.overflow = "hidden"; try { panel.focus(); } catch (e) {} }
       function close() { modal.hidden = true; document.body.style.overflow = ""; }
-
       fig.addEventListener("click", open);
-      fig.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
-      });
+      fig.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
       modal.addEventListener("click", function (e) {
         var btn = e.target.closest("[data-act]");
         if (!btn) return;
-        if (btn.getAttribute("data-act") === "full") panel.classList.toggle("is-full");
-        else close();
+        if (btn.getAttribute("data-act") === "full") panel.classList.toggle("is-full"); else close();
       });
       document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !modal.hidden) close(); });
     });
   }
 
-  // Gallery lightbox: click an image to view it large; ‹ › buttons and arrow keys
-  // navigate between image items in both directions; Esc or backdrop closes.
   function mountLightbox() {
-    var figs = [].slice.call(root.querySelectorAll(
-      ".detail__gallery .detail__fig:not(.detail__fig--pdf):not(.detail__fig--video)"));
+    var figs = [].slice.call(root.querySelectorAll(".detail__gallery .detail__fig:not(.detail__fig--pdf):not(.detail__fig--video):not(.detail__fig--model)"));
     var items = [];
     figs.forEach(function (fig) {
       var img = fig.querySelector("img");
       if (!img) return;
       var cap = fig.querySelector("figcaption");
-      var idx = items.push({ src: img.getAttribute("src"), caption: cap ? cap.textContent : "" }) - 1;
+      var i = items.push({ src: img.getAttribute("src"), caption: cap ? cap.textContent : "" }) - 1;
       var frame = fig.querySelector(".frame");
       frame.classList.add("is-zoomable");
       frame.setAttribute("role", "button");
       frame.setAttribute("tabindex", "0");
-      frame.setAttribute("aria-label", "View " + (items[idx].caption || "image") + " full size");
-      frame.addEventListener("click", function () { open(idx); });
-      frame.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(idx); }
-      });
+      frame.setAttribute("aria-label", "View " + (items[i].caption || "image") + " full size");
+      frame.addEventListener("click", function () { open(i); });
+      frame.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(i); } });
     });
     if (!items.length) return;
 
@@ -228,59 +219,47 @@
         '<p class="lightbox__cap"></p>' +
       "</div>";
     document.body.appendChild(modal);
-
     var panel = modal.querySelector(".lightbox__panel");
     var imgEl = modal.querySelector(".lightbox__img");
     var capEl = modal.querySelector(".lightbox__cap");
     var cur = 0;
-
     function show(i) {
       cur = (i + items.length) % items.length;
       imgEl.src = items[cur].src;
       imgEl.alt = items[cur].caption || "";
-      capEl.textContent = (items[cur].caption || "") +
-        (items.length > 1 ? "  ·  " + (cur + 1) + " / " + items.length : "");
+      capEl.textContent = (items[cur].caption || "") + (items.length > 1 ? "  ·  " + (cur + 1) + " / " + items.length : "");
     }
-    function open(i) {
-      show(i);
-      modal.hidden = false;
-      document.body.style.overflow = "hidden";
-      try { panel.focus(); } catch (e) {}
-    }
+    function open(i) { show(i); modal.hidden = false; document.body.style.overflow = "hidden"; try { panel.focus(); } catch (e) {} }
     function close() { modal.hidden = true; document.body.style.overflow = ""; }
-
     modal.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-act]");
       if (!btn) return;
       var act = btn.getAttribute("data-act");
-      if (act === "prev") show(cur - 1);
-      else if (act === "next") show(cur + 1);
-      else close();
+      if (act === "prev") show(cur - 1); else if (act === "next") show(cur + 1); else close();
     });
     document.addEventListener("keydown", function (e) {
       if (modal.hidden) return;
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowLeft") show(cur - 1);
-      else if (e.key === "ArrowRight") show(cur + 1);
+      if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") show(cur - 1); else if (e.key === "ArrowRight") show(cur + 1);
     });
   }
 
-  function metaRow(p) {
+  function metaRow(pr) {
     var bits = [];
-    if (p.role) bits.push("<span><b>Role:</b> " + esc(p.role) + "</span>");
-    if (p.period) bits.push("<span><b>When:</b> " + esc(p.period) + "</span>");
-    (p.links || []).forEach(function (l) {
+    if (pr.role) bits.push("<span><b>Role:</b> " + esc(pr.role) + "</span>");
+    if (pr.period) bits.push("<span><b>When:</b> " + esc(pr.period) + "</span>");
+    (pr.links || []).forEach(function (l) {
       bits.push('<span><a href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.label) + " ↗</a></span>");
     });
     return bits.length ? '<div class="detail__meta">' + bits.join("") + "</div>" : "";
   }
   function tagRow(tags) {
     if (!tags || !tags.length) return "";
-    return '<div class="detail__tags">' + tags.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") + "</div>";
+    return '<div class="detail__tags">' + tags.map(function (tg) { return "<span>" + esc(tg) + "</span>"; }).join("") + "</div>";
   }
   function block(title, body) {
     if (!body) return "";
-    return '<h2 class="block">' + esc(title) + "</h2>" + body;
+    secNo += 1;
+    return '<h2 class="block"><span class="num">' + (secNo < 10 ? "0" : "") + secNo + "</span>" + esc(title) + "</h2>" + body;
   }
   function bullets(arr) {
     if (!arr || !arr.length) return "";
@@ -288,8 +267,8 @@
   }
   function toolBlock(tools) {
     if (!tools || !tools.length) return "";
-    return block("Technical Skills",
-      '<div class="detail__toolgrid">' + tools.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") + "</div>");
+    return block("Technical skills",
+      '<div class="detail__toolgrid">' + tools.map(function (tl) { return "<span>" + esc(tl) + "</span>"; }).join("") + "</div>");
   }
   function galleryBlock(g) {
     if (!g || !g.length) return "";
@@ -300,37 +279,28 @@
       if (item.pdf) {
         var nm = item.name || (item.pdf.split("/").pop());
         return '<figure class="detail__fig detail__fig--pdf">' +
-          '<div class="frame pdffig" data-pdf="' + esc(item.pdf) + '" data-name="' + esc(nm) + '" ' +
-            'role="button" tabindex="0" aria-label="Open ' + esc(item.caption || nm) + '">' +
+          '<div class="frame pdffig" data-pdf="' + esc(item.pdf) + '" data-name="' + esc(nm) + '" role="button" tabindex="0" aria-label="Open ' + esc(item.caption || nm) + '">' +
             '<embed class="pdffig__embed" src="' + esc(item.pdf) + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf">' +
             '<span class="pdffig__badge">Open PDF</span>' +
           "</div>" +
           (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
       }
       if (item.model) {
-        // Interactive CAD view: self-hosted model-viewer, auto-rotating turntable,
-        // orbit enabled so visitors can inspect the part.
-        return '<figure class="detail__fig detail__fig--model' +
-          (item.feature ? " detail__fig--model-feature" : "") + '">' +
-          '<model-viewer class="detail__mv" src="' + esc(item.model) + '" ' +
-            'alt="' + esc(item.caption || "3D model") + '" ' +
-            'camera-controls auto-rotate loading="eager" touch-action="pan-y" ' +
-            'interaction-prompt="none" shadow-intensity="1" exposure="1.1" ' +
-            'camera-orbit="30deg 75deg 105%" field-of-view="32deg">' +
+        return '<figure class="detail__fig detail__fig--model' + (item.feature ? " detail__fig--model-feature" : "") + '">' +
+          '<model-viewer class="detail__mv" src="' + esc(item.model) + '" alt="' + esc(item.caption || "3D model") + '" ' +
+            'camera-controls auto-rotate loading="eager" touch-action="pan-y" interaction-prompt="none" ' +
+            'shadow-intensity="1" exposure="1.1" camera-orbit="30deg 75deg 110%" field-of-view="30deg">' +
             '<div slot="poster" class="detail__mvposter">Loading 3D model…</div>' +
           "</model-viewer>" +
           (item.badge ? '<span class="detail__mediabadge">' + esc(item.badge) + "</span>" : "") +
           (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
       }
       if (item.video) {
-        // preload="auto": clips are small (a few MB), and full buffering makes the
-        // scrubber seek reliably in both directions even on servers without Range support
         return '<figure class="detail__fig detail__fig--video">' +
           '<div class="frame frame--video">' +
             '<video class="detail__video" controls preload="auto" playsinline controlsList="nodownload"' +
             (item.poster ? ' poster="' + esc(item.poster) + '"' : "") + ">" +
-              '<source src="' + esc(item.video) + '" type="video/mp4">' +
-              "Your browser does not support embedded video." +
+              '<source src="' + esc(item.video) + '" type="video/mp4">Your browser does not support embedded video.' +
             "</video>" +
             (item.badge ? '<span class="detail__mediabadge">' + esc(item.badge) + "</span>" : "") +
           "</div>" +
@@ -339,23 +309,19 @@
       var media = item.src
         ? '<div class="frame" style="padding:0"><img src="' + esc(item.src) + '" alt="' + esc(item.caption || "") + '" loading="lazy" data-missing-note="' + esc(item.src) + '"></div>'
         : '<div class="frame">Image slot</div>';
-      var cls = "detail__fig" +
-        (item.fit === "contain" ? " detail__fig--contain" : "") +
-        (item.wide ? " detail__fig--wide" : "");
-      return '<figure class="' + cls + '">' + media +
-        (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
+      var cls = "detail__fig" + (item.fit === "contain" ? " detail__fig--contain" : "") + (item.wide ? " detail__fig--wide" : "") + (item.dark ? " detail__fig--dark" : "");
+      return '<figure class="' + cls + '">' + media + (item.caption ? "<figcaption>" + esc(item.caption) + "</figcaption>" : "") + "</figure>";
     }).join("");
     return '<div class="detail__gallery">' + figs + "</div>";
   }
   function modelViewer(src) {
     return '<div id="detail-model" class="rocket-viewer">' +
-      '<div class="rocket-viewer__placeholder"><p>3D model coming soon</p>' +
-      "<small>Drop <code>" + esc(src) + "</code> to enable.</small></div></div>";
+      '<div class="rocket-viewer__placeholder"><p>3D model coming soon</p><small>Drop <code>' + esc(src) + "</code> to enable.</small></div></div>";
   }
-  function pager(prev, next) {
+  function pager(pv, nx) {
     return '<div class="detail__nav">' +
-      '<a class="prev" href="project.html?id=' + esc(prev.id) + '"><span class="lbl">← Previous</span><span class="t">' + esc(prev.title) + "</span></a>" +
-      '<a class="next" href="project.html?id=' + esc(next.id) + '"><span class="lbl">Next →</span><span class="t">' + esc(next.title) + "</span></a>" +
+      '<a class="prev" href="project.html?id=' + esc(pv.id) + '"><span class="lbl">← Previous</span><span class="t">' + esc(pv.title) + "</span></a>" +
+      '<a class="next" href="project.html?id=' + esc(nx.id) + '"><span class="lbl">Next →</span><span class="t">' + esc(nx.title) + "</span></a>" +
       "</div>";
   }
   function esc(s) {

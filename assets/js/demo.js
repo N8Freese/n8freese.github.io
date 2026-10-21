@@ -4,44 +4,52 @@
  * Usage:  <div data-demo-tabs></div>
  * Renders a tab strip; each tab shows a short blurb, a clipped source-code
  * preview that expands into a full-screen modal (shared codeviewer.js), and a
- * live canvas simulation of what the script computes (sims.js). The sim runs
- * automatically while it is on screen, pauses off-screen, and the Replay
- * button restarts it.
+ * live canvas playback of what the script computes (sims.js). The sim runs
+ * while it is on screen, pauses off-screen, and the Replay button restarts it.
  *
  * Add a tab by appending to the DEMOS array (point `src` at a file in
  * assets/code/ and `key` at an entry in window.CODE_SIMS).
- * Requires codeviewer.js and sims.js to be loaded first.
+ * Requires codeviewer.js and sims.js (and cope-data.js) to be loaded first.
  * ==========================================================================*/
 (function () {
   "use strict";
 
   var DEMOS = [
     {
+      key: "ffsc",
+      tab: "FFSC engine cycle",
+      title: "AE451_Stage1_FFSC_with_regen_FIXED.m",
+      lang: "MATLAB",
+      blurb: "The Stage 1 full-flow staged-combustion cycle balance from our CDR: CEA chamber properties, pump work from the cycle pressures, the regenerative jacket coupled into the methane path, and the fuel-rich and ox-rich preburner pressures solved so each turbine carries 10% more power than its pump.",
+      src: "assets/code/cope-stage1-ffsc-cycle.m",
+      simCaption: "Live: the pressure cascade the script solves, station by station, from the pump inlets to the 25.5 MPa chamber. Amber is the methane path, blue is LOX, red is preburner gas.",
+    },
+    {
+      key: "regen",
+      tab: "Regenerative cooling",
+      title: "regen_cooling_CDR.m",
+      lang: "MATLAB",
+      blurb: "Thermal analysis of the GRCop-42 chamber liner: Bartz gas-side heat transfer, conduction through the 0.28 mm hot wall, Dittus-Boelter on the methane side, and the three parallel cooling branches marched along the contour with a CoolProp methane table. The output set the 1000 K wall limit margin and the jacket pressure drop that feeds the cycle balance.",
+      src: "assets/code/cope-regen-cooling.m",
+      simCaption: "Live: hot-wall temperature and heat flux swept along the real Stage 1 contour, from the data this script wrote. Peak 797 K and 144 MW/m² at the throat.",
+    },
+    {
+      key: "ascent",
+      tab: "Ascent & max-q",
+      title: "Detail_Ascent.m",
+      lang: "MATLAB",
+      blurb: "Planar gravity-turn ascent of the full stack: US-76 atmosphere, Mach-dependent drag, a 4 g throttle schedule, and a shooting solver on the kick angle and Stage 2 linear-tangent steering to hit a 200 km circular orbit. Its max-q point sized the thrust-vector-control actuators.",
+      src: "assets/code/cope-ascent.m",
+      simCaption: "Live: the trajectory this script produced. Max-q of 35 kPa at 61.6 s and Mach 1.45, staging at 150.6 s, orbit at 305.7 s.",
+    },
+    {
       key: "artemis",
-      tab: "Artemis II Trajectory",
+      tab: "Artemis II trajectory",
       title: "HW4_ArtemisII_March_11_Launch.m",
       lang: "MATLAB",
-      blurb: "An Artemis II-style translunar trajectory tool: propagates the spacecraft state under Earth, Moon, and Sun gravity (n-body) with tuned injection parameters to target a lunar free-return, the kind of orbital-mechanics analysis used in mission design.",
+      blurb: "An Artemis II-style translunar trajectory tool: propagates the spacecraft under Earth, Moon, and Sun gravity with tuned injection parameters to target a lunar free return. Written for the preliminary-design semester to set the mission profile.",
       src: "assets/code/artemis-ii-trajectory.m",
       simCaption: "Live: the same RK4 propagation running in your browser. Translunar injection, lunar flyby, free return.",
-    },
-    {
-      key: "uav-pid",
-      tab: "UAV PID Control",
-      title: "uav_pid_control.m",
-      lang: "MATLAB",
-      blurb: "A multi-axis quadrotor flight controller: cascaded PID on roll, pitch, yaw, and altitude with anti-windup, setpoint tracking, and disturbance rejection (wind-gust torque + thrust loss), integrated in a fixed-step rigid-body simulation loop.",
-      src: "assets/code/uav_pid_control.m",
-      simCaption: "Live: the closed-loop response. The quad tracks roll and altitude commands through a gust and a 15% thrust loss.",
-    },
-    {
-      key: "project1",
-      tab: "Nonlinear Dynamics & ODE Integration",
-      title: "Project_1.m",
-      lang: "MATLAB",
-      blurb: "Numerical-dynamics project: integrates a coupled linear ODE system and a damped nonlinear pendulum about its equilibrium with ode45, sizing the viscous damping from a target logarithmic decrement (~5% amplitude loss per cycle).",
-      src: "assets/code/project-1.m",
-      simCaption: "Live: the damped nonlinear pendulum released 3° from inverted, with the wrapped θ(t) response.",
     },
   ];
 
@@ -79,9 +87,9 @@
         '<div class="demos__split">' +
           '<div class="demos__view"></div>' +
           '<div class="demos__run">' +
-            '<div class="demo__bar"><span class="codeview__name">live simulation</span>' +
+            '<div class="demo__bar"><span class="dots"><i></i><i></i><i></i></span><span class="codeview__name">live playback</span>' +
               '<button type="button" class="demo__btn demos__replay">Replay</button></div>' +
-            '<canvas class="demos__canvas" aria-label="Live simulation of ' + esc(d.title) + '"></canvas>' +
+            '<canvas class="demos__canvas" aria-label="Live playback of ' + esc(d.title) + '"></canvas>' +
             '<p class="demos__cap">' + esc(d.simCaption || "") + "</p>" +
           "</div>" +
         "</div>";
@@ -91,7 +99,7 @@
       });
       if (window.mountCodeViewer) {
         window.mountCodeViewer(panel.querySelector(".demos__view"), {
-          title: d.title, src: d.src, lang: d.lang, previewLines: 18,
+          title: d.title, src: d.src, lang: d.lang, previewLines: 20,
         });
       }
 
@@ -102,7 +110,6 @@
         var replay = panel.querySelector(".demos__replay");
         if (replay) replay.addEventListener("click", function () { activeSim.restart(); });
         if (reduceMotion) {
-          // no auto-play: render the completed result; Replay animates on demand
           requestAnimationFrame(function () { activeSim.drawFinal(); });
         } else {
           simObserver = new IntersectionObserver(function (es) {

@@ -1,16 +1,18 @@
-// Interactive 3D launch-vehicle viewer (Three.js).
+// Interactive 3D viewer for the COPE hardware (Three.js).
 //
-// Behaviour: auto-rotating turntable, NO zoom and NO orbit controls,
-// click / tap toggles an exploded assembly view, and a segmented control swaps
-// between the full launch stack and the on-orbit refuel & crew config.
-// Render loop pauses when the viewer is off-screen to protect mobile battery/perf.
+// Four models share one canvas: the full launch stack, the on-orbit refuel &
+// crew configuration, and the Stage 1 and Stage 2 engine assemblies. The
+// visitor can drag to orbit (auto-rotation resumes after a pause), click or
+// tap to explode the assembly, and switch models with the segmented control.
+// Render loop pauses when the viewer is off-screen.
 //
-// Exploded view: models with real part nodes explode part-by-part. A model that
-// arrives as ONE welded mesh (the launch vehicle came from a single fused STL) is
-// first split into connected components (true disjoint pieces: stages, fins,
-// engines), and only falls back to slicing into axial bands when the geometry is
-// genuinely one connected solid. Parts separate along the vehicle's long axis
-// with a gentle radial spread, which reads like a proper engineering exploded view.
+// Materials: the engine GLBs carry per-part PBR materials from the STEP
+// conversion (graphite thrust chamber, steel pumps, Inconel preburners). The
+// refuel model has named parts and is painted by name. The launch vehicle
+// arrives as ONE welded mesh, so it is split into connected components and
+// each piece is classified by its size and position (shell, tank, engine,
+// ring, capsule) and painted to match: blue LOX, amber CH4, graphite engines,
+// white structure, black bands.
 
 import * as THREE from 'three';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
@@ -20,12 +22,28 @@ const root = document.querySelector('[data-rocket]');
 const canvas = root && root.querySelector('[data-canvas]');
 if (root && canvas) init();
 
-/* ---- geometry splitting ---------------------------------------------------
- * Both splitters return plain { p:[], n:[] } triangle soups so the caller can
- * build BufferGeometries the same way. */
+/* ---- palette ------------------------------------------------------------ */
+const PAINT = {
+  shell:    { color: 0xe9eaee, metalness: 0.15, roughness: 0.55 },
+  band:     { color: 0x16181d, metalness: 0.35, roughness: 0.6 },
+  inner:    { color: 0xb3b9c4, metalness: 0.6, roughness: 0.45 },
+  lox:      { color: 0x8fb8e0, metalness: 0.35, roughness: 0.4 },
+  ch4:      { color: 0xe0a05f, metalness: 0.35, roughness: 0.4 },
+  engine:   { color: 0x33363d, metalness: 0.75, roughness: 0.38 },
+  capsule:  { color: 0xe9eaee, metalness: 0.2, roughness: 0.5 },
+  shield:   { color: 0x4a3f36, metalness: 0.3, roughness: 0.7 },
+  misc:     { color: 0x8c929c, metalness: 0.6, roughness: 0.5 },
+};
+function mat(key) {
+  const p = PAINT[key] || PAINT.misc;
+  const m = new THREE.MeshStandardMaterial({ color: p.color, metalness: p.metalness, roughness: p.roughness });
+  m.envMapIntensity = 1.1;
+  m.side = THREE.DoubleSide;
+  return m;
+}
 
-// Canonical vertex ids: weld duplicated vertices by quantized position so
-// connectivity survives STL-style duplicated corners.
+/* ---- geometry splitting ---------------------------------------------------
+ * Both splitters return plain { p:[], n:[] } triangle soups. */
 function canonicalIds(geo) {
   const pos = geo.attributes.position;
   const bb = geo.boundingBox;
@@ -34,9 +52,7 @@ function canonicalIds(geo) {
   const ids = new Uint32Array(pos.count);
   let next = 0;
   for (let i = 0; i < pos.count; i++) {
-    const key = Math.round(pos.getX(i) / eps) + ',' +
-                Math.round(pos.getY(i) / eps) + ',' +
-                Math.round(pos.getZ(i) / eps);
+    const key = Math.round(pos.getX(i) / eps) + ',' + Math.round(pos.getY(i) / eps) + ',' + Math.round(pos.getZ(i) / eps);
     let id = map.get(key);
     if (id === undefined) { id = next++; map.set(key, id); }
     ids[i] = id;
@@ -44,28 +60,18 @@ function canonicalIds(geo) {
   return { ids, uniqueCount: next };
 }
 
-// Split a mesh into its connected components (union-find over shared vertices).
-// Small shards are merged into the nearest large component so the exploded view
-// never scatters loose slivers. Returns null when the mesh is one solid piece.
 function splitByComponents(mesh) {
   const geo = mesh.geometry;
   geo.computeBoundingBox();
   const pos = geo.attributes.position, nor = geo.attributes.normal, index = geo.index;
   const triCount = index ? index.count / 3 : pos.count / 3;
   const { ids, uniqueCount } = canonicalIds(geo);
-
   const parent = new Uint32Array(uniqueCount);
   for (let i = 0; i < uniqueCount; i++) parent[i] = i;
   function find(x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
   function union(a, b) { a = find(a); b = find(b); if (a !== b) parent[b] = a; }
-
   const vid = (t, k) => ids[index ? index.getX(t * 3 + k) : t * 3 + k];
-  for (let t = 0; t < triCount; t++) {
-    union(vid(t, 0), vid(t, 1));
-    union(vid(t, 0), vid(t, 2));
-  }
-
-  // group triangles by component root
+  for (let t = 0; t < triCount; t++) { union(vid(t, 0), vid(t, 1)); union(vid(t, 0), vid(t, 2)); }
   const groups = new Map();
   for (let t = 0; t < triCount; t++) {
     const r = find(vid(t, 0));
@@ -74,8 +80,6 @@ function splitByComponents(mesh) {
     g.push(t);
   }
   if (groups.size < 2) return null;
-
-  // build raw components with centroids + bounds
   const a = new THREE.Vector3();
   function soupFrom(tris) {
     const p = [], n = [], cen = new THREE.Vector3();
@@ -92,28 +96,20 @@ function splitByComponents(mesh) {
     cen.divideScalar(tris.length * 3);
     return { p, n, cen, min, max, diag: min.distanceTo(max) };
   }
-  // Rank by GEOMETRIC size, not triangle count: after decimation a smooth
-  // propellant tank is a huge part with few triangles while an engine bell is
-  // a tiny part with many, so face counts pick exactly the wrong main parts.
   const comps = [...groups.values()].map(soupFrom).sort((x, y) => y.diag - x.diag);
   const modelDiag = geo.boundingBox.min.distanceTo(geo.boundingBox.max);
-
   // absorb near-coincident shells (a tank's inner + outer wall) into one part
   const merged = [];
   comps.forEach((s) => {
-    const twin = merged.find((k) =>
-      k.cen.distanceTo(s.cen) < modelDiag * 0.01 &&
-      Math.abs(k.diag - s.diag) < Math.max(k.diag, s.diag) * 0.2);
+    const twin = merged.find((k) => k.cen.distanceTo(s.cen) < modelDiag * 0.01 && Math.abs(k.diag - s.diag) < Math.max(k.diag, s.diag) * 0.2);
     if (twin) {
       for (let i = 0; i < s.p.length; i++) twin.p.push(s.p[i]);
       for (let i = 0; i < s.n.length; i++) twin.n.push(s.n[i]);
       twin.min.min(s.min); twin.max.max(s.max);
     } else merged.push(s);
   });
-
-  // keep substantial pieces as parts; fold slivers into the nearest kept part
-  const MIN_DIAG = modelDiag * 0.035;
-  const MAX_PARTS = 30;
+  const MIN_DIAG = modelDiag * 0.02;
+  const MAX_PARTS = 40;
   const kept = merged.filter((s, i) => i < MAX_PARTS && s.diag >= MIN_DIAG);
   if (kept.length < 2) return null;
   merged.forEach((s) => {
@@ -126,8 +122,6 @@ function splitByComponents(mesh) {
   return kept;
 }
 
-// Fallback for a genuinely one-piece solid: slice into N bands along the long
-// axis. Explode motion is purely axial so the cut faces never gape sideways.
 function splitIntoBands(mesh, N) {
   const geo = mesh.geometry;
   geo.computeBoundingBox();
@@ -140,9 +134,7 @@ function splitIntoBands(mesh, N) {
   const bands = Array.from({ length: N }, () => ({ p: [], n: [] }));
   const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
   for (let t = 0; t < triCount; t++) {
-    const i0 = index ? index.getX(t * 3) : t * 3;
-    const i1 = index ? index.getX(t * 3 + 1) : t * 3 + 1;
-    const i2 = index ? index.getX(t * 3 + 2) : t * 3 + 2;
+    const i0 = index ? index.getX(t * 3) : t * 3, i1 = index ? index.getX(t * 3 + 1) : t * 3 + 1, i2 = index ? index.getX(t * 3 + 2) : t * 3 + 2;
     a.fromBufferAttribute(pos, i0); b.fromBufferAttribute(pos, i1); c.fromBufferAttribute(pos, i2);
     let bi = Math.floor((((a[axis] + b[axis] + c[axis]) / 3 - lo) / span) * N);
     bi = bi < 0 ? 0 : bi >= N ? N - 1 : bi;
@@ -163,100 +155,134 @@ function soupToMesh(soup, material) {
   return new THREE.Mesh(g, material);
 }
 
+/* ---- paint rules --------------------------------------------------------- */
+// Launch vehicle: classify each split component by its size and position.
+function paintVehicleParts(parts, axis) {
+  const lat = ['x', 'y', 'z'].filter((ax) => ax !== axis);
+  let lo = Infinity, hi = -Infinity, R = 0;
+  const info = parts.map((m) => {
+    const bb = m.geometry.boundingBox;
+    const rad = Math.max(bb.max[lat[0]] - bb.min[lat[0]], bb.max[lat[1]] - bb.min[lat[1]]) / 2;
+    lo = Math.min(lo, bb.min[axis]); hi = Math.max(hi, bb.max[axis]); R = Math.max(R, rad);
+    return { m, rad, lo: bb.min[axis], hi: bb.max[axis], len: bb.max[axis] - bb.min[axis] };
+  });
+  const H = hi - lo;
+  const shells = info.filter((p) => p.rad > 0.95 * R && p.len > 0.15 * H);
+  shells.forEach((p) => { p.kind = 'shell'; });
+  info.forEach((p) => {
+    if (p.kind) return;
+    if (p.rad > 0.97 * R) { p.kind = 'band'; return; }                   // rings, interstage, adapters, thrust structure
+    if (p.rad < 0.35 * R && p.lo < lo + 0.08 * H) { p.kind = 'engine'; return; } // engine cluster at the base
+    if (p.rad < 0.35 * R) { p.kind = 'misc'; return; }
+    // inner part: hosted by a shell that covers most of its length?
+    const host = shells.find((s) => Math.min(s.hi, p.hi) - Math.max(s.lo, p.lo) > 0.5 * p.len);
+    if (host) { p.host = host; p.kind = 'inner'; }
+    else p.kind = p.len > 0.08 * H ? 'capsule' : (p.lo > lo + 0.5 * H ? 'shield' : 'engine');
+  });
+  // within each shell: the longest inner part is the tank structure; the rest
+  // are propellant tanks, painted LOX (lower) / CH4 (upper)
+  shells.forEach((s) => {
+    const inner = info.filter((p) => p.host === s).sort((a, b) => b.len - a.len);
+    if (!inner.length) return;
+    inner[0].kind = 'inner';
+    const tanks = inner.slice(1).sort((a, b) => a.lo - b.lo);
+    tanks.forEach((t, i) => { t.kind = i % 2 === 0 ? 'lox' : 'ch4'; });
+  });
+  info.forEach((p) => { p.m.material = mat(p.kind); p.m.name = p.kind; });
+}
+// Refuel & crew model: parts are named in the GLB.
+function paintByName(mesh) {
+  const n = String(mesh.name || '').toLowerCase();
+  let key = 'shell';
+  if (n.includes('lox')) key = 'lox';
+  else if (n.includes('meth')) key = 'ch4';
+  else if (n.includes('heat')) key = 'shield';
+  else if (n.includes('engine bay')) key = 'band';
+  else if (n.includes('engine')) key = 'engine';
+  else if (n.includes('adapter')) key = 'band';
+  else if (n.includes('avionics')) key = 'inner';
+  else if (n.includes('capsule')) key = 'capsule';
+  mesh.material = mat(key);
+}
+
 function init() {
   const placeholder = root.querySelector('[data-placeholder]');
   const hint = root.querySelector('[data-hint]');
+  const specBox = root.querySelector('[data-spec]');
+  const legend = root.querySelector('[data-legend]');
   const segBtns = [].slice.call(root.querySelectorAll('.rocket-viewer__seg button'));
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const FOV = 30;
-  const EXPLODE_K = 0.48;    // axial spread relative to each part's offset
-  const RADIAL_K = 0.30;     // gentle sideways separation for off-axis parts
+  const EXPLODE_K = 0.48;
+  const RADIAL_K = 0.30;
   const SOURCES = [
-    'assets/rocket/full-launch-vehicle.glb',
-    'assets/rocket/stage2-refuel-mated.glb',
+    { url: 'assets/rocket/full-launch-vehicle.glb', kind: 'vehicle', name: 'COPE launch vehicle',
+      spec: ['95 m · 6.9 m dia · 1.43 Mkg at liftoff', '8 + 3 LOX/CH₄ FFSC engines', '19.5 km/s mission ΔV'] },
+    { url: 'assets/rocket/stage2-refuel-mated.glb', kind: 'refuel', name: 'Stage 2 · refuel & crew',
+      spec: ['Tanker Stage 2 mated to the crew stack', '792 t propellant after refuel', 'TLI · lunar landing · return'] },
+    { url: 'assets/rocket/cope-s1-engine.glb', kind: 'engine', name: 'Stage 1 engine · ε = 40',
+      spec: ['Pc 25.53 MPa · O/F 3.5 · Rt 132.3 mm', '2.51 MN sea level · Isp 331 s', '2688 kg · gimbal ±6°'] },
+    { url: 'assets/rocket/cope-s2-engine.glb', kind: 'engine', name: 'Stage 2 engine · ε = 100',
+      spec: ['Pc 26.08 MPa · De 2.646 m', '2.91 MN vacuum · Isp 376 s', '3106 kg · gimbal ±6°'] },
   ];
 
   // ---- renderer / scene / lighting ----
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.1;
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-  // studio-style three-point setup: warm key, cool rim, soft ambient fill
-  const key = new THREE.DirectionalLight(0xfff4e8, 1.5);
-  key.position.set(5, 8, 6);
-  const rim = new THREE.DirectionalLight(0xdbe6ff, 0.9);
-  rim.position.set(-6, 4, -7);
-  scene.add(key, rim, new THREE.HemisphereLight(0xdce0e6, 0x1a1c20, 0.55));
+  const key = new THREE.DirectionalLight(0xfff1e0, 1.6); key.position.set(5, 8, 6);
+  const rim = new THREE.DirectionalLight(0xcfe0ff, 1.0); rim.position.set(-6, 4, -7);
+  const fill = new THREE.DirectionalLight(0xffb070, 0.35); fill.position.set(0, -6, 3);
+  scene.add(key, rim, fill, new THREE.HemisphereLight(0xdce0e6, 0x1a1c20, 0.5));
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 5000);
-
-  // A spin pivot turns the upright vehicle about its vertical axis (turntable).
   const spin = new THREE.Group();
   scene.add(spin);
 
-  // soft fake contact shadow (radial-gradient disc, no shadow-map cost)
+  // soft fake contact shadow
   const shadow = (() => {
     const cnv = document.createElement('canvas');
     cnv.width = cnv.height = 256;
     const ctx = cnv.getContext('2d');
     const g = ctx.createRadialGradient(128, 128, 8, 128, 128, 128);
-    g.addColorStop(0, 'rgba(0,0,0,.40)');
-    g.addColorStop(0.55, 'rgba(0,0,0,.16)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 256, 256);
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1, 1),
-      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cnv), transparent: true, depthWrite: false })
-    );
-    mesh.rotation.x = -Math.PI / 2;
-    mesh.visible = false;
+    g.addColorStop(0, 'rgba(0,0,0,.45)'); g.addColorStop(0.55, 'rgba(0,0,0,.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 256, 256);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cnv), transparent: true, depthWrite: false }));
+    mesh.rotation.x = -Math.PI / 2; mesh.visible = false;
     scene.add(mesh);
     return mesh;
   })();
 
   const loader = new GLTFLoader();
-  const models = [null, null];
+  const models = SOURCES.map(() => null);
   let active = 0;
-  let explodeTarget = 0;   // 0 assembled, 1 exploded
-  let explodeCur = 0;
+  let explodeTarget = 0, explodeCur = 0;
 
-  function polishMaterial(mat) {
-    mat.metalness = 0.55;
-    mat.roughness = 0.35;
-    mat.envMapIntensity = 1.15;
-    mat.side = THREE.DoubleSide;   // sliced/open CAD faces render solid
-    mat.needsUpdate = true;
-  }
-
-  function prepModel(gltf) {
-    const src = gltf.scene;
-    src.updateMatrixWorld(true);
+  function prepModel(gltf, src) {
+    const scn = gltf.scene;
+    scn.updateMatrixWorld(true);
     const container = new THREE.Group();
     const materials = new Set();
 
-    // Flatten: bake each mesh's world transform into geometry, reparent into one group.
-    src.traverse((o) => {
+    scn.traverse((o) => {
       if (!o.isMesh) return;
       o.updateWorldMatrix(true, false);
       const geo = o.geometry.clone();
       geo.applyMatrix4(o.matrixWorld);
-      const mat = o.material;
-      polishMaterial(mat);
-      materials.add(mat);
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new THREE.Mesh(geo, o.material);
       mesh.name = o.name || (o.parent && o.parent.name) || '';
       container.add(mesh);
     });
 
-    // A single fused mesh can't explode as-is. Prefer true connected components
-    // (real disjoint pieces); fall back to axial band slices for one-piece solids.
+    // one welded mesh: split into components (or bands as a last resort)
     if (container.children.length <= 1 && container.children[0]) {
       const fused = container.children[0];
       const soups = splitByComponents(fused) || splitIntoBands(fused, 6);
@@ -266,7 +292,7 @@ function init() {
       }
     }
 
-    // Recenter on origin and store each part's explode direction.
+    // recenter + per-part explode offsets
     const box = new THREE.Box3().setFromObject(container);
     const center = box.getCenter(new THREE.Vector3());
     container.children.forEach((m) => m.geometry.translate(-center.x, -center.y, -center.z));
@@ -274,31 +300,42 @@ function init() {
       m.geometry.computeBoundingBox();
       m.userData.offset = m.geometry.boundingBox.getCenter(new THREE.Vector3());
     });
-
-    // Long axis of the assembled vehicle (in geometry space, before upright rotation).
     const size = box.getSize(new THREE.Vector3());
     const axis = size.x >= size.y && size.x >= size.z ? 'x' : (size.y >= size.z ? 'y' : 'z');
 
-    // Outer stage shells slide aside laterally so inner tanks/engines are visible.
+    // paint
+    if (src.kind === 'vehicle') paintVehicleParts(container.children, axis);
+    else if (src.kind === 'refuel') container.children.forEach(paintByName);
+    else container.children.forEach((m) => {
+      // engine GLBs carry their own PBR colours from the STEP conversion; tune the
+      // finish here so the graphite bell reads dark instead of as chrome
+      if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
+      const n = String(m.name || '').toLowerCase();
+      let spec = { color: 0xb8bfc9, metalness: 0.85, roughness: 0.34, env: 1.0 };          // turbopumps: brushed steel
+      if (n.includes('thrustchamber')) spec = { color: 0x111317, metalness: 0.35, roughness: 0.62, env: 0.55 }; // graphite bell
+      else if (n.includes('preburner')) spec = { color: 0xb08d5a, metalness: 0.75, roughness: 0.42, env: 0.9 }; // Inconel
+      else if (n.includes('gimbal')) spec = { color: 0x3a3e46, metalness: 0.6, roughness: 0.5, env: 0.7 };
+      else if (n.includes('injector')) spec = { color: 0x8d939c, metalness: 0.8, roughness: 0.4, env: 0.9 };
+      const mm = new THREE.MeshStandardMaterial({ color: spec.color, metalness: spec.metalness, roughness: spec.roughness });
+      mm.envMapIntensity = spec.env; mm.side = THREE.DoubleSide;
+      m.material = mm;
+    });
+    container.children.forEach((m) => materials.add(m.material));
+
+    // outer stage shells (refuel model) slide aside so the internals show
     const isShell = (n) => {
-      const toks = String(n || '').toLowerCase().split('_')
-        .map((t) => t.replace(/\d+$/, '')).filter(Boolean);
+      const toks = String(n || '').toLowerCase().split('_').map((t) => t.replace(/\d+$/, '')).filter(Boolean);
       return toks.includes('stage') && toks.every((t) => t === 'stage' || t === 'refuel');
     };
     let shellIdx = 0;
     container.children.forEach((m) => {
-      if (!isShell(m.name)) return;
+      if (src.kind !== 'refuel' || !isShell(m.name)) return;
       const s = m.geometry.boundingBox.getSize(new THREE.Vector3());
-      const dia = Math.max(s.x, s.y);
       m.userData.shell = true;
-      m.userData.shellShift = (shellIdx++ % 2 === 0 ? -1 : 1) * dia * 1.1;
+      m.userData.shellShift = (shellIdx++ % 2 === 0 ? -1 : 1) * Math.max(s.x, s.y) * 1.1;
     });
 
-    // Nested internals: a part whose axial span sits inside a larger-radius
-    // part is invisible in a purely axial explode. WIDE internals (propellant
-    // tanks, near the hull's radius) slide out sideways to become visible;
-    // NARROW hardware (engine bells) stays with its stage. Models that already
-    // use named shell slides (the refuel config) are skipped.
+    // nested internals slide out sideways so they are visible in the explode
     if (!container.children.some((m) => m.userData.shell)) {
       const lat = ['x', 'y', 'z'].filter((ax) => ax !== axis);
       const info = container.children.map((m) => {
@@ -308,7 +345,6 @@ function init() {
       });
       info.forEach((part) => {
         const span = part.hi - part.lo || 1;
-        // tightest larger-radius part that axially contains this one
         let host = null;
         info.forEach((b) => {
           if (b === part || b.rad <= part.rad * 1.05) return;
@@ -316,104 +352,88 @@ function init() {
           if (!host || b.rad < host.rad) host = b;
         });
         if (host && part.rad > 0.5 * host.rad) {
-          // diagonal (both lateral axes) so the spread stays visible at every
-          // turntable angle; alternate corners within one hull
           const s = host.side * host.rad * 3.1 * Math.SQRT1_2;
-          part.m.userData.latA = lat[0];
-          part.m.userData.latB = lat[1];
-          part.m.userData.latShiftA = s;
-          part.m.userData.latShiftB = s;
+          part.m.userData.latA = lat[0]; part.m.userData.latB = lat[1];
+          part.m.userData.latShiftA = s; part.m.userData.latShiftB = s;
           host.side = -host.side;
         }
       });
-      // give the topmost part (crew capsule) a little extra axial separation
       let top = null;
-      container.children.forEach((m) => {
-        if (!top || m.userData.offset[axis] > top.userData.offset[axis]) top = m;
-      });
-      if (top) top.userData.axialBoost = 1.35;
+      container.children.forEach((m) => { if (!top || m.userData.offset[axis] > top.userData.offset[axis]) top = m; });
+      if (top && src.kind === 'vehicle') top.userData.axialBoost = 1.35;
     }
 
-    const radius = new THREE.Box3().setFromObject(container)
-      .getBoundingSphere(new THREE.Sphere()).radius;
-
-    // Stand the vehicle upright: rotate whichever axis is the long axis onto world +Y.
+    const radius = new THREE.Box3().setFromObject(container).getBoundingSphere(new THREE.Sphere()).radius;
     if (axis === 'z') container.rotation.x = -Math.PI / 2;
     else if (axis === 'x') container.rotation.z = Math.PI / 2;
     container.visible = false;
     spin.add(container);
-
-    // Ground extent (world Y) for the contact shadow, measured upright.
     container.updateMatrixWorld(true);
     const upright = new THREE.Box3().setFromObject(container);
     const minY = upright.min.y;
     const footprint = Math.max(upright.max.x - upright.min.x, upright.max.z - upright.min.z);
-
-    return { container, radius, materials: [...materials], axis, minY, footprint };
+    return { container, radius, materials: [...materials], axis, minY, footprint, src };
   }
 
   function onLoaded(i, g) {
-    models[i] = prepModel(g);
-    if (i === active) {
-      setActive(active);
-      if (placeholder) placeholder.style.display = 'none';
-    }
+    models[i] = prepModel(g, SOURCES[i]);
+    if (i === active) { setActive(active); if (placeholder) placeholder.style.display = 'none'; }
   }
-  SOURCES.forEach((url, i) => loader.load(url, (g) => onLoaded(i, g), undefined,
-    () => { if (i === 0 && placeholder) placeholder.querySelector('p').textContent = '3D model unavailable'; }));
+  // load the first model now; the rest lazily on first use
+  function load(i) {
+    if (models[i] || models[i] === 'loading') return;
+    models[i] = 'loading';
+    loader.load(SOURCES[i].url, (g) => onLoaded(i, g), undefined,
+      () => { models[i] = null; if (i === active && placeholder) placeholder.querySelector('p').textContent = '3D model unavailable'; });
+  }
+  load(0);
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+  idle(() => { load(1); load(2); load(3); });
+
+  function ready(i) { return models[i] && models[i] !== 'loading'; }
 
   function setOpacity(idx, o) {
-    const m = models[idx]; if (!m) return;
+    if (!ready(idx)) return;
+    const m = models[idx];
     const opaque = o >= 0.999;
     m.container.visible = o > 0.001;
-    m.materials.forEach((mat) => { mat.transparent = !opaque; mat.depthWrite = opaque; mat.opacity = o; });
+    m.materials.forEach((mt) => { mt.transparent = !opaque; mt.depthWrite = opaque; mt.opacity = o; });
   }
 
   const tmp = new THREE.Vector3();
   function poseExplode(idx, f) {
-    const m = models[idx]; if (!m) return;
-    const axis = m.axis;
+    if (!ready(idx)) return;
+    const m = models[idx], axis = m.axis;
     m.container.children.forEach((p) => {
-      if (p.userData.shell) {
-        p.position.set(p.userData.shellShift * f, 0, 0);
-        return;
-      }
-      // Dominant axial spread with a gentle radial separation for off-axis parts
-      // (fins, boosters, clustered engines) so nothing overlaps or jumps sideways.
+      if (p.userData.shell) { p.position.set(p.userData.shellShift * f, 0, 0); return; }
       const o = p.userData.offset;
-      tmp.copy(o);
-      tmp[axis] = 0;
-      tmp.multiplyScalar(RADIAL_K * f);
+      tmp.copy(o); tmp[axis] = 0; tmp.multiplyScalar(RADIAL_K * f);
       tmp[axis] = o[axis] * EXPLODE_K * (p.userData.axialBoost || 1) * f;
-      // nested internals (propellant tanks) slide out sideways to clear the hull
-      if (p.userData.latShiftA) {
-        tmp[p.userData.latA] += p.userData.latShiftA * f;
-        tmp[p.userData.latB] += p.userData.latShiftB * f;
-      }
+      if (p.userData.latShiftA) { tmp[p.userData.latA] += p.userData.latShiftA * f; tmp[p.userData.latB] += p.userData.latShiftB * f; }
       p.position.copy(tmp);
     });
   }
 
+  // ---- camera: zoomed out a touch more than a tight fit, with user orbit ----
+  let elevDeg = 14, userYaw = 0;
   function placeCamera() {
-    const m = models[active]; if (!m) return;
+    if (!ready(active)) return;
+    const m = models[active];
     const vfov = THREE.MathUtils.degToRad(FOV);
-    // Use whichever FOV (horizontal vs vertical) is more constrained so the
-    // bounding sphere fits in both axes. On portrait viewports the horizontal
-    // FOV is smaller, but we cap how far we back off (max 1.6x) so a tall/
-    // narrow model like a rocket still reads at usable size on phones.
     const aspect = camera.aspect || 1;
     const hHalf = Math.atan(Math.tan(vfov / 2) * aspect);
     const useHalf = Math.min(vfov / 2, hHalf);
-    let dist = (m.radius / Math.sin(useHalf)) * (1.04 + 0.55 * explodeCur);
-    const portraitMax = m.radius / Math.sin(vfov / 2) * 1.6 * (1 + explodeCur * 0.5);
+    const zoomOut = m.src.kind === 'engine' ? 1.18 : 1.24;
+    let dist = (m.radius / Math.sin(useHalf)) * (zoomOut + 0.28 * explodeCur);
+    const portraitMax = m.radius / Math.sin(vfov / 2) * 1.7 * (1 + explodeCur * 0.3);
     if (dist > portraitMax) dist = portraitMax;
-    const elev = THREE.MathUtils.degToRad(14);  // slight top-down 3/4 view
+    const elev = THREE.MathUtils.degToRad(elevDeg);
     camera.position.set(0, dist * Math.sin(elev), dist * Math.cos(elev));
     camera.lookAt(0, 0, 0);
   }
-
   function placeShadow() {
-    const m = models[active]; if (!m) return;
+    if (!ready(active)) return;
+    const m = models[active];
     shadow.visible = true;
     shadow.position.y = m.minY * (1 + EXPLODE_K * explodeCur) - m.radius * 0.02;
     const s = m.footprint * (1.9 + 0.5 * explodeCur);
@@ -423,33 +443,61 @@ function init() {
 
   function setActive(idx) {
     active = idx;
-    explodeTarget = 0; // reset to assembled when switching vehicles
-    setOpacity(idx === 0 ? 1 : 0, 0);
-    setOpacity(idx, 1);
-    segBtns.forEach((b, j) => {
-      b.classList.toggle('is-active', j === idx);
-      b.setAttribute('aria-selected', j === idx);
-    });
+    explodeTarget = 0;
+    models.forEach((m, j) => { if (ready(j)) setOpacity(j, j === idx ? 1 : 0); });
+    segBtns.forEach((b, j) => { b.classList.toggle('is-active', j === idx); b.setAttribute('aria-selected', j === idx); });
+    if (specBox) {
+      specBox.textContent = '';
+      const b = document.createElement('b'); b.textContent = SOURCES[idx].name; specBox.appendChild(b);
+      SOURCES[idx].spec.forEach((line) => { specBox.appendChild(document.createTextNode(line)); specBox.appendChild(document.createElement('br')); });
+    }
+    if (legend) legend.style.display = SOURCES[idx].kind === 'engine' ? 'none' : '';
+    if (placeholder) {
+      if (ready(idx)) placeholder.style.display = 'none';
+      else { placeholder.style.display = ''; placeholder.querySelector('p').textContent = 'Loading 3D model…'; load(idx); }
+    }
   }
 
-  // ---- interactions: click/tap to explode, segmented control to switch ----
+  // ---- interactions: drag to orbit, click/tap to explode, segmented control ----
   let hinted = false;
   function toggleExplode() {
-    if (!models[active]) return;
+    if (!ready(active)) return;
     explodeTarget = explodeTarget > 0.5 ? 0 : 1;
     if (!hinted && hint) { hint.classList.add('is-hidden'); hinted = true; }
   }
-  canvas.addEventListener('click', toggleExplode);
-  segBtns.forEach((b) => b.addEventListener('click', () => {
-    const idx = +b.getAttribute('data-model');
-    if (models[idx]) setActive(idx);
-  }));
+  let dragging = false, moved = 0, lastX = 0, lastY = 0, idleT = 0;
+  canvas.addEventListener('pointerdown', (e) => {
+    dragging = true; moved = 0; lastX = e.clientX; lastY = e.clientY;
+    canvas.classList.add('is-dragging'); canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    moved += Math.abs(dx) + Math.abs(dy);
+    spin.rotation.y += dx * 0.01;
+    elevDeg = Math.max(-10, Math.min(55, elevDeg - dy * 0.25));
+    idleT = 0;
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false; canvas.classList.remove('is-dragging');
+    if (moved < 6) toggleExplode();
+  }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExplode(); } });
+  canvas.setAttribute('tabindex', '0');
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', 'Interactive 3D model. Drag to orbit, press Enter to explode the assembly.');
+
+  segBtns.forEach((b) => b.addEventListener('click', () => { setActive(+b.getAttribute('data-model')); }));
 
   // ---- resize ----
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
-    renderer.setSize(w, h, false);
+    if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize);
@@ -462,10 +510,11 @@ function init() {
   function frame(now) {
     requestAnimationFrame(frame);
     const dt = Math.min((now - last) / 1000, 0.05); last = now;
-    if (!visible || !models[active]) return;
+    if (!visible || !ready(active)) return;
     resize();
-    if (!reduce) spin.rotation.y += dt * 0.35;         // continuous auto-rotation
-    explodeCur += (explodeTarget - explodeCur) * Math.min(dt * 4, 1); // eased explode
+    idleT += dt;
+    if (!reduce && !dragging && idleT > 2.5) spin.rotation.y += dt * 0.3;
+    explodeCur += (explodeTarget - explodeCur) * Math.min(dt * 4, 1);
     if (Math.abs(explodeTarget - explodeCur) < 0.001) explodeCur = explodeTarget;
     poseExplode(active, explodeCur);
     placeCamera();
@@ -473,4 +522,5 @@ function init() {
     renderer.render(scene, camera);
   }
   requestAnimationFrame(frame);
+  setActive(0);
 }

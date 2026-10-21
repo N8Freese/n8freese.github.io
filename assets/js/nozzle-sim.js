@@ -1,98 +1,88 @@
 /* ============================================================================
- * nozzle-sim.js - quasi-1D isentropic flow through the COPE engine bells
- * Wall contours are the actual Rao bell profiles from the AE 451 detail-design
- * work (Rt = 132.3 mm; stage 1 eps = 40, stage 2 eps = 100), downsampled and
- * normalized by throat radius. Mach number at each station is solved from the
- * area-Mach relation by bisection (subsonic upstream of the throat, supersonic
- * downstream); temperature/pressure follow from the isentropic relations.
- * Slow flow renders blue, fast flow red. A 1D flow model, not CFD.
- * Mounted on case studies with a `nozzle` field (see project-page.js).
+ * nozzle-sim.js - flow through the COPE engine bells, on the homepage.
+ *
+ * Geometry and the quasi-1D solution (Mach, static temperature and pressure
+ * at every station) come straight from the CDR analysis outputs in
+ * assets/js/cope-data.js: the actual 80% Rao contours (Rt = 132.3 mm; Stage 1
+ * eps = 40, Stage 2 eps = 100) with CEA chamber properties. The canvas shades
+ * the selected field across the bell, draws the plume for the ambient each
+ * stage runs in (sea-level shock cells for Stage 1, free expansion for
+ * Stage 2), advects streak particles at the local velocity, and lets the
+ * visitor probe any station with the pointer. It is a 1D model shaded for
+ * display, not CFD.
  * ==========================================================================*/
 (function () {
   "use strict";
 
   var canvas = document.querySelector("[data-nozzle]");
-  if (!canvas) return;
+  var DATA = window.COPE_DATA;
+  if (!canvas || !DATA) return;
   var ctx = canvas.getContext("2d");
   var playBtn = document.querySelector("[data-nozzle-play]");
-
-  var GAMMA = 1.2; // frozen CEA value for LOX/CH4 combustion products
-
-  // x: station (0 = injector, 1 = exit, normalized by overall length)
-  // r: wall radius / throat radius   t: throat index
-  var CONTOURS = {"S1":{"x":[0.0,0.0089,0.0161,0.025,0.0322,0.0411,0.05,0.0572,0.0661,0.075,0.0822,0.0911,0.0983,0.1063,0.1108,0.1144,0.1189,0.1233,0.1268,0.1311,0.1344,0.1385,0.1425,0.1444,0.1462,0.1479,0.1494,0.1511,0.1526,0.1544,0.1561,0.1576,0.1597,0.1633,0.1662,0.1699,0.173,0.1769,0.1808,0.184,0.188,0.192,0.1953,0.1969,0.1976,0.1985,0.1996,0.2007,0.2016,0.2027,0.2038,0.2046,0.2056,0.2064,0.2074,0.2192,0.2287,0.2408,0.2529,0.2628,0.2752,0.2852,0.2979,0.3107,0.3211,0.3341,0.3473,0.358,0.3715,0.3823,0.396,0.4098,0.421,0.4351,0.4493,0.4608,0.4753,0.4869,0.5017,0.5165,0.5285,0.5436,0.5589,0.5712,0.5867,0.5992,0.6149,0.6308,0.6436,0.6597,0.676,0.6891,0.7056,0.7189,0.7357,0.7526,0.7662,0.7834,0.8007,0.8146,0.8321,0.8463,0.8641,0.882,0.8964,0.9146,0.9329,0.9477,0.9662,0.9812,1.0],"r":[1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.577,1.571,1.557,1.539,1.52,1.493,1.467,1.43,1.389,1.368,1.348,1.327,1.311,1.291,1.274,1.254,1.234,1.217,1.193,1.156,1.128,1.098,1.076,1.053,1.034,1.022,1.01,1.003,1.0,1.0,1.0,1.001,1.004,1.008,1.012,1.018,1.025,1.032,1.041,1.05,1.062,1.211,1.33,1.476,1.621,1.735,1.876,1.987,2.125,2.26,2.368,2.5,2.63,2.733,2.86,2.961,3.084,3.206,3.302,3.42,3.536,3.628,3.741,3.83,3.94,4.047,4.132,4.236,4.339,4.419,4.518,4.596,4.692,4.785,4.859,4.949,5.037,5.107,5.192,5.258,5.34,5.419,5.482,5.558,5.632,5.69,5.761,5.816,5.884,5.95,6.001,6.063,6.123,6.17,6.227,6.271,6.325],"t":43},"S2":{"x":[0.0,0.0057,0.0103,0.0161,0.0207,0.0264,0.0322,0.0368,0.0425,0.0483,0.0529,0.0586,0.0632,0.0684,0.0713,0.0736,0.0765,0.0793,0.0816,0.0843,0.0865,0.0891,0.0917,0.0929,0.094,0.0952,0.0961,0.0972,0.0982,0.0993,0.1005,0.1014,0.1027,0.105,0.1069,0.1093,0.1113,0.1138,0.1163,0.1184,0.1209,0.1235,0.1256,0.1267,0.1271,0.1278,0.1286,0.1293,0.13,0.1307,0.1315,0.132,0.1328,0.1333,0.134,0.147,0.1575,0.1708,0.1842,0.1951,0.2088,0.2198,0.2338,0.2479,0.2593,0.2736,0.2881,0.2999,0.3146,0.3265,0.3416,0.3568,0.369,0.3844,0.4,0.4126,0.4284,0.4412,0.4573,0.4736,0.4867,0.5032,0.5199,0.5333,0.5502,0.5639,0.5811,0.5984,0.6124,0.6299,0.6477,0.662,0.68,0.6945,0.7127,0.7311,0.746,0.7646,0.7835,0.7986,0.8177,0.833,0.8524,0.8719,0.8876,0.9073,0.9272,0.9432,0.9634,0.9796,1.0],"r":[1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.581,1.577,1.571,1.557,1.539,1.52,1.493,1.467,1.43,1.389,1.368,1.348,1.327,1.311,1.291,1.274,1.254,1.234,1.217,1.193,1.156,1.128,1.098,1.076,1.053,1.034,1.022,1.01,1.003,1.0,1.0,1.0,1.002,1.005,1.009,1.014,1.021,1.03,1.038,1.049,1.059,1.073,1.36,1.587,1.866,2.14,2.357,2.623,2.833,3.092,3.345,3.545,3.791,4.032,4.222,4.454,4.638,4.862,5.083,5.256,5.468,5.675,5.838,6.038,6.194,6.385,6.572,6.719,6.897,7.071,7.207,7.373,7.503,7.661,7.814,7.934,8.079,8.219,8.329,8.461,8.564,8.688,8.808,8.901,9.012,9.12,9.202,9.301,9.377,9.468,9.554,9.62,9.698,9.772,9.828,9.893,9.943,10.0],"t":43}};
+  var readout = document.querySelector("[data-nozzle-readout]");
 
   var META = {
-    S1: { label: "stage 1 · Pc = 25.5 MPa · F = 2.6 MN (SL) · Rt = 132.3 mm", eps: 40 },
-    S2: { label: "stage 2 · Pc = 26.1 MPa · F = 2.8 MN (vac) · Rt = 132.3 mm", eps: 100 },
+    S1: { label: "Stage 1 · Pc 25.53 MPa · ε 40 · 2.51 MN SL / 2.73 MN vac", short: "Stage 1 · ε 40 · 2.51 MN SL", eps: 40, pa: 101325, pe: 70500, De: 1.674, Isp: "331 s SL" },
+    S2: { label: "Stage 2 · Pc 26.08 MPa · ε 100 · 2.91 MN vac", short: "Stage 2 · ε 100 · 2.91 MN vac", eps: 100, pa: 0, pe: 24000, De: 2.646, Isp: "376 s vac" },
+  };
+  var FIELDS = {
+    M: { name: "Mach", unit: "", fmt: function (v) { return v.toFixed(2); } },
+    T: { name: "Temperature", unit: "K", fmt: function (v) { return v.toFixed(0) + " K"; } },
+    p: { name: "Pressure", unit: "", fmt: function (v) { return v >= 1e6 ? (v / 1e6).toFixed(2) + " MPa" : (v / 1e3).toFixed(1) + " kPa"; } },
   };
 
-  var cur = "S1";
+  var cur = "S1", field = "M";
   var st = null;
-
-  function areaMach(M) {
-    var e = (GAMMA + 1) / (2 * (GAMMA - 1));
-    return Math.pow((2 / (GAMMA + 1)) * (1 + (GAMMA - 1) / 2 * M * M), e) / M;
-  }
-
-  // Bisection on the area-Mach relation: monotone decreasing in M on the
-  // subsonic branch, increasing on the supersonic branch.
-  function solveM(aRatio, supersonic) {
-    var lo = supersonic ? 1 : 1e-4;
-    var hi = supersonic ? 30 : 1;
-    for (var i = 0; i < 60; i++) {
-      var mid = (lo + hi) / 2;
-      var f = areaMach(mid) - aRatio;
-      if ((f > 0) === supersonic) hi = mid;
-      else lo = mid;
-    }
-    return (lo + hi) / 2;
-  }
+  var hover = null; // normalized station 0..1 under the pointer, or null
 
   function solve() {
-    var c = CONTOURS[cur];
-    var M = [], T = [];
-    for (var i = 0; i < c.r.length; i++) {
-      var m = i === c.t ? 1 : solveM(c.r[i] * c.r[i], i > c.t);
-      M.push(m);
-      T.push(1 / (1 + (GAMMA - 1) / 2 * m * m)); // T/T0
-    }
-    var n = M.length - 1;
+    var c = DATA[cur].contour;
+    var x = c.x_mm, r = c.r_mm;
+    var x0 = x[0], x1 = x[x.length - 1];
     st = {
-      x: c.x, r: c.r, M: M, T: T, Me: M[n],
-      pe: Math.pow(T[n], GAMMA / (GAMMA - 1)), // pe/p0
+      xn: x.map(function (v) { return (v - x0) / (x1 - x0); }),
+      x: x, r: r, M: c.Mach, T: c.T_K, p: c.p_Pa,
+      t: DATA[cur].throat_i,
+      rt: Math.min.apply(null, r), rMax: Math.max.apply(null, r),
+      len: x1 - x0,
     };
+    var n = r.length - 1;
+    st.Me = st.M[n]; st.Te = st.T[n]; st.pe = st.p[n];
+    st.Tmax = Math.max.apply(null, st.T); st.Tmin = Math.min.apply(null, st.T);
+    st.lpMax = Math.log10(Math.max.apply(null, st.p)); st.lpMin = Math.log10(Math.min.apply(null, st.p));
   }
 
-  // Linear interpolation over the (non-uniform) station grid.
+  // interpolate an array on the normalized station grid
   function at(arr, xq) {
-    var x = st.x;
-    if (xq <= x[0]) return arr[0];
-    if (xq >= x[x.length - 1]) return arr[arr.length - 1];
+    var x = st.xn;
+    if (xq <= 0) return arr[0];
+    if (xq >= 1) return arr[arr.length - 1];
     var lo = 0, hi = x.length - 1;
-    while (hi - lo > 1) {
-      var mid = (lo + hi) >> 1;
-      if (x[mid] <= xq) lo = mid; else hi = mid;
-    }
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (x[mid] <= xq) lo = mid; else hi = mid; }
     var f = (xq - x[lo]) / (x[hi] - x[lo] || 1);
     return arr[lo] + (arr[hi] - arr[lo]) * f;
   }
+  // normalized 0..1 value of the active field at a station
+  function fieldNorm(xq) {
+    if (field === "M") return at(st.M, xq) / st.Me;
+    if (field === "T") return (at(st.T, xq) - st.Tmin) / (st.Tmax - st.Tmin);
+    return (Math.log10(at(st.p, xq)) - st.lpMin) / (st.lpMax - st.lpMin);
+  }
 
-  // Slow = blue, fast = red.
-  var STOPS = [
-    [0.00, 28, 63, 184],
-    [0.25, 30, 157, 230],
-    [0.50, 39, 198, 144],
-    [0.75, 255, 193, 77],
-    [1.00, 255, 92, 71],
-  ];
-  function machColor(t, alpha, brightness) {
-    t = Math.min(Math.max(t, 0), 1);
-    var k = brightness == null ? 1 : brightness;
-    var a = STOPS[0], b = STOPS[STOPS.length - 1];
-    for (var i = 0; i < STOPS.length - 1; i++) {
-      if (t >= STOPS[i][0] && t <= STOPS[i + 1][0]) { a = STOPS[i]; b = STOPS[i + 1]; break; }
-    }
+  /* ---- colormaps ---------------------------------------------------------- */
+  var MAPS = {
+    // slow blue -> fast red (Mach)
+    M: [[0, 24, 48, 160], [0.22, 32, 140, 230], [0.48, 48, 200, 150], [0.72, 255, 196, 70], [1, 255, 84, 60]],
+    // cold black-red-orange-white (temperature)
+    T: [[0, 20, 8, 40], [0.3, 120, 20, 60], [0.6, 230, 80, 30], [0.85, 255, 190, 60], [1, 255, 250, 220]],
+    // pressure: deep violet -> teal -> pale
+    p: [[0, 20, 10, 60], [0.35, 50, 60, 170], [0.65, 40, 170, 180], [1, 240, 250, 200]],
+  };
+  function cmap(t, alpha, k) {
+    var S = MAPS[field];
+    t = Math.min(Math.max(t, 0), 1); k = k == null ? 1 : k;
+    var a = S[0], b = S[S.length - 1];
+    for (var i = 0; i < S.length - 1; i++) if (t >= S[i][0] && t <= S[i + 1][0]) { a = S[i]; b = S[i + 1]; break; }
     var u = (t - a[0]) / (b[0] - a[0] || 1);
     var r = Math.min(255, Math.round((a[1] + (b[1] - a[1]) * u) * k));
     var g = Math.min(255, Math.round((a[2] + (b[2] - a[2]) * u) * k));
@@ -100,168 +90,230 @@
     return "rgba(" + r + "," + g + "," + bl + "," + (alpha == null ? 1 : alpha) + ")";
   }
 
-  // Flow particles: advected at the local velocity ~ M*sqrt(T/T0), colored by
-  // local Mach (blue slow, red fast). Small floor so the chamber isn't frozen.
+  /* ---- particles ---------------------------------------------------------- */
   var PARTS = [];
-  for (var i = 0; i < 90; i++) {
-    PARTS.push({ x: Math.random() * 1.2, f: Math.random() * 1.7 - 0.85 });
-  }
+  for (var i = 0; i < 140; i++) PARTS.push({ x: Math.random() * 1.3, f: Math.random() * 1.8 - 0.9, s: 0.7 + Math.random() * 0.6 });
 
+  var clock = 0;
   function draw(dt) {
-    var dpr = window.devicePixelRatio || 1;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = canvas.clientWidth, H = canvas.clientHeight;
     if (!W || !H) return;
-    if (canvas.width !== Math.round(W * dpr)) {
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
+    if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    clock += dt;
 
-    ctx.fillStyle = "#0a0c11";
-    ctx.fillRect(0, 0, W, H);
+    // background: vignette
+    var bg = ctx.createRadialGradient(W * 0.45, H * 0.5, 10, W * 0.45, H * 0.5, W * 0.7);
+    bg.addColorStop(0, "#0e1320"); bg.addColorStop(1, "#070a10");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
-    var x0 = W * 0.05, x1 = W * 0.76, xPlume = W * 0.98;
-    var yc = H * 0.55;
-    var rExit = st.r[st.r.length - 1];
-    var scale = (H * 0.37) / rExit;
-    function X(x) { return x0 + (x1 - x0) * x; }
+    var narrow = W < 640;
+    var x0 = W * 0.04, x1 = W * (narrow ? 0.70 : 0.68), xPlume = W * 0.995;
+    var yc = H * 0.53;
+    var scale = (H * 0.40) / st.rMax;        // px per mm
+    var X = function (xn) { return x0 + (x1 - x0) * xn; };
+    var R = function (xn) { return at(st.r, xn) * scale; };
+    var meta = META[cur];
 
-    // Mach color field inside the contour (dimmed so the particles read)
-    var n = st.r.length - 1;
-    for (var i = 0; i < n; i++) {
-      var xa = X(st.x[i]), xb = X(st.x[i + 1]) + 0.8;
-      var rm = (st.r[i] + st.r[i + 1]) / 2 * scale;
-      ctx.fillStyle = machColor(((st.M[i] + st.M[i + 1]) / 2) / st.Me, 0.9, 0.62);
-      ctx.fillRect(xa, yc - rm, xb - xa, rm * 2);
+    // ---- field inside the bell: per-column vertical gradient with a dark edge near the wall (display only)
+    var cols = Math.max(160, Math.round((x1 - x0) / 2));
+    for (var c = 0; c < cols; c++) {
+      var u0 = c / cols, u1 = (c + 1) / cols;
+      var xa = X(u0), xb = X(u1) + 1;
+      var rm = (R(u0) + R(u1)) / 2;
+      var v = fieldNorm((u0 + u1) / 2);
+      var g = ctx.createLinearGradient(0, yc - rm, 0, yc + rm);
+      g.addColorStop(0, cmap(v, 1, 0.55)); g.addColorStop(0.12, cmap(v, 1, 0.95));
+      g.addColorStop(0.5, cmap(v, 1, 1.08)); g.addColorStop(0.88, cmap(v, 1, 0.95)); g.addColorStop(1, cmap(v, 1, 0.55));
+      ctx.fillStyle = g; ctx.fillRect(xa, yc - rm, xb - xa, rm * 2);
     }
 
-    // Exhaust plume past the exit plane
-    var steps = 26;
-    for (var k = 0; k < steps; k++) {
-      var u = k / steps;
-      var xa2 = x1 + (xPlume - x1) * u, xb2 = x1 + (xPlume - x1) * (u + 1 / steps) + 0.8;
-      var rp = rExit * scale * (1 + 0.30 * u);
-      ctx.fillStyle = machColor(1, 0.38 * (1 - u), 0.62);
-      ctx.fillRect(xa2, yc - rp, xb2 - xa2, rp * 2);
+    // ---- plume
+    var rExit = R(1), Me = st.Me;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    if (meta.pa > 0) {
+      // overexpanded at sea level (pe/pa ≈ 0.70): the jet necks down and a train of shock cells forms.
+      var ratio = meta.pe / meta.pa;
+      var cellL = 0.9 * (2 * rExit) * Math.sqrt(Me * Me - 1) * Math.sqrt(ratio); // Prandtl-Pack style cell spacing, px
+      var steps = 90, len = xPlume - x1;
+      for (var k = 0; k < steps; k++) {
+        var uu = k / steps, px = x1 + len * uu, pw = len / steps + 1;
+        var decay = Math.exp(-uu * 2.2);
+        var cell = Math.abs(Math.sin(Math.PI * (px - x1) / cellL));
+        var rp = rExit * (0.82 + 0.18 * cell) * (1 + 0.25 * uu);
+        var bright = (0.18 + 0.55 * Math.pow(1 - cell, 3)) * decay;
+        var flick = 0.92 + 0.08 * Math.sin(clock * 37 + k * 1.7);
+        var gg = ctx.createLinearGradient(0, yc - rp, 0, yc + rp);
+        gg.addColorStop(0, "rgba(255,120,60,0)"); gg.addColorStop(0.5, "rgba(255,170,90," + (bright * flick).toFixed(3) + ")"); gg.addColorStop(1, "rgba(255,120,60,0)");
+        ctx.fillStyle = gg; ctx.fillRect(px, yc - rp, pw, rp * 2);
+        // bright diamond core
+        if (cell < 0.25) {
+          var core = ctx.createRadialGradient(px, yc, 0, px, yc, rp * 0.5);
+          core.addColorStop(0, "rgba(255,245,210," + (0.7 * decay * flick).toFixed(3) + ")"); core.addColorStop(1, "rgba(255,200,120,0)");
+          ctx.fillStyle = core; ctx.fillRect(px - 2, yc - rp, pw + 4, rp * 2);
+        }
+      }
+    } else {
+      // vacuum: free expansion, the plume fans out and fades
+      var steps2 = 70, len2 = xPlume - x1;
+      for (var k2 = 0; k2 < steps2; k2++) {
+        var u2 = k2 / steps2, px2 = x1 + len2 * u2, pw2 = len2 / steps2 + 1;
+        var rp2 = rExit * (1 + 1.6 * u2);
+        var a2 = 0.42 * Math.exp(-u2 * 2.6) * (0.94 + 0.06 * Math.sin(clock * 21 + k2));
+        var g2 = ctx.createLinearGradient(0, yc - rp2, 0, yc + rp2);
+        g2.addColorStop(0, "rgba(120,160,255,0)"); g2.addColorStop(0.5, "rgba(190,210,255," + a2.toFixed(3) + ")"); g2.addColorStop(1, "rgba(120,160,255,0)");
+        ctx.fillStyle = g2; ctx.fillRect(px2, yc - rp2, pw2, rp2 * 2);
+      }
     }
+    ctx.restore();
 
-    // Nozzle walls + injector face
-    ctx.strokeStyle = "#aab1bb";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (var j = 0; j <= n; j++) {
-      var px = X(st.x[j]), py = yc - st.r[j] * scale;
-      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    // ---- walls: regen jacket band (metal) with the hot-wall line inside
+    function wallPath(sign) {
+      ctx.beginPath();
+      for (var j = 0; j <= 200; j++) {
+        var u = j / 200, px = X(u), py = yc + sign * R(u);
+        if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
     }
-    ctx.stroke();
-    ctx.beginPath();
-    for (var j2 = 0; j2 <= n; j2++) {
-      var px2 = X(st.x[j2]), py2 = yc + st.r[j2] * scale;
-      if (j2 === 0) ctx.moveTo(px2, py2); else ctx.lineTo(px2, py2);
-    }
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x0, yc - st.r[0] * scale);
-    ctx.lineTo(x0, yc + st.r[0] * scale);
-    ctx.stroke();
+    ctx.lineCap = "round";
+    [-1, 1].forEach(function (s) {
+      wallPath(s); ctx.strokeStyle = "#2b313c"; ctx.lineWidth = 11; ctx.stroke();   // closeout jacket
+      wallPath(s); ctx.strokeStyle = "#9aa3b2"; ctx.lineWidth = 7; ctx.stroke();    // jacket metal
+      wallPath(s); ctx.strokeStyle = "#5e6675"; ctx.lineWidth = 2.2; ctx.stroke();  // channel land line
+      // copper hot wall facing the gas
+      ctx.save(); ctx.translate(0, -s * 3.2); wallPath(s); ctx.strokeStyle = "#c98a5a"; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
+    });
+    // injector face
+    ctx.strokeStyle = "#9aa3b2"; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(x0, yc - R(0) - 4); ctx.lineTo(x0, yc + R(0) + 4); ctx.stroke();
+    ctx.strokeStyle = "#c98a5a"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0 + 4, yc - R(0)); ctx.lineTo(x0 + 4, yc + R(0)); ctx.stroke();
 
-    // Throat marker
-    var xtN = st.x[CONTOURS[cur].t];
-    var tx = X(xtN);
-    ctx.strokeStyle = "rgba(226,229,234,.55)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 5]);
-    ctx.beginPath();
-    ctx.moveTo(tx, yc - scale * 1.9 - 12);
-    ctx.lineTo(tx, yc + scale * 1.9 + 12);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = "#c8d3ea";
-    ctx.font = "11px ui-monospace, Menlo, monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("throat  M = 1", tx, yc - scale * 1.9 - 18);
-    ctx.fillText("Me = " + st.Me.toFixed(2), x1, yc - rExit * scale - 10);
+    // ---- throat marker
+    var xt = st.xn[st.t], tx = X(xt);
+    ctx.strokeStyle = "rgba(226,229,234,.5)"; ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(tx, yc - R(xt) - 22); ctx.lineTo(tx, yc + R(xt) + 22); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "#c8d3ea"; ctx.font = "11px ui-monospace, Menlo, monospace"; ctx.textAlign = "center";
+    ctx.fillText("throat · M 1", tx, yc - R(xt) - 28);
+    ctx.fillText("Me " + Me.toFixed(2) + " · De " + meta.De + " m", x1, narrow ? yc + rExit + 18 : yc - rExit - 12);
+    ctx.textAlign = "left";
 
-    // Particles: colored slow-blue -> fast-red
+    // ---- particles, streaked by local velocity
+    var Vexit = Me * Math.sqrt(st.Te / st.Tmax);
     for (var q = 0; q < PARTS.length; q++) {
       var pt = PARTS[q];
-      var Mloc = pt.x <= 1 ? at(st.M, pt.x) : st.Me;
-      var Vloc = pt.x <= 1
-        ? Math.max(Mloc * Math.sqrt(at(st.T, pt.x)), 0.05)
-        : st.Me * Math.sqrt(st.T[st.T.length - 1]);
-      pt.x += Vloc * 0.26 * dt;
-      if (pt.x > 1.28) { pt.x = 0.001; pt.f = Math.random() * 1.7 - 0.85; }
-      var rHere = (pt.x <= 1 ? at(st.r, pt.x) : rExit * (1 + 0.30 * (pt.x - 1) / 0.28)) * scale;
-      var pxq = pt.x <= 1 ? X(pt.x) : x1 + (xPlume - x1) * (pt.x - 1) / 0.28;
-      var pyq = yc + pt.f * rHere * 0.92;
-      var streak = 3 + Vloc * 9;
-      var aQ = pt.x > 1 ? 0.85 * (1 - (pt.x - 1) / 0.28) : 0.95;
-      ctx.strokeStyle = machColor(Mloc / st.Me, aQ, 1.35);
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(pxq - streak, pyq);
-      ctx.lineTo(pxq, pyq);
-      ctx.stroke();
+      var inside = pt.x <= 1;
+      var Mloc = inside ? at(st.M, pt.x) : Me;
+      var Tloc = inside ? at(st.T, pt.x) : st.Te;
+      var Vloc = Math.max(Mloc * Math.sqrt(Tloc / st.Tmax), 0.04);
+      pt.x += Vloc * 0.30 * dt * pt.s;
+      if (pt.x > 1.3) { pt.x = 0.002; pt.f = Math.random() * 1.8 - 0.9; }
+      var rHere = inside ? R(pt.x) : rExit * (meta.pa > 0 ? 0.9 : 1 + 1.2 * (pt.x - 1) / 0.3);
+      var pxq = inside ? X(pt.x) : x1 + (xPlume - x1) * (pt.x - 1) / 0.3;
+      var pyq = yc + pt.f * rHere * 0.9;
+      var streak = 3 + Vloc * 14;
+      var aQ = inside ? 0.9 : 0.8 * (1 - (pt.x - 1) / 0.3);
+      ctx.strokeStyle = cmap(fieldNorm(Math.min(pt.x, 1)), aQ, 1.5);
+      ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(pxq - streak, pyq); ctx.lineTo(pxq, pyq); ctx.stroke();
     }
 
-    // Readout (values from the engine spec / solved state)
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#98a0ab";
-    ctx.font = "12px ui-monospace, Menlo, monospace";
-    ctx.fillText(
-      "γ = " + GAMMA.toFixed(2) +
-      "   Ae/At = " + META[cur].eps +
-      "   Me = " + st.Me.toFixed(2) +
-      "   pe/p0 = " + st.pe.toExponential(2),
-      12, 20
-    );
-    ctx.fillText(META[cur].label, 12, 38);
+    // ---- hover probe
+    if (hover != null && hover >= 0 && hover <= 1) {
+      var hx = X(hover), hr = R(hover);
+      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(hx, yc - hr - 6); ctx.lineTo(hx, yc + hr + 6); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(10,13,20,.85)";
+      var txt = "x " + ((at(st.x, hover)) / 1000).toFixed(2) + " m · A/At " + Math.pow(at(st.r, hover) / st.rt, 2).toFixed(1) + " · M " + at(st.M, hover).toFixed(2) + " · " + at(st.T, hover).toFixed(0) + " K · " + FIELDS.p.fmt(at(st.p, hover));
+      ctx.font = "11px ui-monospace, Menlo, monospace";
+      var tw = ctx.measureText(txt).width + 14, ty = Math.max(8, yc - hr - 44);
+      var tx2 = Math.min(Math.max(8, hx - tw / 2), W - tw - 8);
+      ctx.fillRect(tx2, ty, tw, 20); ctx.strokeStyle = "#353c48"; ctx.strokeRect(tx2 + 0.5, ty + 0.5, tw - 1, 19);
+      ctx.fillStyle = "#e2e5ea"; ctx.fillText(txt, tx2 + 7, ty + 14);
+    }
+
+    // ---- colorbar + readout
+    var cbW = narrow ? 110 : 180, cbX = W - cbW - 14, cbY = narrow ? H - 40 : 16;
+    for (var b = 0; b < cbW; b++) { ctx.fillStyle = cmap(b / cbW, 1, 1); ctx.fillRect(cbX + b, cbY, 1.5, 8); }
+    ctx.fillStyle = "#98a0ab"; ctx.font = "11px ui-monospace, Menlo, monospace";
+    var lo = field === "M" ? "0" : field === "T" ? st.Tmin.toFixed(0) + " K" : FIELDS.p.fmt(Math.pow(10, st.lpMin));
+    var hi = field === "M" ? Me.toFixed(2) : field === "T" ? st.Tmax.toFixed(0) + " K" : FIELDS.p.fmt(Math.pow(10, st.lpMax));
+    ctx.fillText(lo, cbX, cbY + 22); ctx.textAlign = "right"; ctx.fillText(hi, cbX + cbW, cbY + 22); ctx.textAlign = "left";
+    ctx.fillText(FIELDS[field].name, cbX, cbY - 4);
+    ctx.fillStyle = "#c8d3ea"; ctx.font = "12px ui-monospace, Menlo, monospace";
+    // exit velocity from the 1D state: a = sqrt(γ R T) with γ ≈ 1.2 and MW ≈ 24 g/mol frozen in the bell
+    var Ve = Me * Math.sqrt(1.2 * (8314 / 24) * st.Te);
+    if (narrow) {
+      ctx.fillText(meta.short, 12, 20);
+      ctx.fillStyle = "#98a0ab"; ctx.font = "11px ui-monospace, Menlo, monospace";
+      ctx.fillText((meta.pa > 0 ? "pe/pa " + (meta.pe / meta.pa).toFixed(2) + " · overexpanded" : "vacuum") + " · Ve ≈ " + (Ve / 1000).toFixed(2) + " km/s", 12, 38);
+    } else {
+      ctx.fillText(meta.label, 12, 20);
+      ctx.fillStyle = "#98a0ab"; ctx.font = "11px ui-monospace, Menlo, monospace";
+      ctx.fillText((meta.pa > 0 ? "pe/pa = " + (meta.pe / meta.pa).toFixed(2) + " (overexpanded, no separation: > 0.40)" : "vacuum · pe = 24 kPa") + " · Ve ≈ " + (Ve / 1000).toFixed(2) + " km/s", 12, 38);
+    }
+
+    if (readout) {
+      readout.innerHTML = "";
+      var frag = document.createDocumentFragment();
+      function add(label, val) { frag.appendChild(document.createTextNode(label + " ")); var s = document.createElement("span"); s.textContent = val; frag.appendChild(s); frag.appendChild(document.createTextNode("   ")); }
+      add("ε", String(meta.eps)); add("Me", Me.toFixed(2)); add("Te", st.Te.toFixed(0) + " K"); add("pe", FIELDS.p.fmt(st.pe)); add("Isp", meta.Isp);
+      readout.appendChild(frag);
+    }
   }
 
   solve();
   draw(0); // static field is always visible; the button starts the animation
 
-  // Stage preset buttons
+  // Stage / field buttons
   document.querySelectorAll("[data-nozzle-stage]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      cur = btn.getAttribute("data-nozzle-stage");
-      solve();
-      draw(0);
-      document.querySelectorAll("[data-nozzle-stage]").forEach(function (b) {
-        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
-      });
+      cur = btn.getAttribute("data-nozzle-stage"); solve(); draw(0);
+      document.querySelectorAll("[data-nozzle-stage]").forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+    });
+  });
+  document.querySelectorAll("[data-nozzle-field]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      field = btn.getAttribute("data-nozzle-field"); draw(0);
+      document.querySelectorAll("[data-nozzle-field]").forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
     });
   });
 
+  // Pointer probe
+  function probe(e) {
+    var rect = canvas.getBoundingClientRect();
+    var W = rect.width, narrow = W < 640;
+    var x0 = W * 0.04, x1 = W * (narrow ? 0.70 : 0.68);
+    var px = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    hover = (px - x0) / (x1 - x0);
+    if (hover < 0 || hover > 1) hover = null;
+    if (!running) draw(0);
+  }
+  canvas.addEventListener("mousemove", probe);
+  canvas.addEventListener("mouseleave", function () { hover = null; if (!running) draw(0); });
+
   // Run/pause: user turns the flow on; it also pauses off-screen.
   var userOn = false, visible = true, running = false, last = 0;
-
   function frame(ts) {
     if (!running) return;
     var dt = Math.min((ts - last) / 1000 || 0.016, 0.05);
-    last = ts;
-    draw(dt);
-    requestAnimationFrame(frame);
+    last = ts; draw(dt); requestAnimationFrame(frame);
   }
   function update() {
     var want = userOn && visible;
     if (want && !running) { running = true; last = 0; requestAnimationFrame(frame); }
     else if (!want) running = false;
   }
-
   if (playBtn) {
     playBtn.addEventListener("click", function () {
       userOn = !userOn;
-      playBtn.textContent = userOn ? "❚❚ Pause" : "▶ Run simulation";
+      playBtn.textContent = userOn ? "❚❚ Pause" : "▶ Run the flow";
       playBtn.setAttribute("aria-pressed", userOn ? "true" : "false");
       playBtn.classList.toggle("is-running", userOn);
       update();
     });
   }
-
-  var io = new IntersectionObserver(function (entries) {
-    visible = entries[0].isIntersecting;
-    update();
-  }, { threshold: 0.15 });
-  io.observe(canvas);
+  new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; update(); }, { threshold: 0.15 }).observe(canvas);
+  window.addEventListener("resize", function () { if (!running) draw(0); });
 })();
