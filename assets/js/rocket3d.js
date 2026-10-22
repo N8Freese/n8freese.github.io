@@ -171,13 +171,13 @@ function paintVehicleParts(parts, axis) {
   shells.forEach((p) => { p.kind = 'shell'; });
   info.forEach((p) => {
     if (p.kind) return;
-    if (p.rad > 0.97 * R) { p.kind = 'band'; return; }                   // rings, interstage, adapters, thrust structure
+    if (p.rad > 0.97 * R) { p.kind = 'shell'; return; }                  // rings, interstage, adapters, fairings: structure
     if (p.rad < 0.35 * R && p.len > 0.015 * H && p.len < 0.06 * H) { p.kind = 'engine'; return; } // engine bells (base cluster and stage 2)
     if (p.rad < 0.35 * R) { p.kind = 'misc'; return; }
     // inner part: hosted by a shell that covers most of its length?
     const host = shells.find((s) => Math.min(s.hi, p.hi) - Math.max(s.lo, p.lo) > 0.5 * p.len);
     if (host) { p.host = host; p.kind = 'inner'; }
-    else p.kind = p.len > 0.08 * H ? 'capsule' : (p.lo > lo + 0.5 * H ? 'shield' : 'engine');
+    else p.kind = p.len > 0.08 * H ? 'capsule' : (p.lo > lo + 0.5 * H ? 'shield' : 'shell');
   });
   // within each shell: the longest inner part is the tank structure; the rest
   // are propellant tanks, painted LOX (lower) / CH4 (upper)
@@ -194,7 +194,7 @@ function paintVehicleParts(parts, axis) {
     if (p.tank || p.kind === 'inner') {
       // coincident tank/shell surfaces flicker; pull internals in by 1.5% radially
       const c = p.m.geometry.boundingBox.getCenter(new THREE.Vector3());
-      const sc = new THREE.Vector3(0.985, 0.985, 0.985); sc[axis] = 1;
+      const sc = new THREE.Vector3(0.97, 0.97, 0.97); sc[axis] = 1;
       p.m.geometry.translate(-c.x, -c.y, -c.z); p.m.geometry.scale(sc.x, sc.y, sc.z); p.m.geometry.translate(c.x, c.y, c.z);
     }
   });
@@ -230,9 +230,9 @@ function init() {
       spec: ['95 m · 6.9 m dia · 1.43 Mkg at liftoff', '8 + 3 LOX/CH₄ FFSC engines', '19.5 km/s mission ΔV'] },
     { url: 'assets/rocket/stage2-refuel-mated.glb', kind: 'refuel', name: 'Stage 2 · refuel & crew',
       spec: ['Tanker Stage 2 mated to the crew stack', '792 t propellant after refuel', 'TLI · lunar landing · return'] },
-    { url: 'assets/rocket/cope-s1-engine.glb', kind: 'engine', name: 'Stage 1 engine · ε = 40',
+    { url: 'assets/rocket/cope-s1-engine.glb?v=3', kind: 'engine', name: 'Stage 1 engine · ε = 40',
       spec: ['Pc 25.53 MPa · O/F 3.5 · Rt 132.3 mm', '2.51 MN sea level · Isp 331 s', '2688 kg · gimbal ±6°'] },
-    { url: 'assets/rocket/cope-s2-engine.glb', kind: 'engine', name: 'Stage 2 engine · ε = 100',
+    { url: 'assets/rocket/cope-s2-engine.glb?v=3', kind: 'engine', name: 'Stage 2 engine · ε = 100',
       spec: ['Pc 26.08 MPa · De 2.646 m', '2.91 MN vacuum · Isp 376 s', '3106 kg · gimbal ±6°'] },
   ];
 
@@ -272,6 +272,7 @@ function init() {
 
   const loader = new GLTFLoader();
   const models = SOURCES.map(() => null);
+  let hinted = false;
   let active = 0;
   let explodeTarget = 0, explodeCur = 0;
 
@@ -319,11 +320,13 @@ function init() {
       // engine GLBs carry their own PBR colours from the STEP conversion; tune the
       // finish here so the graphite bell reads dark instead of as chrome
       if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
-      // Onshape appearance colours come through the GLB; give every part a consistent metal finish
+      // material classes (copper liner, Inconel, steel, titanium, graphite) are baked into the GLB at export
       const src0 = m.material;
-      const mm = new THREE.MeshStandardMaterial({ color: src0.color ? src0.color.clone() : 0xb8bfc9, metalness: 0.75, roughness: 0.42 });
-      const lum = mm.color.r * 0.3 + mm.color.g * 0.59 + mm.color.b * 0.11;
-      if (lum < 0.08) { mm.metalness = 0.35; mm.roughness = 0.6; }   // graphite / dark parts: matte, not chrome
+      const mm = new THREE.MeshStandardMaterial({
+        color: src0.color ? src0.color.clone() : 0xb8bfc9,
+        metalness: src0.metalness != null ? src0.metalness : 0.7,
+        roughness: src0.roughness != null ? src0.roughness : 0.45,
+      });
       mm.envMapIntensity = 0.85; mm.side = THREE.DoubleSide; mm.flatShading = false;
       m.material = mm;
     });
@@ -459,6 +462,7 @@ function init() {
       SOURCES[idx].spec.forEach((line) => { specBox.appendChild(document.createTextNode(line)); specBox.appendChild(document.createElement('br')); });
     }
     if (legend) legend.style.display = SOURCES[idx].kind === 'engine' ? 'none' : '';
+    if (hint) { hint.textContent = SOURCES[idx].kind === 'engine' ? 'Drag to orbit' : 'Drag to orbit · click to explode'; hint.classList.remove('is-hidden'); hinted = false; }
     if (placeholder) {
       if (ready(idx)) placeholder.style.display = 'none';
       else { placeholder.style.display = ''; placeholder.querySelector('p').textContent = 'Loading 3D model…'; load(idx); }
@@ -466,9 +470,8 @@ function init() {
   }
 
   // ---- interactions: drag to orbit, click/tap to explode, segmented control ----
-  let hinted = false;
   function toggleExplode() {
-    if (!ready(active)) return;
+    if (!ready(active) || SOURCES[active].kind === 'engine') return;
     explodeTarget = explodeTarget > 0.5 ? 0 : 1;
     if (!hinted && hint) { hint.classList.add('is-hidden'); hinted = true; }
   }

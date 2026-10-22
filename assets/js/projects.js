@@ -39,7 +39,7 @@ window.PROJECTS = [
     title: "Avionic Systems Development",
     category: "Systems Engineering Intern · Collins Aerospace",
     tagline:
-      "Test automation, requirements verification, and benchmarking of an internal AI test-case generation tool for transponder products.",
+      "Sustainment of a legacy transponder today; test automation, test procedures, and an AI test-case tool evaluation on the next-generation transponder over the summer.",
     period: "May 2026 – Present",
     role: "Systems Engineering Intern",
     tags: ["Python", "Requirements verification", "Jama", "GitLab", "AI evaluation"],
@@ -52,19 +52,19 @@ window.PROJECTS = [
     ],
     links: [],
     problem:
-      "Transponder test campaigns are long and heavily procedural. My work has been on three fronts: making the existing testing faster, keeping the requirements and test procedures traceable as products move into sustainment, and finding out how far an internal AI tool can be trusted to draft test cases.",
+      "Transponder test campaigns are long and heavily procedural. Over the summer my work was on the next-generation transponder: making its testing faster and finding out how far an internal AI tool can be trusted to draft test cases. Since then I have moved to sustainment of a legacy transponder, keeping it verified as the product transitions to the next system.",
     approach: [
-      "Developed Python automation that drives the keyboard and mouse to run 301 transponder test files unattended, cutting test runtime by 50%.",
+      "Now: rewriting the legacy transponder's test procedures, executing the test cases, and verifying the associated test equipment to support sustainment and the system transition.",
+      "Summer 2026: developed Python automation that drives the keyboard and mouse to run 301 next-generation transponder test files unattended, cutting test runtime by 50%.",
       "Evaluated the internal AI test-case generation tool across 80+ requirements, comparing its output against engineer-written baselines and feeding the results back to the tool's developers.",
       "Built a data dictionary defining requirement inputs and their ranges so the tool's retrieval-augmented generation has structured context to draw from.",
       "Supported requirements verification and test-procedure development in Jama, with Confluence and GitLab for documentation and version control.",
-      "Updated legacy transponder test procedures and verified the associated test equipment to support sustainment and the transition to the next system.",
     ],
     tools: ["Python", "Jama", "Jira", "Confluence", "GitLab", "Test procedures", "Requirements verification", "Test equipment verification"],
     results: [
       "301-file transponder test campaign automated, runtime cut in half.",
       "AI-generated test cases benchmarked across 80+ requirements, with feedback and a supporting data dictionary that improved the tool's accuracy.",
-      "Legacy test procedures and equipment brought current for sustainment and system transition.",
+      "Legacy transponder test procedures rewritten and test cases executed to keep the product verified through its transition.",
     ],
     gallery: [],
     needs: [],
@@ -182,8 +182,8 @@ window.PROJECTS = [
           "The engines were built natively in Onshape, parametrically: the thrust chamber is revolved from the exported Rao contour with the cooled wall, and the turbopumps, preburners, injectors, plumbing, and thrust vector control are driven by the dimensions from the sizing scripts, so the CAD regenerated whenever an analysis number changed. Each turbopump is 49 parts with materials assigned (Ti-6Al-4V, Inconel 718, 440C with Si₃N₄ bearings); the TVC is a 14-part connected load path from the thrust-structure ring through the gimbal cross to the injector dome.",
         ],
         gallery: [
-          { model: "assets/rocket/cope-s1-engine.glb", feature: true, caption: "Stage 1 engine assembly, ε = 40 (drag to rotate)" },
-          { model: "assets/rocket/cope-s2-engine.glb", feature: true, caption: "Stage 2 engine assembly, ε = 100 (drag to rotate)" },
+          { model: "assets/rocket/cope-s1-engine.glb?v=3", feature: true, caption: "Stage 1 engine assembly, ε = 40 (drag to rotate)" },
+          { model: "assets/rocket/cope-s2-engine.glb?v=3", feature: true, caption: "Stage 2 engine assembly, ε = 100 (drag to rotate)" },
           { src: "assets/img/cope/s1-engine.png", fit: "contain", dark: true, caption: "Stage 1 engine render" },
           { src: "assets/img/cope/s2-engine.png", fit: "contain", dark: true, caption: "Stage 2 engine render" },
         ],

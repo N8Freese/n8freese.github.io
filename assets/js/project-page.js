@@ -92,7 +92,9 @@
       mv.setAttribute("disable-zoom", "");
       mv.setAttribute("shadow-intensity", "1");
       mv.setAttribute("exposure", "1.05");
-      mv.setAttribute("camera-orbit", "30deg 80deg 90%");
+      mv.setAttribute("camera-orbit", "30deg 80deg 150%");
+      mv.setAttribute("max-camera-orbit", "auto auto 300%");
+      mv.setAttribute("interaction-prompt", "none");
       mv.setAttribute("field-of-view", "32deg");
       mvHost.replaceChildren(mv);
     }).catch(function () {});
@@ -289,7 +291,7 @@
         return '<figure class="detail__fig detail__fig--model' + (item.feature ? " detail__fig--model-feature" : "") + '">' +
           '<model-viewer class="detail__mv" src="' + esc(item.model) + '" alt="' + esc(item.caption || "3D model") + '" ' +
             'camera-controls auto-rotate loading="eager" touch-action="pan-y" interaction-prompt="none" ' +
-            'shadow-intensity="1" exposure="1.1" camera-orbit="30deg 75deg 110%" field-of-view="30deg">' +
+            'shadow-intensity="1" exposure="1.1" camera-orbit="30deg 75deg 125%" max-camera-orbit="auto auto 300%" field-of-view="30deg">' +
             '<div slot="poster" class="detail__mvposter">Loading 3D model…</div>' +
           "</model-viewer>" +
           (item.badge ? '<span class="detail__mediabadge">' + esc(item.badge) + "</span>" : "") +
