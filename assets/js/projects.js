@@ -39,7 +39,7 @@ window.PROJECTS = [
     title: "Avionic Systems Development",
     category: "Systems Engineering Intern · Collins Aerospace",
     tagline:
-      "Sustainment of a legacy transponder today; test automation, test procedures, and an AI test-case tool evaluation on the next-generation transponder over the summer.",
+      "Sustainment of a legacy transponder today, after a summer of test automation, test procedures, and an AI test-case tool evaluation on the next-generation transponder.",
     period: "May 2026 – Present",
     role: "Systems Engineering Intern",
     tags: ["Python", "Requirements verification", "Jama", "GitLab", "AI evaluation"],
@@ -52,10 +52,10 @@ window.PROJECTS = [
     ],
     links: [],
     problem:
-      "Transponder test campaigns are long and heavily procedural. Over the summer my work was on the next-generation transponder: making its testing faster and finding out how far an internal AI tool can be trusted to draft test cases. Since then I have moved to sustainment of a legacy transponder, keeping it verified as the product transitions to the next system.",
+      "Transponder test campaigns are long and heavily procedural. Over the summer my work was on the next-generation transponder, making its testing faster and finding out how far an internal AI tool can be trusted to draft test cases. Since then I have moved to sustainment of a legacy transponder, keeping it verified as the product transitions to the next system.",
     approach: [
-      "Now: rewriting the legacy transponder's test procedures, executing the test cases, and verifying the associated test equipment to support sustainment and the system transition.",
-      "Summer 2026: developed Python automation that drives the keyboard and mouse to run 301 next-generation transponder test files unattended, cutting test runtime by 50%.",
+      "Currently rewriting the legacy transponder's test procedures, executing the test cases, and verifying the associated test equipment to support sustainment and the system transition.",
+      "Over the summer, developed Python automation that drives the keyboard and mouse to run 301 next-generation transponder test files unattended, cutting test runtime by 50%.",
       "Evaluated the internal AI test-case generation tool across 80+ requirements, comparing its output against engineer-written baselines and feeding the results back to the tool's developers.",
       "Built a data dictionary defining requirement inputs and their ranges so the tool's retrieval-augmented generation has structured context to draw from.",
       "Supported requirements verification and test-procedure development in Jama, with Confluence and GitLab for documentation and version control.",
@@ -76,7 +76,7 @@ window.PROJECTS = [
     title: "Two-Stage Methalox Crewed Lunar Vehicle",
     category: "Senior capstone · Project & Systems Lead · Embry-Riddle",
     tagline:
-      "A two-stage, orbitally refueled LOX/CH₄ launch vehicle that takes three crew to the lunar surface and back. I lead the six-person team and own the engine operating point, nozzle design and CFD, thrust vector control, mass properties, and the Onshape CAD, through PDR and CDR.",
+      "A two-stage, orbitally refueled LOX/CH₄ launch vehicle that takes three crew to the lunar surface and back. I lead the six-person team and own the engine operating point, nozzle design and CFD, thrust vector control, mass properties, and the CAD, through PDR and CDR.",
     period: "Jan 2026 – Present",
     role: "Project & Systems Lead",
     tags: ["Onshape", "NASA CEA", "CFD", "MATLAB", "CATIA V5"],
@@ -96,8 +96,8 @@ window.PROJECTS = [
       {
         title: "The mission",
         text: [
-          "COPE (Crewed Operations for Planetary Exploration) is our two-semester capstone at Embry-Riddle. The vehicle is a two-stage LOX/methane launch vehicle: Stage 1 puts Stage 2 and an Orion-class capsule into low Earth orbit, tanker flights (the same Stage 2 with the capsule swapped for propellant) refuel it, and Stage 2 then does trans-lunar injection, halo-orbit insertion, lunar landing and liftoff, and trans-Earth injection. Three astronauts and a 5,000 kg payload, 19.5 km/s total ΔV, 95 m tall, 6.9 m diameter, 1.43 million kg at liftoff.",
-          "I am the project and systems lead on a team of six. In the spring we took it through Preliminary Design Review; in October 2026 we delivered the Critical Design Review. Both reports are linked at the bottom of this page, and the homepage has the interactive stack and both engines in 3D.",
+          "COPE (Crewed Operations for Planetary Exploration) is our two-semester capstone at Embry-Riddle. The vehicle is a two-stage LOX/methane launch vehicle. Stage 1 puts Stage 2 and an Orion-class capsule into low Earth orbit, tanker flights (the same Stage 2 with the capsule swapped for propellant) refuel it, and Stage 2 then does trans-lunar injection, halo-orbit insertion, lunar landing and liftoff, and trans-Earth injection. Three astronauts and a 5,000 kg payload, 19.5 km/s total ΔV, 95 m tall, 6.9 m diameter, 1.43 million kg at liftoff.",
+          "I am the project and systems lead on a team of six. In the spring we took it through Preliminary Design Review, and in October 2026 we delivered the Critical Design Review. Both reports are linked at the bottom of this page, and the homepage has the interactive stack and both engines in 3D.",
         ],
         gallery: [
           { model: "assets/rocket/full-launch-vehicle.glb", feature: true, caption: "Full launch stack (drag to rotate)" },
@@ -115,7 +115,7 @@ window.PROJECTS = [
         ],
         bullets: [
           "Two stages on a common 6.9 m diameter, 95 m tall, 1.43 million kg at liftoff with a liftoff T/W of 1.43.",
-          "Stage 1: eight LOX/CH₄ engines, 3.6 km/s of ΔV to staging. Stage 2: three engines of the same family, 6.4 km/s to orbit and 9.7 km/s after refueling for the lunar mission.",
+          "Stage 1 has eight LOX/CH₄ engines and gives 3.6 km/s of ΔV to staging. Stage 2 has three engines of the same family, 6.4 km/s to orbit and 9.7 km/s after refueling for the lunar mission.",
           "Orbital refueling by tanker flights of the same Stage 2, so one engine and one tank design serve the whole architecture.",
           "Engine family set at ~2.6 MN per engine, O/F 3.5, with sea-level and vacuum bells on the same chamber.",
         ],
@@ -128,8 +128,8 @@ window.PROJECTS = [
       {
         title: "Critical design (Fall 2026)",
         text: [
-          "At CDR every requirement from the system level down to the component level had to have an analysis result and a status. I wrote the requirements tables and the work breakdown structure, and owned the engine operating point, the nozzle contours and CFD, the turbopumps, injectors, and preburners, the feed ducts, thrust vector control, mass properties and the inertia matrices, the COTS and TRL assessment, and the Onshape CAD and drawings. Because I was also the systems lead, integrating all of it into one consistent design was my job.",
-          "Every requirement closed as met, with the two engine thrust allocations met within the 5% tolerance. The major ones:",
+          "At CDR every requirement from the system level down to the component level had to have an analysis result and a status. I wrote the requirements tables and the work breakdown structure, and owned the engine operating point, the nozzle contours and CFD, the turbopumps, injectors, and preburners, the feed ducts, thrust vector control, mass properties and the inertia matrices, the COTS and TRL assessment, and the CAD and drawings. Because I was also the systems lead, integrating all of it into one consistent design was my job.",
+          "Every requirement closed as met, with the two engine thrust allocations met within the 5% tolerance. The major ones are below.",
         ],
         table: {
           head: ["Requirement", "Target", "Result", "Status"],
@@ -150,23 +150,23 @@ window.PROJECTS = [
       {
         title: "Engine operating point",
         text: [
-          "Both stages use a common full-flow staged-combustion LOX/CH₄ engine with the same chamber and throat (0.0550 m², O/F 3.5). Stage 1 runs 25.53 MPa with an expansion ratio of 40 so it can start at sea level; Stage 2 runs 26.08 MPa at ε = 100 for vacuum. I ran NASA CEA for the equilibrium combustion properties, applied a 0.98 c* efficiency for combustion losses, and took the nozzle efficiency (0.992) from my own CFD rather than assuming it.",
+          "Both stages use a common full-flow staged-combustion LOX/CH₄ engine with the same chamber and throat (0.0550 m², O/F 3.5). Stage 1 runs 25.53 MPa with an expansion ratio of 40 so it can start at sea level, and Stage 2 runs 26.08 MPa at ε = 100 for vacuum. I ran NASA CEA for the equilibrium combustion properties, applied a 0.98 c* efficiency for combustion losses, and took the nozzle efficiency (0.992) from my own CFD rather than assuming it.",
         ],
         bullets: [
-          "Delivered Isp: 331 s sea level and 361 s vacuum for Stage 1, 376 s vacuum for Stage 2.",
-          "Thrust per engine: 2.51 MN sea level, 2.73 MN vacuum (Stage 1); 2.91 MN vacuum (Stage 2).",
-          "Stage 2 needs 372.6 s to close the post-refuel mass ratio; 375.7 s leaves about 80 m/s of reserve.",
+          "Delivered Isp of 331 s sea level and 361 s vacuum for Stage 1, and 376 s vacuum for Stage 2.",
+          "Thrust per engine of 2.51 MN sea level and 2.73 MN vacuum for Stage 1, and 2.91 MN vacuum for Stage 2.",
+          "Stage 2 needs 372.6 s to close the post-refuel mass ratio, and 375.7 s leaves about 80 m/s of reserve.",
           "Benchmarked against Raptor 2, RS-25, and RD-180 to show the chamber pressures and thrust levels sit inside the range of flown staged-combustion engines.",
         ],
       },
       {
         title: "Nozzle contour and CFD",
         text: [
-          "I designed both bells as 80% Rao contours from a 132.3 mm throat: a contraction ratio of 2.5, L* of 1.10 m, 1.674 m and 2.646 m exit diameters, exit Mach 4.19 and 4.90. Then I set up each nozzle as an axisymmetric inviscid CFD case, initialized from the CEA throat conditions and run until thrust settled.",
+          "I designed both bells as 80% Rao contours from a 132.3 mm throat, with a contraction ratio of 2.5, L* of 1.10 m, 1.674 m and 2.646 m exit diameters, and exit Mach 4.19 and 4.90. Then I set up each nozzle as an axisymmetric inviscid CFD case, initialized from the CEA throat conditions and run until thrust settled.",
           "The CFD thrust coefficient came out just under CEA's (1.944 against 1.960 for Stage 1), and that ratio is the nozzle efficiency used in the operating-point numbers above. The Stage 1 exit pressure of 70.5 kPa gives a pe/pa of 0.70 at sea level, well above the 0.40 separation screen, so the ε = 40 bell is safe to start on the pad. I also ran the exhaust plume for both engines to look at the shock structure downstream of the exit.",
         ],
         gallery: [
-          { src: "assets/img/cope/s1-thrust-chamber-render.jpg", fit: "contain", dark: true, caption: "Stage 1 thrust chamber (ε = 40): GRCop-42 liner, closeout jacket, coolant manifolds" },
+          { src: "assets/img/cope/s1-thrust-chamber-render.jpg", fit: "contain", dark: true, caption: "Stage 1 thrust chamber (ε = 40) with GRCop-42 liner, closeout jacket, and coolant manifolds" },
           { src: "assets/img/cope/s2-thrust-chamber-render.jpg", fit: "contain", dark: true, caption: "Stage 2 thrust chamber (ε = 100)" },
           { src: "assets/img/cope/s1-nozzle-mach.jpg", fit: "contain", caption: "Stage 1 nozzle Mach number, axisymmetric CFD" },
           { src: "assets/img/cope/s2-nozzle-mach.jpg", fit: "contain", caption: "Stage 2 nozzle Mach number" },
@@ -179,11 +179,11 @@ window.PROJECTS = [
       {
         title: "Engine CAD",
         text: [
-          "The engines were built natively in Onshape, parametrically: the thrust chamber is revolved from the exported Rao contour with the cooled wall, and the turbopumps, preburners, injectors, plumbing, and thrust vector control are driven by the dimensions from the sizing scripts, so the CAD regenerated whenever an analysis number changed. Each turbopump is 49 parts with materials assigned (Ti-6Al-4V, Inconel 718, 440C with Si₃N₄ bearings); the TVC is a 14-part connected load path from the thrust-structure ring through the gimbal cross to the injector dome.",
+          "The engines were built parametrically in CAD. The thrust chamber is revolved from the exported Rao contour with the cooled wall, and the turbopumps, preburners, injectors, plumbing, and thrust vector control are driven by the dimensions from the sizing scripts, so the CAD regenerated whenever an analysis number changed. Each turbopump is 49 parts with materials assigned (Ti-6Al-4V, Inconel 718, 440C with Si₃N₄ bearings), and the TVC is a 14-part connected load path from the thrust-structure ring through the gimbal cross to the injector dome.",
         ],
         gallery: [
-          { model: "assets/rocket/cope-s1-engine.glb?v=3", feature: true, caption: "Stage 1 engine assembly, ε = 40 (drag to rotate)" },
-          { model: "assets/rocket/cope-s2-engine.glb?v=3", feature: true, caption: "Stage 2 engine assembly, ε = 100 (drag to rotate)" },
+          { model: "assets/rocket/cope-s1-engine.glb?v=3", feature: true, neutral: true, caption: "Stage 1 engine assembly, ε = 40 (drag to rotate)" },
+          { model: "assets/rocket/cope-s2-engine.glb?v=3", feature: true, neutral: true, caption: "Stage 2 engine assembly, ε = 100 (drag to rotate)" },
           { src: "assets/img/cope/s1-engine.png", fit: "contain", dark: true, caption: "Stage 1 engine render" },
           { src: "assets/img/cope/s2-engine.png", fit: "contain", dark: true, caption: "Stage 2 engine render" },
         ],
@@ -193,12 +193,12 @@ window.PROJECTS = [
       {
         label: "Full CDR report (PDF)",
         src: "assets/AE451-CDR.pdf",
-        blurb: "Critical Design Review (October 2026): requirements, engine operating point, nozzle and CFD, cooling, cycle balance, turbomachinery, feed, TVC, structures, mass properties, COTS and TRL, and the drawing appendix.",
+        blurb: "Critical Design Review (October 2026) covering requirements, engine operating point, nozzle and CFD, cooling, cycle balance, turbomachinery, feed, TVC, structures, mass properties, COTS and TRL, and the drawing appendix.",
       },
       {
         label: "Preliminary Design Review (PDF)",
         src: "assets/AE441-PDR.pdf",
-        blurb: "PDR report (Spring 2026): vehicle architecture, staging, propulsion, and subsystem trades.",
+        blurb: "PDR report (Spring 2026) covering vehicle architecture, staging, propulsion, and subsystem trades.",
       },
     ],
     gallery: [],
@@ -263,7 +263,7 @@ window.PROJECTS = [
     stats: [
       { n: "13", u: "×", l: "Overall speedup, Gateway tool" },
       { n: "21", u: "×", l: "Faster graphics rendering" },
-      { n: "3", l: "Vehicles: Orion, Starliner, Gateway" },
+      { n: "3", l: "Vehicles, Orion, Starliner, and Gateway" },
     ],
     links: [],
     problem:
@@ -290,7 +290,7 @@ window.PROJECTS = [
     title: "ERFSEDS Artemini Rocket",
     category: "Manufacturing Member · Embry-Riddle Future Space Explorers",
     tagline:
-      "Scaled-down Artemis rocket: 3D models in CATIA V5 and SolidWorks and OpenRocket flight optimization with a 15-student team.",
+      "Scaled-down Artemis rocket with 3D models in CATIA V5 and SolidWorks and OpenRocket flight optimization, on a 15-student team.",
     period: "Aug 2024 – Jan 2025",
     role: "Manufacturing Member",
     tags: ["CATIA V5", "SolidWorks", "OpenRocket", "Manufacturing"],
@@ -319,7 +319,7 @@ window.PROJECTS = [
     title: "ERPL Spectre Rocket",
     category: "Hardware Member · Experimental Rocket Propulsion Lab",
     tagline:
-      "Active-stabilization high-powered rocket: structural components, Fusion 360 design, and MATLAB test-data analysis.",
+      "Active-stabilization high-powered rocket, with structural components in Fusion 360 and MATLAB test-data analysis.",
     period: "Aug 2022 – May 2024",
     role: "Hardware Member",
     tags: ["Fusion 360", "MATLAB", "Hardware", "Data analysis"],

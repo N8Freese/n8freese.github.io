@@ -189,7 +189,14 @@ function paintVehicleParts(parts, axis) {
     const tanks = inner.slice(1).filter((p) => p.len > 0.25 * shellLen).sort((a, b) => a.lo - b.lo);
     tanks.forEach((t, i) => { t.kind = i % 2 === 0 ? 'lox' : 'ch4'; t.tank = true; });
   });
+  // explode groups: stage 1, stage 2, crew section. Each stage moves as one unit so
+  // tanks, engines and fairings stay inside their stage.
+  const ordered = shells.slice().sort((a, b) => a.lo - b.lo);
+  const cut1 = ordered.length > 1 ? (ordered[0].hi + ordered[1].lo) / 2 : lo + H / 3;
+  const cut2 = ordered.length > 1 ? ordered[ordered.length - 1].hi + 0.01 * H : lo + 2 * H / 3;
   info.forEach((p) => {
+    const c = (p.lo + p.hi) / 2;
+    p.m.userData.cluster = c < cut1 ? 0 : (c < cut2 ? 1 : 2);
     p.m.material = mat(p.kind); p.m.name = p.kind;
     if (p.tank || p.kind === 'inner') {
       // coincident tank/shell surfaces flicker; pull internals in by 1.5% radially
@@ -346,7 +353,7 @@ function init() {
     });
 
     // nested internals slide out sideways so they are visible in the explode
-    if (!container.children.some((m) => m.userData.shell)) {
+    if (src.kind !== 'vehicle' && !container.children.some((m) => m.userData.shell)) {
       const lat = ['x', 'y', 'z'].filter((ax) => ax !== axis);
       const info = container.children.map((m) => {
         const bb = m.geometry.boundingBox;
@@ -382,7 +389,8 @@ function init() {
     const upright = new THREE.Box3().setFromObject(container);
     const minY = upright.min.y;
     const footprint = Math.max(upright.max.x - upright.min.x, upright.max.z - upright.min.z);
-    return { container, radius, materials: [...materials], axis, minY, footprint, src };
+    const height = size[axis];
+    return { container, radius, materials: [...materials], axis, minY, footprint, src, height };
   }
 
   function onLoaded(i, g) {
@@ -416,6 +424,13 @@ function init() {
     const m = models[idx], axis = m.axis;
     m.container.children.forEach((p) => {
       if (p.userData.shell) { p.position.set(p.userData.shellShift * f, 0, 0); return; }
+      if (p.userData.cluster != null) {
+        // whole stages separate along the long axis: stage 1 down, crew section up
+        tmp.set(0, 0, 0);
+        tmp[axis] = (p.userData.cluster - 1) * 0.16 * m.height * f;
+        p.position.copy(tmp);
+        return;
+      }
       const o = p.userData.offset;
       tmp.copy(o); tmp[axis] = 0; tmp.multiplyScalar(RADIAL_K * f);
       tmp[axis] = o[axis] * EXPLODE_K * (p.userData.axialBoost || 1) * f;
@@ -434,7 +449,8 @@ function init() {
     const hHalf = Math.atan(Math.tan(vfov / 2) * aspect);
     const useHalf = Math.min(vfov / 2, hHalf);
     const zoomOut = m.src.kind === 'engine' ? 1.2 : 1.45;
-    let dist = (m.radius / Math.sin(useHalf)) * (zoomOut + 0.28 * explodeCur);
+    const explodeZoom = m.src.kind === 'vehicle' ? 0.38 : 0.28;
+    let dist = (m.radius / Math.sin(useHalf)) * (zoomOut + explodeZoom * explodeCur);
     const portraitMax = m.radius / Math.sin(vfov / 2) * 1.7 * (1 + explodeCur * 0.3);
     if (dist > portraitMax) dist = portraitMax;
     const elev = THREE.MathUtils.degToRad(elevDeg);

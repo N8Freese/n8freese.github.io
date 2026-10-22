@@ -100,6 +100,19 @@
     }).catch(function () {});
   }
 
+  // engine models on this page are shown in a plain metal finish (the renders below carry the colour)
+  root.querySelectorAll("model-viewer[data-neutral]").forEach(function (mv) {
+    mv.addEventListener("load", function () {
+      try {
+        (mv.model.materials || []).forEach(function (mt) {
+          mt.pbrMetallicRoughness.setBaseColorFactor([0.70, 0.72, 0.76, 1]);
+          mt.pbrMetallicRoughness.setMetallicFactor(0.85);
+          mt.pbrMetallicRoughness.setRoughnessFactor(0.38);
+        });
+      } catch (e) { /* older model-viewer without the materials API */ }
+    });
+  });
+
   // code previews (one per section that has `code`, plus a legacy top-level `code`)
   root.querySelectorAll("[data-codeview]").forEach(function (host) {
     var spec = JSON.parse(host.getAttribute("data-codeview"));
@@ -289,7 +302,7 @@
       }
       if (item.model) {
         return '<figure class="detail__fig detail__fig--model' + (item.feature ? " detail__fig--model-feature" : "") + '">' +
-          '<model-viewer class="detail__mv" src="' + esc(item.model) + '" alt="' + esc(item.caption || "3D model") + '" ' +
+          '<model-viewer class="detail__mv" src="' + esc(item.model) + '" alt="' + esc(item.caption || "3D model") + '" ' + (item.neutral ? 'data-neutral="1" ' : "") +
             'camera-controls auto-rotate loading="eager" touch-action="pan-y" interaction-prompt="none" ' +
             'shadow-intensity="1" exposure="1.1" camera-orbit="30deg 75deg 125%" max-camera-orbit="auto auto 300%" field-of-view="30deg">' +
             '<div slot="poster" class="detail__mvposter">Loading 3D model…</div>' +
