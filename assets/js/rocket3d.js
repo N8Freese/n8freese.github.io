@@ -28,7 +28,7 @@ const PAINT = {
   band:     { color: 0x16181d, metalness: 0.35, roughness: 0.6 },
   inner:    { color: 0xb3b9c4, metalness: 0.6, roughness: 0.45 },
   lox:      { color: 0x8fb8e0, metalness: 0.35, roughness: 0.4 },
-  ch4:      { color: 0xe0a05f, metalness: 0.35, roughness: 0.4 },
+  ch4:      { color: 0xd9a441, metalness: 0.35, roughness: 0.4 },
   engine:   { color: 0x33363d, metalness: 0.75, roughness: 0.38 },
   capsule:  { color: 0xe9eaee, metalness: 0.2, roughness: 0.5 },
   shield:   { color: 0x4a3f36, metalness: 0.3, roughness: 0.7 },
@@ -172,7 +172,7 @@ function paintVehicleParts(parts, axis) {
   info.forEach((p) => {
     if (p.kind) return;
     if (p.rad > 0.97 * R) { p.kind = 'band'; return; }                   // rings, interstage, adapters, thrust structure
-    if (p.rad < 0.35 * R && p.lo < lo + 0.08 * H) { p.kind = 'engine'; return; } // engine cluster at the base
+    if (p.rad < 0.35 * R && p.len > 0.015 * H && p.len < 0.06 * H) { p.kind = 'engine'; return; } // engine bells (base cluster and stage 2)
     if (p.rad < 0.35 * R) { p.kind = 'misc'; return; }
     // inner part: hosted by a shell that covers most of its length?
     const host = shells.find((s) => Math.min(s.hi, p.hi) - Math.max(s.lo, p.lo) > 0.5 * p.len);
@@ -185,10 +185,19 @@ function paintVehicleParts(parts, axis) {
     const inner = info.filter((p) => p.host === s).sort((a, b) => b.len - a.len);
     if (!inner.length) return;
     inner[0].kind = 'inner';
-    const tanks = inner.slice(1).sort((a, b) => a.lo - b.lo);
-    tanks.forEach((t, i) => { t.kind = i % 2 === 0 ? 'lox' : 'ch4'; });
+    const shellLen = s.hi - s.lo;
+    const tanks = inner.slice(1).filter((p) => p.len > 0.25 * shellLen).sort((a, b) => a.lo - b.lo);
+    tanks.forEach((t, i) => { t.kind = i % 2 === 0 ? 'lox' : 'ch4'; t.tank = true; });
   });
-  info.forEach((p) => { p.m.material = mat(p.kind); p.m.name = p.kind; });
+  info.forEach((p) => {
+    p.m.material = mat(p.kind); p.m.name = p.kind;
+    if (p.tank || p.kind === 'inner') {
+      // coincident tank/shell surfaces flicker; pull internals in by 1.5% radially
+      const c = p.m.geometry.boundingBox.getCenter(new THREE.Vector3());
+      const sc = new THREE.Vector3(0.985, 0.985, 0.985); sc[axis] = 1;
+      p.m.geometry.translate(-c.x, -c.y, -c.z); p.m.geometry.scale(sc.x, sc.y, sc.z); p.m.geometry.translate(c.x, c.y, c.z);
+    }
+  });
 }
 // Refuel & crew model: parts are named in the GLB.
 function paintByName(mesh) {
@@ -215,7 +224,7 @@ function init() {
 
   const FOV = 30;
   const EXPLODE_K = 0.48;
-  const RADIAL_K = 0.30;
+  const RADIAL_K = 0.34;
   const SOURCES = [
     { url: 'assets/rocket/full-launch-vehicle.glb', kind: 'vehicle', name: 'COPE launch vehicle',
       spec: ['95 m · 6.9 m dia · 1.43 Mkg at liftoff', '8 + 3 LOX/CH₄ FFSC engines', '19.5 km/s mission ΔV'] },
@@ -310,14 +319,12 @@ function init() {
       // engine GLBs carry their own PBR colours from the STEP conversion; tune the
       // finish here so the graphite bell reads dark instead of as chrome
       if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals();
-      const n = String(m.name || '').toLowerCase();
-      let spec = { color: 0xb8bfc9, metalness: 0.85, roughness: 0.34, env: 1.0 };          // turbopumps: brushed steel
-      if (n.includes('thrustchamber')) spec = { color: 0x111317, metalness: 0.35, roughness: 0.62, env: 0.55 }; // graphite bell
-      else if (n.includes('preburner')) spec = { color: 0xb08d5a, metalness: 0.75, roughness: 0.42, env: 0.9 }; // Inconel
-      else if (n.includes('gimbal')) spec = { color: 0x3a3e46, metalness: 0.6, roughness: 0.5, env: 0.7 };
-      else if (n.includes('injector')) spec = { color: 0x8d939c, metalness: 0.8, roughness: 0.4, env: 0.9 };
-      const mm = new THREE.MeshStandardMaterial({ color: spec.color, metalness: spec.metalness, roughness: spec.roughness });
-      mm.envMapIntensity = spec.env; mm.side = THREE.DoubleSide;
+      // Onshape appearance colours come through the GLB; give every part a consistent metal finish
+      const src0 = m.material;
+      const mm = new THREE.MeshStandardMaterial({ color: src0.color ? src0.color.clone() : 0xb8bfc9, metalness: 0.75, roughness: 0.42 });
+      const lum = mm.color.r * 0.3 + mm.color.g * 0.59 + mm.color.b * 0.11;
+      if (lum < 0.08) { mm.metalness = 0.35; mm.roughness = 0.6; }   // graphite / dark parts: matte, not chrome
+      mm.envMapIntensity = 0.85; mm.side = THREE.DoubleSide; mm.flatShading = false;
       m.material = mm;
     });
     container.children.forEach((m) => materials.add(m.material));
@@ -423,7 +430,7 @@ function init() {
     const aspect = camera.aspect || 1;
     const hHalf = Math.atan(Math.tan(vfov / 2) * aspect);
     const useHalf = Math.min(vfov / 2, hHalf);
-    const zoomOut = m.src.kind === 'engine' ? 1.18 : 1.24;
+    const zoomOut = m.src.kind === 'engine' ? 1.2 : 1.45;
     let dist = (m.radius / Math.sin(useHalf)) * (zoomOut + 0.28 * explodeCur);
     const portraitMax = m.radius / Math.sin(vfov / 2) * 1.7 * (1 + explodeCur * 0.3);
     if (dist > portraitMax) dist = portraitMax;

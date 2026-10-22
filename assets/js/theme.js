@@ -18,7 +18,7 @@
   function apply(mode) {
     root.setAttribute("data-theme", mode);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", mode === "dark" ? "#090d14" : "#f4f0e8");
+    if (meta) meta.setAttribute("content", mode === "dark" ? "#0a0f16" : "#f4f0e8");
     var btn = document.querySelector(".nav__theme");
     if (btn) btn.setAttribute("aria-label", mode === "dark" ? "Switch to light mode" : "Switch to dark mode");
   }

@@ -41,7 +41,7 @@
     return;
   }
 
-  document.title = p.title + " | Nate Freese";
+  document.title = p.title + " | Nathanyl Freese";
   var metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", p.tagline || p.title);
 

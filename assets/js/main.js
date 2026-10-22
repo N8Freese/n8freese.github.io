@@ -129,7 +129,7 @@
 
   /* ---- Scroll reveal --------------------------------------------------- */
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.querySelectorAll(".skills__group, .timeline__item, .glance__item, .edu").forEach(function (el) { el.classList.add("reveal"); });
+  document.querySelectorAll(".skills__group, .timeline__item, .edu").forEach(function (el) { el.classList.add("reveal"); });
   var revealables = document.querySelectorAll(".reveal");
   if (reduce || !("IntersectionObserver" in window)) {
     revealables.forEach(function (el) { el.classList.add("is-in"); });

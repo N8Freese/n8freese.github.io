@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nate Freese | Aerospace Engineer</title>
+  <title>Nathanyl Freese | Aerospace Engineer</title>
 
   <!-- SEO -->
   <meta name="description" content="Nathanyl (Nate) Freese, Aerospace Engineering student at Embry-Riddle. Project and systems lead on a crewed two-stage methalox lunar vehicle, Systems Engineering Intern at Collins Aerospace, previously NASA Johnson Space Center. Rocket engine design, CFD, CAD, and the code around them." />
   <meta name="author" content="Nathanyl Freese" />
-  <meta name="keywords" content="aerospace engineer, rocket propulsion, launch vehicle design, staged combustion, CFD, OpenFOAM, Onshape, CATIA, MATLAB, Python, NASA, Collins Aerospace, portfolio" />
+  <meta name="keywords" content="aerospace engineer, rocket propulsion, launch vehicle design, staged combustion, CFD, Onshape, CATIA, MATLAB, Python, NASA, Collins Aerospace, portfolio" />
   <link rel="canonical" href="https://n8freese.github.io/" />
-  <meta name="theme-color" content="#090d14" />
+  <meta name="theme-color" content="#0a0f16" />
 
   <!-- Security: strict same-origin content policy (hash allows the import map below).
        GitHub Pages can't set response headers, so this is delivered via meta tags. -->
@@ -19,12 +19,12 @@
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nate Freese | Aerospace Engineer" />
+  <meta property="og:title" content="Nathanyl Freese | Aerospace Engineer" />
   <meta property="og:description" content="Rocket engine and launch vehicle design, CFD, CAD, and the code around them. Collins Aerospace, NASA Johnson Space Center, Embry-Riddle." />
   <meta property="og:url" content="https://n8freese.github.io/" />
   <meta property="og:image" content="https://n8freese.github.io/assets/img/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Nate Freese | Aerospace Engineer" />
+  <meta name="twitter:title" content="Nathanyl Freese | Aerospace Engineer" />
   <meta name="twitter:description" content="Rocket engine and launch vehicle design, CFD, CAD, and the code around them." />
   <meta name="twitter:image" content="https://n8freese.github.io/assets/img/og-image.png" />
 
@@ -61,7 +61,7 @@
   <!-- NAV -->
   <header class="nav">
     <div class="nav__inner">
-      <a class="nav__brand" href="#top" aria-label="Back to top"><span class="mark">NF</span>Nate Freese</a>
+      <a class="nav__brand" href="#top" aria-label="Back to top">Nathanyl Freese</a>
       <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -69,7 +69,7 @@
         <a href="#about">About</a>
         <a href="#skills">Toolset</a>
         <a href="#projects">Work</a>
-        <a href="#rocket">Interactive</a>
+        <a href="#rocket">3D</a>
         <a href="#experience">Experience</a>
         <a href="#contact">Contact</a>
         <a class="btn" href="assets/nathanyl_freese_resume.pdf" download>Resume</a>
@@ -83,76 +83,53 @@
 
   <!-- HERO -->
   <section id="top" class="hero">
-    <div class="hero__stars" aria-hidden="true"></div>
+    <div class="hero__grid" aria-hidden="true"></div>
     <div class="hero__art" aria-hidden="true" data-nozzle-art></div>
     <div class="hero__inner">
-      <div>
-        <p class="hero__eyebrow">Aerospace engineer · Embry-Riddle, Dec 2026</p>
-        <h1 class="hero__name">Nate <span class="accent">Freese</span>.</h1>
+      <figure class="hero__photo">
+        <img src="assets/img/headshot.jpg" alt="Nathanyl Freese" />
+      </figure>
+      <div class="hero__text">
+        <p class="hero__eyebrow">Aerospace Engineering · Embry-Riddle · Class of 2026</p>
+        <h1 class="hero__name">Nathanyl Freese</h1>
         <p class="hero__pitch">I design rocket engines and launch vehicles, then write the code that checks the numbers.</p>
         <p class="hero__sub">
-          Project and systems lead for COPE, a crewed two-stage LOX/methane lunar vehicle, through Preliminary and Critical Design Review. Systems Engineering Intern at Collins Aerospace. Before that, mission-visualization software at NASA Johnson Space Center.
+          Senior in Aerospace Engineering at Embry-Riddle, graduating December 2026. I like the part of a project where requirements turn into hardware: sizing the engine, drawing the parts, and proving the numbers with analysis and code. Project and systems lead for a crewed two-stage methalox lunar vehicle, Systems Engineering Intern at Collins Aerospace, and before that NASA Johnson Space Center.
         </p>
         <div class="hero__cta">
-          <a class="btn" href="#projects">See the work <span class="arrow">↗</span></a>
+          <a class="btn" href="#projects">See the work</a>
           <a class="btn btn--ghost" href="assets/nathanyl_freese_resume.pdf" download>Resume (PDF)</a>
         </div>
-        <div class="hero__tags">
-          <span class="tag">Propulsion &amp; CFD</span>
-          <span class="tag">Systems engineering</span>
-          <span class="tag">Onshape · CATIA · SolidWorks</span>
-          <span class="tag">Python · MATLAB</span>
-        </div>
+        <p class="hero__line"><span>Collins Aerospace</span><span>NASA Johnson Space Center</span><span>Embry-Riddle capstone lead</span></p>
       </div>
-      <aside class="hero__card">
-        <div class="hero__photo"><img src="assets/img/headshot.jpg" alt="Nate Freese" /></div>
-        <div class="hero__cardbody">
-          <p class="hero__cardtitle">Nathanyl “Nate” Freese</p>
-          <ul class="hero__cardmeta">
-            <li><span>Now</span><b>Collins Aerospace</b></li>
-            <li><span>Previously</span><b>NASA Johnson Space Center</b></li>
-            <li><span>Based in</span><b>Daytona Beach, FL</b></li>
-            <li><span>GPA</span><b>3.97 · Tau Beta Pi</b></li>
-          </ul>
-        </div>
-      </aside>
     </div>
   </section>
 
-  <!-- AT A GLANCE -->
-  <div class="glance">
-    <div class="glance__grid">
-      <div class="glance__item"><div class="n">19.5<small>km/s</small></div><div class="l">Mission ΔV of the lunar vehicle my team designed</div></div>
-      <div class="glance__item"><div class="n">2.51<small>MN</small></div><div class="l">Sea-level thrust of the staged-combustion engine I sized</div></div>
-      <div class="glance__item"><div class="n">13<small>×</small></div><div class="l">Speedup of the Gateway visualization tool at NASA JSC</div></div>
-      <div class="glance__item"><div class="n">301</div><div class="l">Transponder test files automated at Collins Aerospace</div></div>
-    </div>
-  </div>
-
   <!-- ABOUT -->
   <section id="about" class="section">
-    <p class="section__eyebrow">01 / About</p>
-    <div class="about">
-      <div class="about__lead">
-        <h3>The short version.</h3>
-        <p>Senior in Aerospace Engineering at Embry-Riddle, graduating December 2026. I like the part of a project where requirements turn into hardware: sizing the engine, drawing the parts, and proving the numbers with analysis and code.</p>
+    <div class="section__head">
+      <div>
+        <p class="section__eyebrow">About me</p>
+        <h2 class="section__title">Hardware first, software to prove it.</h2>
       </div>
+    </div>
+    <div class="about">
       <div class="about__text">
         <p>
-          Right now I split my time between <strong>Collins Aerospace</strong>, where I write Python test automation, author and verify test procedures for transponder products, and benchmark an internal AI test-case generation tool, and our senior capstone, where I lead a six-person team designing a crewed two-stage LOX/CH₄ lunar vehicle. On the capstone I own the engine operating point, nozzle design and OpenFOAM CFD, turbopumps, injectors and preburners, thrust vector control, mass properties, and all of the Onshape CAD and drawings.
+          Right now I split my time between <strong>Collins Aerospace</strong>, where I write Python test automation, author and verify test procedures for transponder products, and benchmark an internal AI test-case generation tool, and our senior capstone, where I lead a six-person team designing a crewed two-stage LOX/CH₄ lunar vehicle. On the capstone I own the engine operating point, nozzle design and CFD, turbopumps, injectors and preburners, thrust vector control, mass properties, and the Onshape CAD.
         </p>
         <p>
           Before that I built Python/PyQt5 mission-visualization tools at <strong>NASA Johnson Space Center</strong> used in controller training and simulated missions, including a <strong>13× speedup</strong> of the Gateway tool, and spent a summer doing airframe CAD and an Unreal Engine 5 + PX4 flight simulator for a heavy-lift UAV.
         </p>
-        <div class="about__focus">
-          <span class="chip">Rocket propulsion</span>
-          <span class="chip">Launch-vehicle design</span>
-          <span class="chip">CFD (OpenFOAM)</span>
-          <span class="chip">Systems &amp; requirements</span>
-          <span class="chip">CAD &amp; drawings</span>
-          <span class="chip">Test automation</span>
-          <span class="chip">Flight simulation</span>
-        </div>
+      </div>
+      <div class="about__focus">
+        <span class="chip">Rocket propulsion</span>
+        <span class="chip">Launch-vehicle design</span>
+        <span class="chip">CFD</span>
+        <span class="chip">Systems engineering</span>
+        <span class="chip">CAD</span>
+        <span class="chip">Test automation</span>
+        <span class="chip">Flight simulation</span>
       </div>
     </div>
   </section>
@@ -161,34 +138,34 @@
   <section id="skills" class="section section--band">
     <div class="section__head">
       <div>
-        <p class="section__eyebrow">02 / Toolset</p>
-        <h2 class="section__title">What I actually work in.</h2>
+        <p class="section__eyebrow">Toolset</p>
+        <h2 class="section__title">What I work in.</h2>
       </div>
-      <p class="section__hint">The tools behind the projects below. Nothing here is listed that I haven't used on real deliverables.</p>
+      <p class="section__hint">The tools behind the projects below, all used on real deliverables.</p>
     </div>
     <div class="skills">
       <div class="skills__group">
-        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4.5v11L12 22l-8-4.5v-11L12 2Z"/><path d="M12 22V11.5M4 6.5l8 5 8-5"/></svg></span> CAD &amp; design <span class="idx">01</span></h3>
+        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4.5v11L12 22l-8-4.5v-11L12 2Z"/><path d="M12 22V11.5M4 6.5l8 5 8-5"/></svg></span> CAD &amp; design</h3>
         <div class="skills__list">
-          <span>Onshape</span><span>CATIA V5</span><span>SolidWorks</span><span>Fusion 360</span><span>Creo Parametric</span><span>FeatureScript</span><span>Engineering drawings</span>
+          <span>Onshape</span><span>CATIA V5</span><span>SolidWorks</span><span>Fusion 360</span><span>Creo Parametric</span>
         </div>
       </div>
       <div class="skills__group">
-        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-6 3 3 5-7"/></svg></span> Analysis &amp; simulation <span class="idx">02</span></h3>
+        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-6 3 3 5-7"/></svg></span> Analysis &amp; simulation</h3>
         <div class="skills__list">
-          <span>MATLAB</span><span>NASA CEA</span><span>OpenFOAM</span><span>ParaView</span><span>ANSYS Fluent</span><span>NASTRAN</span><span>OpenRocket</span><span>Unreal Engine 5</span><span>Cosys-AirSim</span><span>PX4</span>
+          <span>MATLAB</span><span>NASA CEA</span><span>OpenFOAM</span><span>ANSYS Fluent</span><span>NASTRAN</span><span>OpenRocket</span><span>Unreal Engine 5</span><span>Cosys-AirSim</span><span>PX4</span>
         </div>
       </div>
       <div class="skills__group">
-        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg></span> Programming <span class="idx">03</span></h3>
+        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg></span> Programming</h3>
         <div class="skills__list">
-          <span>Python</span><span>MATLAB</span><span>C</span><span>PyQt5</span><span>NumPy</span><span>Linux CLI</span>
+          <span>Python</span><span>MATLAB</span><span>C</span><span>PyQt5</span><span>Linux CLI</span>
         </div>
       </div>
       <div class="skills__group">
-        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg></span> Systems &amp; workflow <span class="idx">04</span></h3>
+        <h3><span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg></span> Systems &amp; workflow</h3>
         <div class="skills__list">
-          <span>Requirements (WBS / MIL-STD-881)</span><span>Jama</span><span>Jira</span><span>Confluence</span><span>GitHub</span><span>GitLab</span><span>Agile / Scrum</span><span>VS Code</span>
+          <span>Jama</span><span>Jira</span><span>Confluence</span><span>GitHub</span><span>GitLab</span><span>Agile / Scrum</span><span>VS Code</span>
         </div>
       </div>
     </div>
@@ -198,7 +175,7 @@
   <section id="projects" class="section">
     <div class="section__head">
       <div>
-        <p class="section__eyebrow">03 / Selected work</p>
+        <p class="section__eyebrow">Selected work</p>
         <h2 class="section__title">Engines, vehicles, and the software around them.</h2>
       </div>
       <p class="section__hint">Each card opens a full case study with the analysis, figures, CAD, and documents behind it.</p>
@@ -209,14 +186,14 @@
     </div>
   </section>
 
-  <!-- 3D VIEWER + NOZZLE SIM -->
+  <!-- 3D VIEWER -->
   <section id="rocket" class="section section--band">
     <div class="section__head">
       <div>
-        <p class="section__eyebrow">04 / Interactive</p>
-        <h2 class="section__title">COPE, in three dimensions.</h2>
+        <p class="section__eyebrow">Interactive 3D</p>
+        <h2 class="section__title">The lunar vehicle, in three dimensions.</h2>
       </div>
-      <p class="section__hint">The launch stack, the on-orbit refuel configuration, and both engines from our CDR. Drag to orbit, click to explode the assembly, and switch models with the tabs. Colors follow the hardware: blue for LOX, amber for methane, graphite for engines.</p>
+      <p class="section__hint">The launch stack, the on-orbit refuel configuration, and both engine assemblies from our critical design. Drag to orbit, click to explode the assembly, and switch models with the tabs. Colors follow the hardware: blue for LOX, gold for methane, graphite for engines.</p>
     </div>
     <div id="rocket-viewer" class="rocket-viewer" data-rocket>
       <div class="rocket-viewer__controls">
@@ -228,7 +205,7 @@
         </div>
         <div class="rocket-viewer__legend" data-legend>
           <span><i style="background:#8fb8e0"></i>LOX</span>
-          <span><i style="background:#e0a05f"></i>CH₄</span>
+          <span><i style="background:#d9a441"></i>CH₄</span>
           <span><i style="background:#3a3e46"></i>Engines</span>
           <span><i style="background:#e9eaee"></i>Structure</span>
         </div>
@@ -241,55 +218,13 @@
         <small>Interactive model requires WebGL &amp; JavaScript.</small>
       </div>
     </div>
-
-    <!-- Engine nozzle flow: quasi-1D along the real Rao contour (assets/js/nozzle-sim.js) -->
-    <div class="nozzlehome">
-      <div class="nozzlehome__head">
-        <h3 class="nozzlehome__title">Inside the engine bell.</h3>
-        <p class="section__hint">The actual Stage 1 (ε = 40) and Stage 2 (ε = 100) contours from our CDR, with the quasi-1D flow solution from the same MATLAB that sized them. Hover the nozzle to probe any station; switch the field between Mach number, temperature, and pressure. The plume shows the sea-level shock cells for Stage 1 and the vacuum expansion for Stage 2.</p>
-      </div>
-      <div class="nozzlesim">
-        <div class="demo__bar"><span class="dots"><i></i><i></i><i></i></span>
-          <span class="codeview__name">quasi-1D isentropic flow · Rao bell · live</span>
-          <span class="grp"><span class="lbl">Stage</span>
-            <button type="button" class="demo__btn" data-nozzle-stage="S1" aria-pressed="true">1 · sea level</button>
-            <button type="button" class="demo__btn" data-nozzle-stage="S2" aria-pressed="false">2 · vacuum</button>
-          </span>
-          <span class="grp"><span class="lbl">Field</span>
-            <button type="button" class="demo__btn" data-nozzle-field="M" aria-pressed="true">Mach</button>
-            <button type="button" class="demo__btn" data-nozzle-field="T" aria-pressed="false">Temperature</button>
-            <button type="button" class="demo__btn" data-nozzle-field="p" aria-pressed="false">Pressure</button>
-          </span>
-        </div>
-        <div class="nozzlesim__stage">
-          <canvas class="nozzlesim__canvas" data-nozzle></canvas>
-          <button type="button" class="demo__btn nozzlesim__play" data-nozzle-play aria-pressed="false">▶ Run the flow</button>
-        </div>
-        <div class="nozzlesim__foot">
-          <p class="demos__cap">Rt = 132.3 mm, contraction ratio 2.5, L* = 1.10 m, 80% Rao bell. Flow from the area-Mach relation with CEA properties (γ ≈ 1.14 in the chamber). A 1D model shaded for display, not CFD; the CFD results are in the case study.</p>
-          <p class="nozzlesim__readout" data-nozzle-readout></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CODE SHOWCASE -->
-  <section id="code" class="section">
-    <div class="section__head">
-      <div>
-        <p class="section__eyebrow">05 / Code</p>
-        <h2 class="section__title">MATLAB from the CDR, running live.</h2>
-      </div>
-      <p class="section__hint">The scripts behind the engine. Each tab pairs the real source with a browser port of the same calculation, playing from the data the script produced. Click the code to read the whole file.</p>
-    </div>
-    <div data-demo-tabs></div>
   </section>
 
   <!-- EXPERIENCE -->
-  <section id="experience" class="section section--band">
+  <section id="experience" class="section">
     <div class="section__head">
       <div>
-        <p class="section__eyebrow">06 / Experience</p>
+        <p class="section__eyebrow">Experience</p>
         <h2 class="section__title">Where I've worked.</h2>
       </div>
     </div>
@@ -343,10 +278,10 @@
   </section>
 
   <!-- EDUCATION -->
-  <section id="education" class="section">
+  <section id="education" class="section section--band">
     <div class="section__head">
       <div>
-        <p class="section__eyebrow">07 / Education</p>
+        <p class="section__eyebrow">Education</p>
         <h2 class="section__title">Academics.</h2>
       </div>
     </div>
@@ -368,9 +303,9 @@
     <div class="contact__inner">
       <div class="contact__grid">
         <div>
-          <p class="section__eyebrow">08 / Contact</p>
-          <h2 class="contact__title">Let's build something that flies.</h2>
-          <p class="contact__text">Open to propulsion, systems, and vehicle-design roles starting January 2027. Email is the fastest way to reach me.</p>
+          <p class="section__eyebrow">Contact</p>
+          <h2 class="contact__title">Let's talk.</h2>
+          <p class="contact__text">I'm graduating in December 2026 and open to systems, propulsion, test engineering, and fluids roles. Email is the fastest way to reach me.</p>
           <div class="contact__links">
             <a class="iconlink" href="mailto:nathanylfreese@gmail.com"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>nathanylfreese@gmail.com</a>
             <a class="iconlink" href="https://www.linkedin.com/in/nathanyl-freese/" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.72C24 .77 23.2 0 22.22 0Z"/></svg>LinkedIn</a>
@@ -379,15 +314,15 @@
         </div>
         <div class="contact__side">
           <div class="row"><span>Graduating</span><b>December 2026</b></div>
-          <div class="row"><span>Looking for</span><b>Propulsion · Systems · Vehicle design</b></div>
+          <div class="row"><span>Looking for</span><b>Systems · Propulsion · Test · Fluids</b></div>
           <div class="row"><span>Location</span><b>Daytona Beach, FL · open to relocate</b></div>
           <div class="row"><span>Resume</span><b>Updated October 2026</b></div>
         </div>
       </div>
       <div class="footer__bar">
-        <span>© <span id="year"></span> Nathanyl Freese · Built by hand, no frameworks.</span>
+        <span>© <span id="year"></span> Nathanyl Freese</span>
         <nav aria-label="Footer">
-          <a href="#about">About</a><a href="#projects">Work</a><a href="#rocket">Interactive</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+          <a href="#about">About</a><a href="#projects">Work</a><a href="#rocket">3D</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
         </nav>
       </div>
     </div>
@@ -396,10 +331,6 @@
   <script src="assets/js/cope-data.js"></script>
   <script src="assets/js/projects.js"></script>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/codeviewer.js"></script>
-  <script src="assets/js/sims.js"></script>
-  <script src="assets/js/demo.js"></script>
-  <script src="assets/js/nozzle-sim.js"></script>
   <script type="module" src="assets/js/rocket3d.js"></script>
 </body>
 </html>
