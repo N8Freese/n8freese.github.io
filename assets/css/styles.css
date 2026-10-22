@@ -223,8 +223,9 @@ img { max-width: 100%; display: block; }
   font-size: clamp(2.6rem, 6.4vw, 4.8rem); letter-spacing: -0.035em; margin: 0 0 18px; line-height: 1;
   color: var(--text);
 }
-.hero__pitch { font-size: clamp(1.1rem, 2.1vw, 1.35rem); color: var(--text); max-width: 600px; margin: 0 0 10px; line-height: 1.5; }
-.hero__sub { color: var(--muted); max-width: 580px; margin: 0 0 30px; font-size: 1.02rem; }
+.hero__pitch { font-size: clamp(1.1rem, 2.1vw, 1.3rem); color: var(--text); max-width: 620px; margin: 0 0 12px; line-height: 1.5; }
+.hero__sub { color: var(--muted); max-width: 620px; margin: 0 0 16px; font-size: 1.02rem; }
+.hero__sub + .hero__sub { margin-bottom: 30px; }
 .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
 .hero__line { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 0; font-size: .86rem; color: var(--muted); }
 .hero__line span + span::before { content: "·"; margin: 0 10px; color: var(--faint); }
@@ -505,7 +506,8 @@ img { max-width: 100%; display: block; }
 .contact__inner { max-width: var(--maxw); margin: 0 auto; }
 .contact__grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 32px 64px; align-items: start; }
 .contact__title { font-size: clamp(2rem, 5.4vw, 3.4rem); margin: 0 0 14px; letter-spacing: -.03em; }
-.contact__text { color: var(--muted); margin: 0 0 24px; font-size: 1.08rem; max-width: 520px; }
+.contact__text { color: var(--muted); margin: 0 0 16px; font-size: 1.08rem; max-width: 540px; }
+.contact__text:last-of-type { margin-bottom: 26px; }
 .contact__links { display: flex; gap: 10px; flex-wrap: wrap; }
 .contact__links a.iconlink {
   display: inline-flex; align-items: center; gap: 9px; padding: 12px 18px;

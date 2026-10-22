@@ -27,7 +27,7 @@
  *      (tools[] still renders after the sections)
  *
  *   gallery items: { src, caption, fit:"contain", wide:true, dark:true }
- *                  { model, caption, feature:true }   (3D, GLB)
+ *                  { model, caption, feature:true, neutral:true }   (3D, GLB)
  *                  { video, poster, caption, badge }
  *   docs        array of { label, src, blurb } document buttons (CDR, PDR, report)
  * ==========================================================================*/
@@ -39,7 +39,7 @@ window.PROJECTS = [
     title: "Avionic Systems Development",
     category: "Systems Engineering Intern · Collins Aerospace",
     tagline:
-      "Sustainment of a legacy transponder today, after a summer of test automation, test procedures, and an AI test-case tool evaluation on the next-generation transponder.",
+      "Avionics test automation, requirements verification, and sustainment work on next-generation and legacy transponder systems during my systems engineering internship.",
     period: "May 2026 – Present",
     role: "Systems Engineering Intern",
     tags: ["Python", "Requirements verification", "Jama", "GitLab", "AI evaluation"],
@@ -47,24 +47,46 @@ window.PROJECTS = [
     thumbStyle: "logo",
     stats: [
       { n: "301", l: "Test files automated" },
-      { n: "50", u: "%", l: "Test runtime cut" },
-      { n: "80+", l: "Requirements benchmarked" },
+      { n: "50", u: "%", l: "Test runtime reduced" },
+      { n: "80+", l: "Requirements evaluated" },
     ],
     links: [],
-    problem:
-      "Transponder test campaigns are long and heavily procedural. Over the summer my work was on the next-generation transponder, making its testing faster and finding out how far an internal AI tool can be trusted to draft test cases. Since then I have moved to sustainment of a legacy transponder, keeping it verified as the product transitions to the next system.",
-    approach: [
-      "Currently rewriting the legacy transponder's test procedures, executing the test cases, and verifying the associated test equipment to support sustainment and the system transition.",
-      "Over the summer, developed Python automation that drives the keyboard and mouse to run 301 next-generation transponder test files unattended, cutting test runtime by 50%.",
-      "Evaluated the internal AI test-case generation tool across 80+ requirements, comparing its output against engineer-written baselines and feeding the results back to the tool's developers.",
-      "Built a data dictionary defining requirement inputs and their ranges so the tool's retrieval-augmented generation has structured context to draw from.",
-      "Supported requirements verification and test-procedure development in Jama, with Confluence and GitLab for documentation and version control.",
-    ],
     tools: ["Python", "Jama", "Jira", "Confluence", "GitLab", "Test procedures", "Requirements verification", "Test equipment verification"],
-    results: [
-      "301-file transponder test campaign automated, runtime cut in half.",
-      "AI-generated test cases benchmarked across 80+ requirements, with feedback and a supporting data dictionary that improved the tool's accuracy.",
-      "Legacy transponder test procedures rewritten and test cases executed to keep the product verified through its transition.",
+    sections: [
+      {
+        title: "Overview",
+        text: [
+          "During my internship at Collins Aerospace I've gained practical experience in systems engineering, particularly in avionics testing, requirements verification, and test automation. My work has involved both next-generation and legacy transponder systems, which has given me exposure to different stages of a product's development and sustainment lifecycle.",
+        ],
+      },
+      {
+        title: "Test automation",
+        text: [
+          "One of my primary projects during the summer involved developing Python automation to improve the efficiency of transponder testing. The existing process required manually executing a large number of test files, which made the overall testing process time-consuming.",
+          "I developed an automation script that simulated keyboard and mouse inputs to execute 301 test files, which reduced the total test runtime by approximately 50%.",
+          "This project let me apply my programming experience to an engineering testing environment, and it taught me a lot about why verification efficiency matters when test campaigns run for weeks.",
+        ],
+      },
+      {
+        title: "AI test-case generation",
+        text: [
+          "I also had the opportunity to evaluate an internal AI tool designed to generate test cases from system requirements. I compared the AI-generated test cases against engineer-developed baselines across more than 80 requirements, identifying where the tool performed well and where it needed improvement, and fed those results back to the tool's developers.",
+          "As part of this effort I developed a data dictionary defining requirement inputs and their associated ranges, which gives the tool's retrieval-augmented generation process more structured context to draw from.",
+          "This work gave me a better understanding of how AI-based tools can support engineering verification, and it also made clear how important it is to review and validate anything they generate.",
+        ],
+      },
+      {
+        title: "Legacy transponder sustainment",
+        text: [
+          "More recently I've been supporting the sustainment of a legacy transponder system. This has involved updating existing test procedures, executing test cases, and verifying test equipment functionality to help maintain system verification during the transition to the next-generation product. Requirements and procedures are managed in Jama, with Confluence and GitLab for documentation and version control.",
+        ],
+      },
+      {
+        title: "What I've taken from it",
+        text: [
+          "This internship has given me a much better understanding of how systems engineering supports the development, verification, and sustainment of complex aerospace systems. I've particularly enjoyed working with requirements and testing, because it shows how engineering decisions turn into measurable system performance.",
+        ],
+      },
     ],
     gallery: [],
     needs: [],
@@ -76,7 +98,7 @@ window.PROJECTS = [
     title: "Two-Stage Methalox Crewed Lunar Vehicle",
     category: "Senior capstone · Project & Systems Lead · Embry-Riddle",
     tagline:
-      "A two-stage, orbitally refueled LOX/CH₄ launch vehicle that takes three crew to the lunar surface and back. I lead the six-person team and own the engine operating point, nozzle design and CFD, thrust vector control, mass properties, and the CAD, through PDR and CDR.",
+      "A conceptual two-stage LOX/CH₄ launch vehicle, refueled in orbit, designed by our six-person senior design team to carry three crew to the lunar surface and back. I lead the team and contribute the propulsion analysis, nozzle design and CFD, thrust vector control, mass properties, and CAD.",
     period: "Jan 2026 – Present",
     role: "Project & Systems Lead",
     tags: ["Onshape", "NASA CEA", "CFD", "MATLAB", "CATIA V5"],
@@ -94,10 +116,12 @@ window.PROJECTS = [
     ],
     sections: [
       {
-        title: "The mission",
+        title: "Project overview",
         text: [
-          "COPE (Crewed Operations for Planetary Exploration) is our two-semester capstone at Embry-Riddle. The vehicle is a two-stage LOX/methane launch vehicle. Stage 1 puts Stage 2 and an Orion-class capsule into low Earth orbit, tanker flights (the same Stage 2 with the capsule swapped for propellant) refuel it, and Stage 2 then does trans-lunar injection, halo-orbit insertion, lunar landing and liftoff, and trans-Earth injection. Three astronauts and a 5,000 kg payload, 19.5 km/s total ΔV, 95 m tall, 6.9 m diameter, 1.43 million kg at liftoff.",
-          "I am the project and systems lead on a team of six. In the spring we took it through Preliminary Design Review, and in October 2026 we delivered the Critical Design Review. Both reports are linked at the bottom of this page, and the homepage has the interactive stack and both engines in 3D.",
+          "COPE (Crewed Operations for Planetary Exploration) is a two-semester senior design project at Embry-Riddle focused on developing a conceptual launch vehicle capable of transporting three astronauts and a 5,000 kg payload to the lunar surface and returning the crew to Earth.",
+          "Our design is a two-stage liquid oxygen and methane launch vehicle that uses orbital refueling to support the lunar mission. Stage 1 puts Stage 2 and an Orion-class capsule into low Earth orbit, tanker flights of the same Stage 2 refuel it, and Stage 2 then performs trans-lunar injection, the lunar landing and liftoff, and the return to Earth. The vehicle is approximately 95 meters tall, has a diameter of 6.9 meters, and a liftoff mass of approximately 1.43 million kilograms.",
+          "As the project and systems lead for our six-person team, I've been responsible for coordinating the overall design while also contributing directly to several technical areas, including propulsion analysis, engine sizing, nozzle design, CFD, thrust vector control, mass properties, and CAD development.",
+          "The project has been a chance to work through the full engineering design process, from initial mission requirements and preliminary design to detailed subsystem analysis and our Critical Design Review. Both review reports are linked at the bottom of this page, and the homepage has the interactive launch stack and both engine assemblies in 3D.",
         ],
         gallery: [
           { model: "assets/rocket/full-launch-vehicle.glb", feature: true, caption: "Full launch stack (drag to rotate)" },
@@ -111,13 +135,16 @@ window.PROJECTS = [
       {
         title: "Preliminary design (Spring 2026)",
         text: [
-          "PDR was about getting the architecture to close. I wrote the MATLAB vehicle-sizing model, iterating the rocket equation across both stages and the refueling scheme until the mass fractions and ΔV split worked, ran LOX/CH₄ combustion cases in NASA CEA to set engine Isp and sizing assumptions, and ran the team's trade studies across propulsion, structures, GNC, and thermal. I also built the full launch-vehicle assembly in CATIA V5 and Fusion 360 with a parts breakdown for each stage.",
+          "During the preliminary design phase our primary focus was establishing a feasible vehicle architecture capable of meeting the mission requirements.",
+          "I developed a MATLAB-based vehicle sizing model to evaluate staging configurations, propellant mass requirements, and the overall velocity budget. I also performed combustion analysis using NASA CEA to establish preliminary engine performance characteristics, and supported trade studies across the vehicle's major subsystems, including propulsion, structures, guidance and control, and thermal management.",
+          "Alongside the analytical work, I developed the initial launch vehicle CAD assembly in CATIA V5 and Fusion 360, which let our team visualize the overall configuration and start evaluating subsystem integration.",
+          "By the end of the preliminary design phase we had established the vehicle architecture, preliminary propulsion requirements, and subsystem configurations needed to move into detailed design.",
         ],
         bullets: [
-          "Two stages on a common 6.9 m diameter, 95 m tall, 1.43 million kg at liftoff with a liftoff T/W of 1.43.",
-          "Stage 1 has eight LOX/CH₄ engines and gives 3.6 km/s of ΔV to staging. Stage 2 has three engines of the same family, 6.4 km/s to orbit and 9.7 km/s after refueling for the lunar mission.",
-          "Orbital refueling by tanker flights of the same Stage 2, so one engine and one tank design serve the whole architecture.",
-          "Engine family set at ~2.6 MN per engine, O/F 3.5, with sea-level and vacuum bells on the same chamber.",
+          "Two stages on a common 6.9 m diameter, 95 m tall, 1.43 million kg at liftoff with a liftoff thrust-to-weight ratio of 1.43.",
+          "Stage 1 carries eight LOX/CH₄ engines and provides 3.6 km/s of ΔV to staging. Stage 2 carries three engines of the same family, with 6.4 km/s to orbit and 9.7 km/s after refueling for the lunar mission.",
+          "Orbital refueling by tanker flights of the same Stage 2, so one engine design and one tank design serve the whole architecture.",
+          "Engine family set at roughly 2.6 MN per engine and an O/F of 3.5, with sea-level and vacuum bells on the same chamber.",
         ],
         note: {
           text: "The full PDR report is linked under Documents below.",
@@ -128,8 +155,11 @@ window.PROJECTS = [
       {
         title: "Critical design (Fall 2026)",
         text: [
-          "At CDR every requirement from the system level down to the component level had to have an analysis result and a status. I wrote the requirements tables and the work breakdown structure, and owned the engine operating point, the nozzle contours and CFD, the turbopumps, injectors, and preburners, the feed ducts, thrust vector control, mass properties and the inertia matrices, the COTS and TRL assessment, and the CAD and drawings. Because I was also the systems lead, integrating all of it into one consistent design was my job.",
-          "Every requirement closed as met, with the two engine thrust allocations met within the 5% tolerance. The major ones are below.",
+          "Following the Preliminary Design Review our team moved into detailed design, where the focus shifted toward refining the subsystem designs and showing that the vehicle could meet its established requirements.",
+          "My primary responsibilities included developing the engine operating conditions, designing the nozzle contours, performing the CFD analysis, evaluating turbomachinery and feed system requirements, and analyzing thrust vector control and vehicle mass properties.",
+          "As the systems lead I was also responsible for developing and organizing the requirements structure, keeping the subsystem designs consistent with each other, and integrating the team's technical work into the final Critical Design Review.",
+          "One of the more challenging parts of this phase was making sure that a change in one subsystem stayed consistent with the rest of the vehicle. Adjustments to engine performance, for example, affected the overall thrust requirements, the vehicle mass properties, and the mission performance.",
+          "Our final design met the assessed requirements within their established tolerances, which gave us a consistent analytical baseline for the conceptual vehicle. Some of the major ones are summarized below.",
         ],
         table: {
           head: ["Requirement", "Target", "Result", "Status"],
@@ -150,20 +180,24 @@ window.PROJECTS = [
       {
         title: "Engine operating point",
         text: [
-          "Both stages use a common full-flow staged-combustion LOX/CH₄ engine with the same chamber and throat (0.0550 m², O/F 3.5). Stage 1 runs 25.53 MPa with an expansion ratio of 40 so it can start at sea level, and Stage 2 runs 26.08 MPa at ε = 100 for vacuum. I ran NASA CEA for the equilibrium combustion properties, applied a 0.98 c* efficiency for combustion losses, and took the nozzle efficiency (0.992) from my own CFD rather than assuming it.",
+          "Both stages use a common full-flow staged-combustion engine architecture with liquid oxygen and methane as propellants. The engines share the same combustion chamber and throat geometry, but each stage uses a different nozzle expansion ratio to suit its operating environment.",
+          "I used NASA CEA to evaluate the combustion properties and establish the engine operating conditions, including chamber pressure, mixture ratio, specific impulse, and thrust. Those results were then used to size the propulsion system and check its ability to meet the vehicle's performance requirements. A 0.98 c* efficiency was applied for combustion losses, and the nozzle efficiency came from my own CFD rather than an assumed value.",
+          "The Stage 1 engine was designed for sea-level operation at 25.53 MPa with an expansion ratio of 40, while the Stage 2 engine was optimized for vacuum at 26.08 MPa and an expansion ratio of 100. The final analytical results predicted approximately 331 seconds of sea-level specific impulse for Stage 1 and 376 seconds of vacuum specific impulse for Stage 2.",
         ],
         bullets: [
           "Delivered Isp of 331 s sea level and 361 s vacuum for Stage 1, and 376 s vacuum for Stage 2.",
           "Thrust per engine of 2.51 MN sea level and 2.73 MN vacuum for Stage 1, and 2.91 MN vacuum for Stage 2.",
-          "Stage 2 needs 372.6 s to close the post-refuel mass ratio, and 375.7 s leaves about 80 m/s of reserve.",
-          "Benchmarked against Raptor 2, RS-25, and RD-180 to show the chamber pressures and thrust levels sit inside the range of flown staged-combustion engines.",
+          "Stage 2 needs 372.6 s to close the post-refuel mass ratio, so 375.7 s leaves about 80 m/s of reserve.",
+          "Benchmarked against Raptor 2, RS-25, and RD-180 to confirm the chamber pressures and thrust levels sit inside the range of flown staged-combustion engines.",
         ],
       },
       {
-        title: "Nozzle contour and CFD",
+        title: "Nozzle design and CFD",
         text: [
-          "I designed both bells as 80% Rao contours from a 132.3 mm throat, with a contraction ratio of 2.5, L* of 1.10 m, 1.674 m and 2.646 m exit diameters, and exit Mach 4.19 and 4.90. Then I set up each nozzle as an axisymmetric inviscid CFD case, initialized from the CEA throat conditions and run until thrust settled.",
-          "The CFD thrust coefficient came out just under CEA's (1.944 against 1.960 for Stage 1), and that ratio is the nozzle efficiency used in the operating-point numbers above. The Stage 1 exit pressure of 70.5 kPa gives a pe/pa of 0.70 at sea level, well above the 0.40 separation screen, so the ε = 40 bell is safe to start on the pad. I also ran the exhaust plume for both engines to look at the shock structure downstream of the exit.",
+          "One of my primary technical contributions was the design and analysis of the Stage 1 and Stage 2 engine nozzles. I developed both nozzle geometries as 80% Rao bell contours from a 132.3 mm throat, with expansion ratios of 40 and 100 for the first and second stages, a contraction ratio of 2.5, and exit Mach numbers of 4.19 and 4.90.",
+          "The nozzle geometries were then evaluated using axisymmetric CFD simulations, initialized from the CEA throat conditions, to examine the internal flow behavior and estimate nozzle performance. The CFD results were compared against the theoretical predictions from NASA CEA to evaluate the nozzle thrust coefficient and estimate nozzle efficiency. For Stage 1 the CFD thrust coefficient came out at 1.944 against 1.960 from CEA, and that ratio is the efficiency used in the operating point above.",
+          "I also examined the exhaust plume characteristics, including the Mach number, pressure, and temperature distributions. The Stage 1 exit pressure of 70.5 kPa gives a pressure ratio of 0.70 at sea level, well above the 0.40 screening value for flow separation, so the ε = 40 bell can start on the pad.",
+          "This analysis gave us a more realistic estimate of engine performance and more confidence in the selected nozzle geometries.",
         ],
         gallery: [
           { src: "assets/img/cope/s1-thrust-chamber-render.jpg", fit: "contain", dark: true, caption: "Stage 1 thrust chamber (ε = 40) with GRCop-42 liner, closeout jacket, and coolant manifolds" },
@@ -177,9 +211,11 @@ window.PROJECTS = [
         ],
       },
       {
-        title: "Engine CAD",
+        title: "Engine CAD development",
         text: [
-          "The engines were built parametrically in CAD. The thrust chamber is revolved from the exported Rao contour with the cooled wall, and the turbopumps, preburners, injectors, plumbing, and thrust vector control are driven by the dimensions from the sizing scripts, so the CAD regenerated whenever an analysis number changed. Each turbopump is 49 parts with materials assigned (Ti-6Al-4V, Inconel 718, 440C with Si₃N₄ bearings), and the TVC is a 14-part connected load path from the thrust-structure ring through the gimbal cross to the injector dome.",
+          "Alongside the propulsion analysis I developed detailed CAD models of the engine assemblies to better understand the physical integration of the major propulsion components. The models include the thrust chamber, nozzle, turbomachinery, preburners, injectors, feed lines, and thrust vector control hardware.",
+          "The CAD was built parametrically, with component dimensions taken from the analytical sizing results, so the models reflect the engineering calculations used throughout the design and could be regenerated whenever an analysis number changed. Each turbopump is 49 parts with materials assigned (Ti-6Al-4V, Inconel 718, 440C with Si₃N₄ bearings), and the TVC is a 14-part connected load path from the thrust-structure ring through the gimbal cross to the injector dome.",
+          "Building these assemblies was particularly valuable because it connected the theoretical propulsion analysis to the physical configuration of the engine and surfaced integration problems, like duct routing around the nozzle bell, that the spreadsheets never would have.",
         ],
         gallery: [
           { model: "assets/rocket/cope-s1-engine.glb?v=3", feature: true, neutral: true, caption: "Stage 1 engine assembly, ε = 40 (drag to rotate)" },
@@ -212,30 +248,33 @@ window.PROJECTS = [
     title: "Heavy Lift UAV Project",
     category: "CAD & Simulation Engineer · Daytona Beach, FL",
     tagline:
-      "Frame, motor-mount, and 300+ lb payload-attachment CAD plus an Unreal Engine 5 flight simulator integrated with PX4 for testing autonomy before flight.",
+      "A multirotor aircraft built to carry large payloads, where I've worked on the structural CAD for the frame, motor mounts, and payload attachment, and on a flight simulation environment for testing autonomy before flight.",
     period: "Apr 2026 – Present",
     role: "CAD & Simulation Engineer",
     tags: ["SolidWorks", "Fusion 360", "Unreal Engine 5", "PX4", "Cosys-AirSim"],
     thumb: "assets/img/uav-cover.jpg",
     stats: [
-      { n: "300+", u: "lb", l: "Payload attachment design load" },
+      { n: "300", u: "lb", l: "Payload attachment design load" },
       { n: "360", u: "°", l: "Sensor coverage layout" },
-      { n: "UE5 + PX4", l: "Simulation-in-the-loop" },
+      { n: "UE5 + PX4", l: "Simulation environment" },
     ],
     links: [],
-    problem:
-      "A heavy-lift multirotor needs an airframe and payload interface that are light but stiff enough to carry several hundred pounds, and a simulation environment realistic enough to test autonomous flight behavior before risking the aircraft.",
-    approach: [
-      "Designed frame components in SolidWorks and Fusion 360, working the strength-to-weight ratio and manufacturability of each part.",
-      "Contributed to the 300+ lb payload attachment system and the motor mount, developing the CAD models used for integration.",
-      "Laid out sensor mounting to get full 360-degree coverage for future autonomous operations.",
-      "Built a photorealistic flight simulation in Unreal Engine 5 with Cosys-AirSim and Cesium global terrain, integrated with the PX4 autopilot, and used it for simulation-driven testing and validation of autonomous flight.",
-    ],
     tools: ["SolidWorks", "Fusion 360", "Unreal Engine 5", "Cosys-AirSim", "Cesium", "PX4"],
-    results: [
-      "Frame components, motor mount, and a payload attachment system modeled for payloads up to 300 lb.",
-      "Sensor mounting concepts sized for full 360-degree coverage.",
-      "A working UE5 + PX4 simulation loop for autonomous flight testing.",
+    sections: [
+      {
+        title: "Overview",
+        text: [
+          "The Heavy Lift UAV project focuses on the development of a multirotor aircraft designed to carry large payloads while maintaining a high payload-to-weight ratio. The project involves both the structural design of the aircraft and the development of a simulation environment to support testing before physical flight operations.",
+        ],
+      },
+      {
+        title: "My contributions",
+        text: [
+          "My primary contributions have been the CAD models for the aircraft's structural components, including the frame, motor mounts, and payload attachment system. Using SolidWorks and Fusion 360, I've worked on designs that balance structural strength, weight, and manufacturability while accommodating payloads of approximately 300 pounds. I also laid out the sensor mounting to get full 360-degree coverage for future autonomous operations.",
+          "I've also been involved in developing a flight simulation environment using Unreal Engine 5, Cosys-AirSim, and PX4, with Cesium providing global terrain. This environment lets the team evaluate aircraft behavior and test autonomous flight capabilities in simulation before implementing them on the physical vehicle.",
+          "Working on both the mechanical design and the simulation side has helped me see how structural design decisions and software development each contribute to the performance of an aircraft.",
+        ],
+      },
     ],
     gallery: [
       {
@@ -254,7 +293,7 @@ window.PROJECTS = [
     title: "NASA JSC Mission Visualization Tools",
     category: "Engineering Intern · KBR & LZ Technology · NASA Johnson Space Center",
     tagline:
-      "Python/PyQt5 tools visualizing antenna blockage, tracking, and Orion/Starliner simulations with live telemetry overlays for controller training.",
+      "Python and PyQt5 mission visualization software for spacecraft telemetry, antenna tracking, and communication blockage, used to support flight controller training and simulated missions for Orion, Starliner, and Gateway.",
     period: "Jan 2025 – Aug 2025",
     role: "Engineering Intern",
     tags: ["Python", "PyQt5", "Telemetry", "Linux", "GitLab", "Optimization"],
@@ -266,19 +305,29 @@ window.PROJECTS = [
       { n: "3", l: "Vehicles, Orion, Starliner, and Gateway" },
     ],
     links: [],
-    problem:
-      "Flight controllers and trainers needed clear, real-time visualization of antenna blockage, vehicle tracking, and spacecraft state for Orion, Starliner, and Gateway during simulated missions and controller training.",
-    approach: [
-      "Built desktop visualization tools in Python with PyQt5, overlaying live telemetry onto tracking and blockage displays.",
-      "Led development of the Starliner visualization tool, integrating telemetry overlays used in operational workflows.",
-      "Profiled and re-architected the Gateway visualization tool to eliminate rendering and data-handling bottlenecks.",
-      "Developed and debugged in a Linux environment using Spyder and VS Code, with GitLab for version control.",
-    ],
     tools: ["Python", "PyQt5", "Linux", "Spyder / VS Code", "GitLab"],
-    results: [
-      "13× overall performance boost and 21× faster graphics rendering on the Gateway tool after profiling and targeting the real bottleneck.",
-      "Starliner visualization tool with integrated telemetry overlays, used in operational simulations.",
-      "Supported controller training and simulated missions with live telemetry overlays.",
+    sections: [
+      {
+        title: "Overview",
+        text: [
+          "During my internship at NASA Johnson Space Center through KBR and LZ Technology, I worked on developing and improving mission visualization software used to support flight controller training and simulated space missions.",
+          "The tools were written primarily in Python and PyQt5 and provided visual representations of spacecraft telemetry, antenna tracking, and communication blockage for vehicles including Orion, Starliner, and Gateway.",
+        ],
+      },
+      {
+        title: "My contributions",
+        text: [
+          "One of my primary responsibilities was improving the performance of an existing Gateway visualization application. By profiling the software and finding inefficiencies in its data processing and graphics rendering, I was able to improve its overall performance by approximately 13 times, including a 21-times improvement in graphics rendering speed.",
+          "I also led the development of a Starliner visualization tool that incorporated telemetry overlays to help users better understand spacecraft behavior during simulated mission operations.",
+          "Throughout the internship I worked in a Linux development environment and gained experience with Python application development, debugging, software optimization, and version control in GitLab.",
+        ],
+      },
+      {
+        title: "Looking back",
+        text: [
+          "This internship was particularly valuable because it showed me how software development supports real aerospace operations. It also strengthened my programming skills and gave me a better appreciation for building reliable, efficient tools for engineering use.",
+        ],
+      },
     ],
     gallery: [],
     needs: [],
@@ -290,24 +339,28 @@ window.PROJECTS = [
     title: "ERFSEDS Artemini Rocket",
     category: "Manufacturing Member · Embry-Riddle Future Space Explorers",
     tagline:
-      "Scaled-down Artemis rocket with 3D models in CATIA V5 and SolidWorks and OpenRocket flight optimization, on a 15-student team.",
+      "A student-built, scaled-down version of NASA's Artemis launch vehicle, where I contributed CAD models of rocket components and OpenRocket and MATLAB flight simulations as part of a 15-member team.",
     period: "Aug 2024 – Jan 2025",
     role: "Manufacturing Member",
     tags: ["CATIA V5", "SolidWorks", "OpenRocket", "Manufacturing"],
     thumb: "assets/img/artemis-cover.png",
     model: "assets/rocket/artemis.glb",
     links: [],
-    problem:
-      "Build a scaled-down version of the Artemis rocket to enable local launches, with sound aerodynamics, stability, and structural reliability, as part of a large student team.",
-    approach: [
-      "Developed 3D models of the scaled Artemis rocket in CATIA V5 and SolidWorks.",
-      "Ran OpenRocket and MATLAB simulations to optimize trajectory, stability, and flight parameters.",
-      "Collaborated with a 15-member team to integrate design modifications and ensure structural reliability.",
-    ],
     tools: ["CATIA V5", "SolidWorks", "OpenRocket", "MATLAB"],
-    results: [
-      "Delivered 3D models supporting manufacturing and integration.",
-      "Tuned trajectory and stability parameters through simulation.",
+    sections: [
+      {
+        title: "Overview",
+        text: [
+          "The Artemini Rocket project was a student-led effort through Embry-Riddle Future Space Explorers to design and develop a scaled-down version of NASA's Artemis launch vehicle. As part of a 15-member team, I contributed to the design and development of the rocket, with a focus on CAD modeling and flight performance analysis.",
+        ],
+      },
+      {
+        title: "My contributions",
+        text: [
+          "I developed 3D models of rocket components using CATIA V5 and SolidWorks, and ran flight simulations in OpenRocket and MATLAB to evaluate trajectory and stability characteristics. I also worked with other team members to fold in design changes and support the integration of the rocket's structural components.",
+          "The project gave me more experience with rocket design and showed me how CAD development, flight simulation, and teamwork all have to fit together over the course of a build.",
+        ],
+      },
     ],
     gallery: [],
     needs: [],
@@ -319,24 +372,28 @@ window.PROJECTS = [
     title: "ERPL Spectre Rocket",
     category: "Hardware Member · Experimental Rocket Propulsion Lab",
     tagline:
-      "Active-stabilization high-powered rocket, with structural components in Fusion 360 and MATLAB test-data analysis.",
+      "A high-powered rocket with an active stabilization system, where I worked on the hardware team designing and testing the canard control system, modeling structural parts in Fusion 360, and analyzing test data in MATLAB.",
     period: "Aug 2022 – May 2024",
     role: "Hardware Member",
     tags: ["Fusion 360", "MATLAB", "Hardware", "Data analysis"],
     thumb: "assets/img/spectre-cover.png",
     thumbFit: "contain",
     links: [],
-    problem:
-      "Contribute to the structure of an active-stabilization high-powered rocket and use flight and test data to drive continuous design improvement.",
-    approach: [
-      "Contributed to the design, assembly, and testing of the active-stabilization system, including canard integration, within a 10-member team.",
-      "Modeled structural components in Fusion 360, refining the design to minimize aerodynamic forces.",
-      "Soldered avionics hardware and analyzed test data in MATLAB to drive iterative improvements.",
-    ],
     tools: ["Fusion 360", "MATLAB", "Hand assembly / soldering"],
-    results: [
-      "Delivered structural hardware for an active-stabilization high-powered rocket.",
-      "Closed the loop from test data back into design via MATLAB analysis.",
+    sections: [
+      {
+        title: "Overview",
+        text: [
+          "The Spectre Rocket project was a student-led effort through Embry-Riddle's Experimental Rocket Propulsion Lab to develop a high-powered rocket with an active stabilization system. It was a chance to get hands-on experience with rocket hardware, structural design, and testing while working alongside a team of about 10 students.",
+        ],
+      },
+      {
+        title: "My contributions",
+        text: [
+          "As a member of the hardware team, I contributed to the design, assembly, and testing of the rocket's active stabilization system, including its canard control surfaces. I also developed structural CAD models in Fusion 360, helped with avionics hardware assembly and soldering, and analyzed experimental test data in MATLAB to support design improvements.",
+          "Spectre was one of my earlier opportunities to work with real rocket hardware. It helped me build practical engineering skills and understand how testing and design iterations add up to a working system.",
+        ],
+      },
     ],
     gallery: [
       { model: "assets/rocket/spectre-canard.glb", caption: "Canard control surface, v4.0 (drag to rotate)" },
